@@ -74,6 +74,7 @@ request.httpBody = try! multipartFormData.encode()
 """;
 
   final String kTemplateEnd = """
+
 let semaphore = DispatchSemaphore(value: 0) 
 
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
@@ -164,7 +165,7 @@ semaphore.wait()
 
       var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
-        "url": uri.toString(),
+        "url": uri.toString().split('?').first,
         "method": requestModel.method.name.toUpperCase(),
         "params": params, 
       });
