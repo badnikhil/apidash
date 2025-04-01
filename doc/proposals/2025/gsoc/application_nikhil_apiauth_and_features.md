@@ -86,20 +86,20 @@ This project aims to expand APIDash by implementing multiple authentication meth
 
 ## Weekly Timeline
 
-| Week | Task |
-|------|------|
-| **Week 1** | Finalize implementation plan, initial setup, mentor discussions |
-| **Week 2** | Implement Basic Authentication, API Key authentication |
-| **Week 3** | Add Bearer Token & JWT authentication |
-| **Week 4** | Implement Digest Authentication |
-| **Week 5** | OAuth 1.0 & OAuth 2.0 implementation |
-| **Week 6-7** | Expand code generation support to new languages() |
-| **Week 8** | Refine code generation templates & improve output quality |
-| **Week 9** | Increase test coverage, add integration tests |
-| **Week 10** | Finalize features, conduct additional testing |
-| **Week 11** | Documentation, bug fixes, and final refinements |
-| **Week 12** | Submit final deliverables, address mentor feedback |
-
+| Week | Tasks                                                                                  | Deliverables                           |
+|------|----------------------------------------------------------------------------------------|----------------------------------------|
+| 1    | Finalize implementation plan, discuss scope with mentors, implement Basic Authentication and API Key Authentication  |   Basic and API Key auth working |
+| 2    | Implement Bearer Token support (header-based), add JWT parsing and validation, integrate into APIDash | Bearer Token and JWT auth functional   |
+| 3    | Implement Digest Authentication (nonce, hash generation), add challenge-response logic | Digest auth implemented                |
+| 4    | Implement OAuth 1.0 (signature generation, request signing), OAuth 2.0 (authorization code flow, refresh tokens) | OAuth 1.0 and 2.0 functional           |
+| 5    | Adjust auth features based on mentor feedback, prepare codegen for alignment with new auth methods | Working auth suite                     |
+| 6    | Update codegen(All supported languages) to support all new auth methods, , | Updated Whole Codegen for Auth    |
+| 7    | Add  TypeScript  (Axios & Fetch APIs), Haskell  (http-client), Perl  (LWP::UserAgent) | TypeScript ,Haskell and Perl codegen functional    |
+| 8    | Add Elixir  (HTTPoison), Scala  (sttp & Akka HTTP), R  (httr) | Scala ,elixir and R codegen implemented |
+| 9    | Add Lua support (LuaSocket), Erlang support (httpc), Shell  (Wget with auth via flags/headers) | Lua, Erlang, and Shell codegen completed |
+| 10   | Adjust codegen features based on mentor feedback, demo all features ,start working on tests | Working auth and codegen suite, demo   |
+| 11   | Add relevant tests and expand the existing test coverage, fix bugs  | Tested auth and codegen features |
+| 12   | Write user and developer documentation (guides, examples), address final mentor feedback, prepare GSoC report, submit deliverables | Features with documentation, submitted project and report |
 ---
 # Authentication Integration 
 ## Frontend Images
