@@ -18,11 +18,10 @@
 ## Skills
 
 - **Flutter & Dart Development:** Advanced knowledge in Flutter app development, with a strong focus on API clients, network communication, and performance optimizations.
-- **API Development & Integration:** Deep experience working with REST APIs, GraphQL, WebSockets, authentication methods and network protocols.
+- **API Development & Integration:** Deep experience working with REST APIs, GraphQL,  authentication methods and network protocols.
 - **Programming Languages:** Currently Proficient in C++, Dart, and x86 Assembly but adaptable to any(worked with 10+ languages) with a strong grasp of low-level computing concepts.
 - **Low-Level System Knowledge:** Understanding of computer architecture, memory management, operating systems, and system performance optimizations.
-- **Problem-Solving & Competitive Coding:** Rated 5-star @CodeChef and 1600+ on LeetCode.
-- **Collaboration & Open Source Contributions:** 
+- **Problem-Solving & Competitive Coding:** Rated 5-star [Codechef](https://www.codechef.com/users/badnikhil) and 1600+ on [Leetcode](https://leetcode.com/u/badnikhil/).
 ---
 
 ## University Information
@@ -120,6 +119,16 @@ This project aims to expand APIDash by implementing multiple authentication meth
 6. **OAuth 1.0** - Legacy token-based authentication
 7. **OAuth 2.0** - Modern token-based authentication
 
+As per the mentor’s suggestion, all authentication-related tasks will be handled within the HttpResponseModel class. More specific implementation details will be discussed further to ensure alignment with community expectations and maintain consistency within the project.
+
+### Below is an simple example on how the methods will be implemented with the approach
+
+## General Authentication Challenges
+1. **Network Interruptions**: All authentication methods must handle network failures gracefully
+2. **Timeout Handling**: Implement proper timeout configuration to prevent hanging requests
+3. **Error Reporting**: Standardize error messaging across all authentication method
+(Handled perfectly in the provided info below)
+
 #### 1. Basic Authentication
 
 Basic authentication requires sending a username and password in the HTTP request headers. I will implement this with proper encoding and security measures:
@@ -177,6 +186,28 @@ try {
 } finally {
   client.close();
 }
+```
+**Edge Cases:**
+- Username or password containing special characters that need encoding
+- Servers requiring additional headers alongside basic auth
+- Authentication against servers that don't follow the standard 401 challenge-response pattern
+
+**Implementation Challenges:**
+- Securing credentials in memory to prevent exposure
+- Properly encoding credentials in UTF-8 before Base64 encoding
+- Handling servers that don't properly indicate authentication failures
+
+  
+# Example of handling special characters in credentials
+```
+
+String username = 'user@example.com:withColon';  // Contains problematic characters
+String password = 'p@$$w0rd';
+
+// Proper encoding for special characters
+String encodedUsername = Uri.encodeComponent(username);
+String encodedPassword = Uri.encodeComponent(password);
+String basicAuth = 'Basic ' + base64Encode(utf8.encode('$encodedUsername:$encodedPassword'));
 ```
 
 #### 2. API Key Authentication
@@ -239,6 +270,42 @@ try {
   }
 } finally {
   client.close();
+}
+```
+
+**Edge Cases:**
+- API keys containing special characters
+- Multiple API keys required for a single request
+- Different API key placement conventions (query, header, custom header names)
+
+**Implementation Challenges:**
+- Supporting different naming conventions (X-API-KEY, api_key, apikey, etc.)
+- Securely storing API keys within the application
+- Managing expiring API keys
+
+## Example of handling multiple API keys 
+```
+Future<http.Response> fetchWithMultipleApiKeys(String url, Map<String, String> apiKeys, 
+    {Map<String, String> headerKeys = const {}, Map<String, String> queryKeys = const {}}) async {
+  final client = http.Client();
+  try {
+    Uri uri = Uri.parse(url);
+    
+    // Add query parameter API keys
+    if (queryKeys.isNotEmpty) {
+      final queryParams = Map<String, dynamic>.from(uri.queryParameters);
+      queryParams.addAll(queryKeys);
+      uri = uri.replace(queryParameters: queryParams);
+    }
+    
+    // Prepare headers with API keys
+    final headers = {'Content-Type': 'application/json'};
+    headerKeys.forEach((key, value) => headers[key] = value);
+    
+    return await client.get(uri, headers: headers);
+  } finally {
+    client.close();
+  }
 }
 ```
 
@@ -392,6 +459,52 @@ final response = await http.get(
   },
 );
 ```
+**Edge Cases:**
+- Token expiration during request execution
+- Token revocation
+- Different token formats (JWT vs opaque tokens)
+- Token scope limitations
+
+**Implementation Challenges:**
+- Implementing automatic token refresh mechanisms
+- Handling concurrent requests during token refresh
+- Managing token storage securely
+
+## Example of token refresh mechanism
+```
+
+Future<http.Response> fetchWithTokenRefresh(String url, String token, 
+    Future<String> Function() refreshToken) async {
+  final client = http.Client();
+  try {
+    final response = await client.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    
+    // Handle expired token
+    if (response.statusCode == 401) {
+      final newToken = await refreshToken();
+      // Retry with new token
+      return await client.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $newToken',
+          'Content-Type': 'application/json',
+        },
+      );
+    }
+    
+    return response;
+  } finally {
+    client.close();
+  }
+}
+```
+
 
 #### 5. Digest Authentication
 
@@ -534,7 +647,50 @@ try {
   client.close();
 }
 ```
+**Edge Cases:**
+- JWT signature verification failures
+- Invalid JWT structure
+- JWT payload claims validation (exp, nbf, iss, aud)
+- Clock skew between client and server
 
+**Implementation Challenges:**
+- Supporting different JWT signing algorithms (HMAC, RSA, ECDSA)
+- Validating complex JWT claims structures
+- Handling JWT header verification
+
+  
+##Example of handling JWT validation and clock skew
+
+```
+bool validateJWT(String token, String secretKey, {int clockSkewSeconds = 30}) {
+  try {
+    final parts = token.split('.');
+    if (parts.length != 3) return false;
+    
+    // Parse payload
+    final payload = jsonDecode(utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))));
+    
+    // Check expiration with clock skew allowance
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    if (payload.containsKey('exp') && 
+        payload['exp'] < now - clockSkewSeconds) {
+      return false; // Token expired
+    }
+    
+    // Check not-before with clock skew allowance
+    if (payload.containsKey('nbf') && 
+        payload['nbf'] > now + clockSkewSeconds) {
+      return false; // Token not yet valid
+    }
+    
+    // Additional claims validation would go here...
+    
+    return true;
+  } catch (e) {
+    return false; // Any parsing error means invalid token
+  }
+}
+```
 #### 6. OAuth 1.0
 
 OAuth 1.0 implementation will include proper signature generation and token handling:
@@ -682,6 +838,7 @@ final response = await http.get(
 );
 ```
 
+
 #### 7. OAuth 2.0
 
 OAuth 2.0 implementation will support multiple grant types and proper token management:
@@ -808,6 +965,48 @@ Future<http.Response> fetchDataWithOAuth2(String url, String accessToken) async 
 }
 ```
 
+**Edge Cases:**
+- Servers not providing proper nonce or other required parameters
+- Different digest algorithm requirements (MD5, SHA-256, etc.)
+- QOP (Quality of Protection) handling variations
+- Nonce counting and stale nonce handling
+
+**Implementation Challenges:**
+- Implementing the complex digest calculation algorithm correctly
+- Handling servers with non-standard digest implementations
+- Managing nonce count for subsequent requests
+
+## Example of handling stale nonce in digest auth
+```
+
+Future<http.Response> digestAuthWithStaleNonce(String url, String username, String password) async {
+  final client = http.Client();
+  try {
+    // Make initial request
+    final response = await _performDigestAuth(url, username, password, client);
+    
+    // Check if server indicates stale nonce
+    if (response.statusCode == 401) {
+      final authHeader = response.headers['www-authenticate'] ?? '';
+      if (authHeader.contains('stale=true')) {
+        // Re-authenticate with new nonce
+        return await _performDigestAuth(url, username, password, client);
+      }
+    }
+    
+    return response;
+  } finally {
+    client.close();
+  }
+}
+
+Future<http.Response> _performDigestAuth(String url, String username, String password, http.Client client) async {
+  // Implementation details omitted for brevity
+  // Would extract nonce and other parameters, calculate digest response, etc.
+  return await client.get(Uri.parse(url));
+}
+```
+
 
 
 
@@ -911,7 +1110,11 @@ wget "https://api.example.com/data"
 
 This provides a brief breakdown of implementing authentication in APIDash. Each method has been explained with corresponding code generation snippet. Further enhancements will be made by updating Code generation to handle authentication requests for all other lanugages and adding relevant tests.
 This contribution will significantly expand the APIDash's capabilities by enabling support for multiple programming languages, making the CodeGen feature more robust and widely usable. By following a structured development, testing, and validation approach, the enhancements will ensure reliable and maintainable code generation.
+### **Tasks Covered in This Proposal**  
+
+- **Implement Authentication Methods** – Integrate the suggested authentication methods .
+- **Expand Codegen feature** – Add support for more programming languages, enhancing the flexibility and usability of the feature for a wider range of developers.
+
 
 ## Final Thoughts
-
-I am fully committed to delivering high-quality contributions to APIDash, leveraging my expertise in Flutter, API development, and low-level systems understanding. I will actively collaborate with mentors and ensure the successful implementation of these improvements.
+I am fully committed to delivering high-quality contributions to Apidash, leveraging my expertise in Flutter, API development, and multilingual programming. As this is the only project I am submitting to, my complete focus will be on ensuring the successful implementation of these improvements. 
