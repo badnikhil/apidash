@@ -1,4 +1,5 @@
-# APIDash GSoC Proposal
+# GSoC Proposal
+# APIdash
 
 ## About Me
 
@@ -21,22 +22,14 @@
 - **Programming Languages:** Currently Proficient in C++, Dart, and x86 Assembly but adaptable to any(worked with 10+ languages) with a strong grasp of low-level computing concepts.
 - **Low-Level System Knowledge:** Understanding of computer architecture, memory management, operating systems, and system performance optimizations.
 - **Problem-Solving & Competitive Coding:** Rated 5-star @CodeChef and 1600+ on LeetCode.
-- **Collaboration & Open Source Contributions:** Actively contributing to APIDash, with multiple PRs :
-  
-  [**PR #693**](https://github.com/foss42/apidash/pull/693) – Fixed code generation for Swift  
-  [**PR #681**](https://github.com/foss42/apidash/pull/681) – *In Progress:* Adding support for multiple params in requests and the code generation feature  
-  [**PR #670**](https://github.com/foss42/apidash/pull/670) – Added onboarding screen  
-  [**PR #654**](https://github.com/foss42/apidash/pull/654) – Fixed a video player crash bug and an error occurring during tests  
-  [**PR #649**](https://github.com/foss42/apidash/pull/649) – Updated a link in the README file  
-
-
+- **Collaboration & Open Source Contributions:** 
 ---
 
 ## University Information
 
 - **University:** KIET Group of Institutions, Ghaziabad  
 - **Program:** B.Tech in Computer Science with AI/ML  
-- **Year:** 2024  
+- **Year:** 2024 (1st)
 - **Expected Graduation Date:** 2028  
 ---
 
@@ -49,16 +42,28 @@ Short answers to the following questions (Add relevant links wherever you can):
 
 **1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?**
 
-I’ve been actively contributing to APIDash, submitting multiple PRs and raising issues. I have studied the codebase in depth and will begin implementation immediately after the initial discussions with mentors.
+I’ve been actively contributing to APIDash, submitting multiple PRs and raising issues. I have studied the codebase in depth and will begin implementation immediately after the initial discussions with mentors.Working further on adding more features to APIDash
+  
+  [**PR #693**](https://github.com/foss42/apidash/pull/693) – Fixed code generation for Swift  
+  [**PR #681**](https://github.com/foss42/apidash/pull/681) – *In Progress:* Adding support for multiple params in requests and the code generation feature  
+  [**PR #670**](https://github.com/foss42/apidash/pull/670) – Added onboarding screen  
+  [**PR #654**](https://github.com/foss42/apidash/pull/654) – Fixed a video player crash bug and an error occurring during tests  
+  [**PR #649**](https://github.com/foss42/apidash/pull/649) – Updated a link in the README file  
+
+
 
 
 **2. What is your one project/achievement that you are most proud of? Why?**
-
-Leading a college hackathon team to build an API client under a strict deadline. This experience strengthened my problem-solving skills and ability to work efficiently under pressure.
+My proudest achievement was leading my college hackathon team to victory by developing a sophisticated API client under extreme time constraints. This accomplishment exemplifies my technical capabilities, leadership skills, and ability to perform under pressure.
+As team lead, I coordinated four developers with diverse skill sets while simultaneously contributing to the codebase. When we encountered a critical integration issue six hours before submission, I quickly pivoted our approach, redesigned the architecture, and guided the team through implementing the new solution. Despite the setback, we delivered a fully functional product with comprehensive documentation that impressed the judges and industry sponsors.
+This achievement stands as a testament to my core strengths as a programmer. First, it demonstrated my technical versatility—I seamlessly moved between frontend design, API integration, and performance optimization as the project required. Second, it showcased my leadership abilities, as I maintained team cohesion during high-stress moments by establishing clear communication channels and fostering a collaborative environment where every member could contribute their best work.
+Perhaps most importantly, this victory reflected my problem-solving mindset. When faced with seemingly insurmountable technical challenges, I remained calm, broke down complex problems into manageable components, and identified innovative solutions that others had overlooked.
+The skills I developed during this intense experience—technical adaptability, effective team leadership, and creative problem-solving under pressure—have become foundational to my approach to software development and would be valuable assets to bring to the APIDSAH initiative.
 
 **3. What interests you the most about API Dash?**
 
-APIDash is fascinating because of its fully Flutter-based architecture, which ensures a seamless and consistent cross-platform experience. Its efficient approach to  request management and response visualization makes it a powerful yet lightweight tool. The way it streamlines code generation further enhances its usability for developers working with APIs.
+APIDash is fascinating because of its fully Flutter-based architecture, which ensures a seamless and consistent cross-platform experience. Its efficient approach to  request management and response visualization makes it a powerful yet lightweight tool. The way it streamlines code generation further enhances its usability for developers working with APIs.The opportunity to enhance authentication methods and the codegen feature excites me because these are critical components that directly impact security and efficiency, two pillars of modern software development. I’m particularly thrilled to work with Flutter on a cross-platform project, as it combines my love for building intuitive tools with the chance to explore a cutting-edge framework. Beyond the technical appeal, I’m motivated by the idea of collaborating with a talented community and delivering features that make a real difference for users.
+This project aligns beautifully with my skills and aspirations. I’m proficient in programming and problem-solving, with a growing expertise in API design and security—key areas for implementing robust authentication methods. Looking ahead, I aim to specialize in creating secure, scalable software solutions, and working on API Dash offers a perfect stepping stone. Enhancing the codegen feature also ties into my goal of optimizing developer workflows, making this an ideal match for my future ambitions.As a versatile programmer fluent in multiple languages spanning the spectrum from low-level assembly to high-level Python, I thrive on the challenge of crafting efficient, innovative solutions across diverse technical landscapes. My journey in coding began with a fascination for how machines interpret instructions at their core, driving me to master assembly and understand computing at its most fundamental level. Over time, this curiosity evolved into a passion for building robust, scalable applications using modern languages like golang ,rust ,js, where I’ve honed my ability to balance performance with practicality.
 
 
 **4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?**
