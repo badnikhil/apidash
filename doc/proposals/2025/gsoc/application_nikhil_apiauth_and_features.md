@@ -27,7 +27,7 @@
 ## University Information
 
 - **University:** KIET Group of Institutions, Ghaziabad  
-- **Program:** B.Tech in Computer Science with AI/ML  
+- **Program:** B.Tech in Computer Science with specialization in AI/ML  
 - **Year:** 2024 (1st)
 - **Expected Graduation Date:** 2028  
 ---
@@ -54,9 +54,9 @@ I’ve been actively contributing to APIDash, submitting multiple PRs and raisin
 
 **2. What is your one project/achievement that you are most proud of? Why?**
 My proudest achievement was leading my college hackathon team to victory by developing a sophisticated API client under extreme time constraints. This accomplishment exemplifies my technical capabilities, leadership skills, and ability to perform under pressure.
-As team lead, I coordinated four developers with diverse skill sets while simultaneously contributing to the codebase. When we encountered a critical integration issue six hours before submission, I quickly pivoted our approach, redesigned the architecture, and guided the team through implementing the new solution. Despite the setback, we delivered a fully functional product with comprehensive documentation that impressed the judges and industry sponsors.
+As team lead, I coordinated two developers with diverse skill sets while simultaneously contributing to the codebase. When we encountered a critical integration issue six hours before submission, I quickly pivoted our approach, redesigned the architecture, and guided the team through implementing the new solution. Despite the setback, we delivered a fully functional product with comprehensive documentation that impressed the judges and industry sponsors.
 This achievement stands as a testament to my core strengths as a programmer. First, it demonstrated my technical versatility—I seamlessly moved between frontend design, API integration, and performance optimization as the project required. Second, it showcased my leadership abilities, as I maintained team cohesion during high-stress moments by establishing clear communication channels and fostering a collaborative environment where every member could contribute their best work.
-Perhaps most importantly, this victory reflected my problem-solving mindset. When faced with seemingly insurmountable technical challenges, I remained calm, broke down complex problems into manageable components, and identified innovative solutions that others had overlooked.
+Perhaps most importantly, this victory reflected my problem-solving mindset. When faced with seemingly insurmountable technical challenges, I  broke down complex problems into manageable components, and identified innovative solutions that others had overlooked.
 The skills I developed during this intense experience—technical adaptability, effective team leadership, and creative problem-solving under pressure—have become foundational to my approach to software development and would be valuable assets to bring to the APIDSAH initiative.
 
 **3. What interests you the most about API Dash?**
@@ -342,6 +342,7 @@ Future<http.Response> fetchDataWithBearerToken(String url, String token) async {
 }
 ```
 
+
 Generated Code (Dart):
 ```
 final client = http.Client();
@@ -365,6 +366,52 @@ try {
   }
 } finally {
   client.close();
+}
+```
+
+**Edge Cases:**
+- Token expiration during request execution
+- Token revocation
+- Different token formats (JWT vs opaque tokens)
+- Token scope limitations
+
+**Implementation Challenges:**
+- Implementing automatic token refresh mechanisms
+- Handling concurrent requests during token refresh
+- Managing token storage securely
+
+## Example of token refresh mechanism
+
+```
+Future<http.Response> fetchWithTokenRefresh(String url, String token, 
+    Future<String> Function() refreshToken) async {
+  final client = http.Client();
+  try {
+    final response = await client.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    
+    // Handle expired token
+    if (response.statusCode == 401) {
+      final newToken = await refreshToken();
+      // Retry with new token
+      return await client.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $newToken',
+          'Content-Type': 'application/json',
+        },
+      );
+    }
+    
+    return response;
+  } finally {
+    client.close();
+  }
 }
 ```
 
@@ -460,47 +507,45 @@ final response = await http.get(
 );
 ```
 **Edge Cases:**
-- Token expiration during request execution
-- Token revocation
-- Different token formats (JWT vs opaque tokens)
-- Token scope limitations
+- JWT signature verification failures
+- Invalid JWT structure
+- JWT payload claims validation (exp, nbf, iss, aud)
+- Clock skew between client and server
 
 **Implementation Challenges:**
-- Implementing automatic token refresh mechanisms
-- Handling concurrent requests during token refresh
-- Managing token storage securely
+- Supporting different JWT signing algorithms (HMAC, RSA, ECDSA)
+- Validating complex JWT claims structures
+- Handling JWT header verification
 
-## Example of token refresh mechanism
+- 
+## Example of handling JWT validation and clock skew
 ```
-
-Future<http.Response> fetchWithTokenRefresh(String url, String token, 
-    Future<String> Function() refreshToken) async {
-  final client = http.Client();
+bool validateJWT(String token, String secretKey, {int clockSkewSeconds = 30}) {
   try {
-    final response = await client.get(
-      Uri.parse(url),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    final parts = token.split('.');
+    if (parts.length != 3) return false;
     
-    // Handle expired token
-    if (response.statusCode == 401) {
-      final newToken = await refreshToken();
-      // Retry with new token
-      return await client.get(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer $newToken',
-          'Content-Type': 'application/json',
-        },
-      );
+    // Parse payload
+    final payload = jsonDecode(utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))));
+    
+    // Check expiration with clock skew allowance
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    if (payload.containsKey('exp') && 
+        payload['exp'] < now - clockSkewSeconds) {
+      return false; // Token expired
     }
     
-    return response;
-  } finally {
-    client.close();
+    // Check not-before with clock skew allowance
+    if (payload.containsKey('nbf') && 
+        payload['nbf'] > now + clockSkewSeconds) {
+      return false; // Token not yet valid
+    }
+    
+    // Additional claims validation would go here...
+    
+    return true;
+  } catch (e) {
+    return false; // Any parsing error means invalid token
   }
 }
 ```
@@ -648,49 +693,47 @@ try {
 }
 ```
 **Edge Cases:**
-- JWT signature verification failures
-- Invalid JWT structure
-- JWT payload claims validation (exp, nbf, iss, aud)
-- Clock skew between client and server
+- Servers not providing proper nonce or other required parameters
+- Different digest algorithm requirements (MD5, SHA-256, etc.)
+- QOP (Quality of Protection) handling variations
+- Nonce counting and stale nonce handling
 
 **Implementation Challenges:**
-- Supporting different JWT signing algorithms (HMAC, RSA, ECDSA)
-- Validating complex JWT claims structures
-- Handling JWT header verification
+- Implementing the complex digest calculation algorithm correctly
+- Handling servers with non-standard digest implementations
+- Managing nonce count for subsequent requests
 
-  
-##Example of handling JWT validation and clock skew
+ ## Example of handling stale nonce in digest auth
 
 ```
-bool validateJWT(String token, String secretKey, {int clockSkewSeconds = 30}) {
+Future<http.Response> digestAuthWithStaleNonce(String url, String username, String password) async {
+  final client = http.Client();
   try {
-    final parts = token.split('.');
-    if (parts.length != 3) return false;
+    // Make initial request
+    final response = await _performDigestAuth(url, username, password, client);
     
-    // Parse payload
-    final payload = jsonDecode(utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))));
-    
-    // Check expiration with clock skew allowance
-    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    if (payload.containsKey('exp') && 
-        payload['exp'] < now - clockSkewSeconds) {
-      return false; // Token expired
+    // Check if server indicates stale nonce
+    if (response.statusCode == 401) {
+      final authHeader = response.headers['www-authenticate'] ?? '';
+      if (authHeader.contains('stale=true')) {
+        // Re-authenticate with new nonce
+        return await _performDigestAuth(url, username, password, client);
+      }
     }
     
-    // Check not-before with clock skew allowance
-    if (payload.containsKey('nbf') && 
-        payload['nbf'] > now + clockSkewSeconds) {
-      return false; // Token not yet valid
-    }
-    
-    // Additional claims validation would go here...
-    
-    return true;
-  } catch (e) {
-    return false; // Any parsing error means invalid token
+    return response;
+  } finally {
+    client.close();
   }
 }
+
+Future<http.Response> _performDigestAuth(String url, String username, String password, http.Client client) async {
+  // Implementation details omitted for brevity
+  // Would extract nonce and other parameters, calculate digest response, etc.
+  return await client.get(Uri.parse(url));
+}
 ```
+
 #### 6. OAuth 1.0
 
 OAuth 1.0 implementation will include proper signature generation and token handling:
@@ -837,7 +880,43 @@ final response = await http.get(
   },
 );
 ```
+**Edge Cases:**
+- Timestamp synchronization issues between client and server
+- Handling special characters in OAuth parameters
+- Request signing with different signature methods (HMAC-SHA1, RSA-SHA1, PLAINTEXT)
+- Three-legged OAuth flow (requesting and using request tokens)
 
+**Implementation Challenges:**
+- Creating the correct signature base string with proper parameter sorting
+- URL encoding parameters according to OAuth 1.0 specifications
+- Managing OAuth tokens and secrets securely
+
+## Example of handling URL encoding in OAuth 1.0
+
+```
+String encodeOAuthParameter(String value) {
+  // OAuth 1.0 uses a specific subset of URI encoding
+  return Uri.encodeComponent(value)
+      .replaceAll('!', '%21')
+      .replaceAll('*', '%2A')
+      .replaceAll('\'', '%27')
+      .replaceAll('(', '%28')
+      .replaceAll(')', '%29');
+}
+
+String createSignatureBaseString(String method, String url, Map<String, String> params) {
+  // Sort parameters alphabetically
+  final sortedParams = SplayTreeMap<String, String>.from(params);
+  
+  // Create parameter string with OAuth-specific encoding
+  final paramPairs = sortedParams.entries.map(
+    (entry) => '${encodeOAuthParameter(entry.key)}=${encodeOAuthParameter(entry.value)}'
+  ).join('&');
+  
+  // Combine components
+  return '$method&${encodeOAuthParameter(url)}&${encodeOAuthParameter(paramPairs)}';
+}
+```
 
 #### 7. OAuth 2.0
 
@@ -964,47 +1043,41 @@ Future<http.Response> fetchDataWithOAuth2(String url, String accessToken) async 
   }
 }
 ```
-
 **Edge Cases:**
-- Servers not providing proper nonce or other required parameters
-- Different digest algorithm requirements (MD5, SHA-256, etc.)
-- QOP (Quality of Protection) handling variations
-- Nonce counting and stale nonce handling
+- Handling various OAuth 2.0 grant types (authorization code, client credentials, password, etc.)
+- PKCE extension support for public clients
+- Refresh token expiration and rotation
+- Cross-site request forgery (CSRF) protection in authorization flow
 
 **Implementation Challenges:**
-- Implementing the complex digest calculation algorithm correctly
-- Handling servers with non-standard digest implementations
-- Managing nonce count for subsequent requests
+- Supporting various OAuth 2.0 providers with different implementations
+- Managing state between authorization request and callback
+- Secure storage of tokens and refresh tokens
+- Handling redirect flows in mobile/desktop environments
 
-## Example of handling stale nonce in digest auth
+  ## Example of PKCE implementation for OAuth 2.0
+
 ```
 
-Future<http.Response> digestAuthWithStaleNonce(String url, String username, String password) async {
-  final client = http.Client();
-  try {
-    // Make initial request
-    final response = await _performDigestAuth(url, username, password, client);
-    
-    // Check if server indicates stale nonce
-    if (response.statusCode == 401) {
-      final authHeader = response.headers['www-authenticate'] ?? '';
-      if (authHeader.contains('stale=true')) {
-        // Re-authenticate with new nonce
-        return await _performDigestAuth(url, username, password, client);
-      }
-    }
-    
-    return response;
-  } finally {
-    client.close();
-  }
+String generateCodeVerifier() {
+  final random = Random.secure();
+  final values = List<int>.generate(64, (_) => random.nextInt(256));
+  return base64Url.encode(values).replaceAll('=', '');
 }
 
-Future<http.Response> _performDigestAuth(String url, String username, String password, http.Client client) async {
-  // Implementation details omitted for brevity
-  // Would extract nonce and other parameters, calculate digest response, etc.
-  return await client.get(Uri.parse(url));
+String generateCodeChallenge(String verifier) {
+  final bytes = utf8.encode(verifier);
+  final digest = sha256.convert(bytes);
+  return base64Url.encode(digest.bytes).replaceAll('=', '');
 }
+
+// Usage in authorization request
+final codeVerifier = generateCodeVerifier();
+final codeChallenge = generateCodeChallenge(codeVerifier);
+
+// Store codeVerifier securely for later use in token request
+// Then use in authorization request URL:
+// https://auth.example.com/authorize?response_type=code&client_id=CLIENT_ID&redirect_uri=REDIRECT_URI&code_challenge=CODE_CHALLENGE&code_challenge_method=S256
 ```
 
 
