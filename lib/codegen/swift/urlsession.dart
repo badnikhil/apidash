@@ -37,14 +37,16 @@ let multipartFormData = try! MultipartFormData(boundary: boundary) {
 ''';
 
   final String kTemplateJsonData = '''
-let parameters = "{{jsonData}}"
-let postData = parameters.data(using: .utf8)
+let postData = """
+{{jsonData}}
+""".data(using: .utf8)
 
 ''';
 
   final String kTemplateTextData = '''
-let parameters = "{{textData}}"
-let postData = parameters.data(using: .utf8)
+let postData = """
+{{textData}}
+""".data(using: .utf8)
 
 ''';
 
@@ -68,8 +70,12 @@ request.addValue("{{value}}", forHTTPHeaderField: "{{header}}")
 
 """;
 
-  final String kTemplateBody = """
+  final String kTemplateFormDataBody = """
 request.httpBody = try! multipartFormData.encode()
+""";
+
+  final String kTemplateJsonTextBody = """
+request.httpBody = postData
 
 """;
 
@@ -98,16 +104,12 @@ task.resume()
 semaphore.wait()
 """;
 
+
   String? getCode(HttpRequestModel requestModel) {
     try {
       String result = kTemplateStart;
 
-      if (requestModel.hasFormData) {
-        result += kTemplateFormDataImport;
-      }
-
-      var rec = 
-      getValidRequestUri(requestModel.url, requestModel.enabledParams);
+      var rec = getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
 
     var params = requestModel.enabledParamsMap.entries.expand((entry) {
@@ -123,11 +125,13 @@ semaphore.wait()
 
 
       if (requestModel.hasFormData) {
+        result += kTemplateFormDataImport;
+        
         var formDataList = requestModel.formDataMapList.map((param) {
           if (param['type'] == 'file') {
             final filePath = param['value'] as String;
             final fileName = path.basename(filePath);
-            final fileExtension =
+            final fileExtension = 
                 path.extension(fileName).toLowerCase().replaceFirst('.', '');
             return {
               'type': 'file',
@@ -149,17 +153,19 @@ semaphore.wait()
         result += templateFormData.render({
           "formData": formDataList,
         });
-      } else if (requestModel.hasJsonData) {
+      } 
+      // Handle JSON data
+      else if (requestModel.hasJsonData) {
         var templateJsonData = jj.Template(kTemplateJsonData);
         result += templateJsonData.render({
-          "jsonData":
-              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
-        });
-      } else if (requestModel.hasTextData) {
+          "jsonData": requestModel.body!
+                    });
+      } 
+      // Handle text data
+      else if (requestModel.hasTextData) {
         var templateTextData = jj.Template(kTemplateTextData);
         result += templateTextData.render({
-          "textData":
-              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
+          "textData": requestModel.body!
         });
       }
 
@@ -172,19 +178,21 @@ semaphore.wait()
 
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasFormData) {
-        headers.putIfAbsent("Content-Type",
-            () => "multipart/form-data; boundary=\\(boundary.stringValue)");
-      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
-        headers.putIfAbsent(
-            kHeaderContentType, () => requestModel.bodyContentType.header);
-      }
+        headers['Content-Type'] = 
+            "multipart/form-data; boundary=\\(boundary.stringValue)";
+      } else if(requestModel.hasJsonData||requestModel.hasTextData){
+        headers['Content-Type'] = 'application/json';
+    }
+
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeaders);
         result += templateHeader.render({"headers": headers});
       }
 
-      if (requestModel.hasFormData || requestModel.hasBody) {
-        result += kTemplateBody;
+      if (requestModel.hasFormData) {
+        result += kTemplateFormDataBody;
+      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
+        result += kTemplateJsonTextBody;
       }
 
       result += kTemplateEnd;
