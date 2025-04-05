@@ -1180,7 +1180,7 @@ httpc:request(get, {"https://api.example.com/data", []}, [], []).
 wget "https://api.example.com/data"
 ```
 
-### TASK 3. **Adding gRPC Support**
+### TASK 3. **Adding gRPC (google Remote Procedure Call) Support**
 
 The project will implement comprehensive gRPC testing capabilities in APIDash, allowing developers to test gRPC APIs directly from the tool. Users will have two options to define proto data:
 - **Import a `.proto` file**: Upload a local file for parsing.
@@ -1389,14 +1389,12 @@ Or we can maintain the UI style consistent with the existing headers / params UI
 ## Conclusion
 
 This provides a brief breakdown of implementing authentication in APIDash. Each method has been explained with corresponding code generation snippet. Further enhancements will be made by updating Code generation to handle authentication requests for all other lanugages and adding relevant tests.
-This contribution will significantly expand the APIDash's capabilities by enabling support for multiple programming languages, making the CodeGen feature more robust and widely usable. By following a structured development, testing, and validation approach, the enhancements will ensure reliable and maintainable code generation.
-after completing auth and codegen first, offering flexibility via .proto import and reflection grpc support will be added. The 14-week timeline ensures thorough development, testing, and documentation.
-
+This contribution will significantly expand the APIDash's capabilities by enabling support for multiple programming languages, making the CodeGen feature more robust and widely usable. By following a structured development, testing, and validation approach, the enhancements will ensure reliable and maintainable code generation.After completing authentication and code generation, gRPC methods offering flexibility via .proto imports and reflection will be added. The 14-week timeline ensures thorough development, testing, and documentation.
 ### **Tasks Covered in This Proposal**  
 
 - **Implement Authentication Methods** – Integrate the suggested authentication methods .
 - **Expand Codegen feature** – Add support for more programming languages, enhancing the flexibility and usability of the feature for a wider range of developers.
-- **Add gRPC Support** – Enable gRPC testing with import and reflection options..
+- **Add gRPC Support** – Enable gRPC method with import and reflection options..
 
 
 ## Final Thoughts
