@@ -77,29 +77,31 @@ Not at all! Regular sync-ups with the mentors will help me stay on track, get va
 
 ## Project Proposal
 
-### **Title:** Adding Authentication Support & Enhance/Update Code Generation feature in APIDash  
+### **Title:** Enhancing APIDash with Authentication Support, Code Generation Updates, and gRPC Integration
 
 ### **Abstract:**  
-This project aims to expand APIDash by implementing multiple authentication methods  and improving its code generation capabilities Alongside adding relevant tests. With prior experience in the codebase, I have already mapped out the necessary changes and will begin work right after mentor discussions.
-
+This project aims to expand APIDash by implementing multiple authentication methods, enhancing its code generation capabilities, and adding gRPC support . With prior experience in the APIDash codebase, I will begin work immediately after mentor discussions. Authentication and codegen enhancements will be completed first, followed by gRPC integration, which will offer two options for proto definition: importing .proto files or using gRPC reflection.
 ---
 
 ## Weekly Timeline
 
 | Week | Tasks                                                                                  | Deliverables                           |
 |------|----------------------------------------------------------------------------------------|----------------------------------------|
-| 1    | Finalize implementation plan, discuss scope with mentors, implement Basic Authentication and API Key Authentication  |   Basic and API Key auth working |
+| 1    | Finalize implementation plan, discuss scope with mentors, implement Basic Authentication and API Key Authentication | Basic and API Key auth working         |
 | 2    | Implement Bearer Token support (header-based), add JWT parsing and validation, integrate into APIDash | Bearer Token and JWT auth functional   |
 | 3    | Implement Digest Authentication (nonce, hash generation), add challenge-response logic | Digest auth implemented                |
 | 4    | Implement OAuth 1.0 (signature generation, request signing), OAuth 2.0 (authorization code flow, refresh tokens) | OAuth 1.0 and 2.0 functional           |
 | 5    | Adjust auth features based on mentor feedback, prepare codegen for alignment with new auth methods | Working auth suite                     |
-| 6    | Update codegen(All supported languages) to support all new auth methods, , | Updated Whole Codegen for Auth    |
-| 7    | Add  TypeScript  (Axios & Fetch APIs), Haskell  (http-client), Perl  (LWP::UserAgent) | TypeScript ,Haskell and Perl codegen functional    |
-| 8    | Add Elixir  (HTTPoison), Scala  (sttp & Akka HTTP), R  (httr) | Scala ,elixir and R codegen implemented |
-| 9    | Add Lua support (LuaSocket), Erlang support (httpc), Shell  (Wget with auth via flags/headers) | Lua, Erlang, and Shell codegen completed |
-| 10   | Adjust codegen features based on mentor feedback, demo all features ,start working on tests | Working auth and codegen suite, demo   |
-| 11   | Add relevant tests and expand the existing test coverage, fix bugs  | Tested auth and codegen features |
-| 12   | Write user and developer documentation (guides, examples), address final mentor feedback, prepare GSoC report, submit deliverables | Features with documentation, submitted project and report |
+| 6    | Update codegen (all supported languages) to support all new auth methods | Updated codegen for auth               |
+| 7    | Add TypeScript (Axios & Fetch APIs), Haskell (http-client), Perl (LWP::UserAgent) | TypeScript, Haskell, Perl codegen functional |
+| 8    | Add Elixir (HTTPoison), Scala (sttp & Akka HTTP), R (httr) | Elixir, Scala, R codegen implemented   |
+| 9    | Add Lua (LuaSocket), Erlang (httpc), Shell (Wget with auth via flags/headers), adjust codegen based on feedback | Lua, Erlang, Shell codegen completed   |
+| 10   | Design gRPC support architecture, implement `.proto` file import and parsing, begin gRPC reflection integration | gRPC proto import and reflection functional |
+| 11   | Develop dynamic UI generation for gRPC message fields, integrate `grpc-dart` client for request sending | gRPC UI and client working             |
+| 12   | Enhance gRPC response visualization, add reflection-based service discovery, optimize performance | Optimized gRPC support                 |
+| 13   | Add unit tests for auth, codegen, and gRPC (parsing/reflection/UI/client), expand test coverage, fix bugs | Tested features                        |
+| 14   | Write user and developer documentation (guides, examples) for auth, codegen, and gRPC, prepare GSoC report, submit deliverables | Features with documentation, submitted project and report |
+
 ---
 # Authentication Integration 
 ## Frontend Images
@@ -110,7 +112,7 @@ This project aims to expand APIDash by implementing multiple authentication meth
 
 **A dropdown to select the authentication type, along with an icon to open a dialog box where users can enter their credentials for seamless integration into their workflow.  I will ensure minimal changes to the existing codebase(only a line or two ).*
 
-## Authentication Methods to be Implemented 
+## TASK 1 -Authentication Methods  
 1. **Basic Authentication** - Username & Password
 2. **API Key Authentication** - Key-Value pair in headers or query
 3. **Bearer Token Authentication** - JWT-based authentication
@@ -119,7 +121,6 @@ This project aims to expand APIDash by implementing multiple authentication meth
 6. **OAuth 1.0** - Legacy token-based authentication
 7. **OAuth 2.0** - Modern token-based authentication
 
-As per the mentor’s suggestion, all authentication-related tasks will be handled within the HttpResponseModel class. More specific implementation details will be discussed further to ensure alignment with community expectations and maintain consistency within the project.
 
 ### Below is an simple example on how the methods will be implemented with the approach
 
@@ -127,7 +128,7 @@ As per the mentor’s suggestion, all authentication-related tasks will be handl
 1. **Network Interruptions**: All authentication methods must handle network failures gracefully
 2. **Timeout Handling**: Implement proper timeout configuration to prevent hanging requests
 3. **Error Reporting**: Standardize error messaging across all authentication method
-(Handled perfectly in the provided info below)
+(Handled in the provided info below)
 
 #### 1. Basic Authentication
 
@@ -1083,8 +1084,10 @@ final codeChallenge = generateCodeChallenge(codeVerifier);
 
 
 
-### 1. **Languages to be Added (Codegen feature)**
-
+### TASK 2. Languages to be Added (Codegen feature)
+  **CODEGEN FOR ALL LANGUAGES WILL BE UPDATED AS SHOWN FOR RELEVANT AUTH METHODS.ABOVE ARE THE NEW LANUGAGES WHICH WILL BE ADDED**
+      
+      
   - **Elixir** (Using HTTPoison)
   - **TypeScript** (Axios & Fetch APIs)
   - **Haskell** (http-client)
@@ -1177,16 +1180,223 @@ httpc:request(get, {"https://api.example.com/data", []}, [], []).
 wget "https://api.example.com/data"
 ```
 
+### TASK 3. **Adding gRPC Support**
 
+The project will implement comprehensive gRPC testing capabilities in APIDash, allowing developers to test gRPC APIs directly from the tool. Users will have two options to define proto data:
+- **Import a `.proto` file**: Upload a local file for parsing.
+- **Use gRPC Reflection**: Connect to a server supporting reflection to fetch service definitions dynamically.
+
+The system will:
+- Parse `.proto` files (via import) or fetch proto data (via reflection).
+- Display a list of services and RPC methods in a dropdown.
+- Auto-generate a Flutter-based UI for inputting message data.
+- Send requests and receive responses using a `grpc-dart` client, with robust error handling and response visualization.
+
+#### Key Features to Implement
+- Support for uploading `.proto` files and parsing with `protoc_plugin`
+- Integration of gRPC reflection to fetch proto definitions from servers
+- Parser to extract Services, RPCs, and Message types
+- Dynamic UI generation for message fields based on proto definitions
+- gRPC client integration using `grpc-dart` with robust error handling
+- Response visualization and formatting
+
+#### gRPC Support Workflow
+```mermaid
+flowchart TD
+    A[Start: User chooses gRPC request] --> B{Select method of defining proto}
+    B -->|Upload .proto file| C[Parse using protoc]
+    B -->|Use gRPC reflection| D[Connect to server]
+    C --> E[Extract Services, RPCs, Messages]
+    D --> E
+    E --> F[Display list of RPC methods]
+    F --> G[User selects RPC and enters request data]
+    G --> H[Use gRPC client to invoke method]
+    H --> I[Show response in UI]
+    I --> J[Allow saving/copying response]
+```
+
+#### Sample Proto File and Usage
+```proto
+syntax = "proto3";
+
+package math;
+
+service MathService {
+  rpc Square (Number) returns (Number);
+}
+
+message Number {
+  int32 value = 1;
+}
+```
+
+With this proto definition, APIDash would generate an interface allowing users to:
+1. Select the `MathService` service
+2. Choose the `Square` RPC method
+3. Enter a value for the `Number` message
+4. Execute the request and view the response
+
+#### Example Dart Client Implementation
+```dart
+import 'package:grpc/grpc.dart';
+import 'src/generated/math.pbgrpc.dart';
+
+void main() async {
+  final channel = ClientChannel(
+    'localhost',
+    port: 50051,
+    options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
+  );
+
+  final stub = MathServiceClient(channel);
+
+  try {
+    final response = await stub.square(Number()..value = 9);
+    print('Square: ${response.value}');
+  } catch (e) {
+    print('Caught error: $e');
+  }
+
+  await channel.shutdown();
+}
+```
+#### example of parsing the file
+
+- import option
+
+```
+import 'package:protoc_plugin/protoc.dart';
+import 'dart:io';
+
+Future<Map<String, dynamic>> parseProtoFile(File file) async {
+  try {
+    final content = await file.readAsString();
+    final generator = ProtoGenerator();
+    final parsed = generator.parse(content);
+
+    final services = parsed.services.map((service) => {
+      'name': service.name,
+      'methods': service.methods.map((method) => {
+        'name': method.name,
+        'inputType': method.inputType,
+        'outputType': method.outputType,
+      }).toList(),
+    }).toList();
+
+    final messages = parsed.messages.map((msg) => {
+      'name': msg.name,
+      'fields': msg.fields.map((field) => {
+        'name': field.name,
+        'type': field.type,
+        'isRepeated': field.isRepeated,
+      }).toList(),
+    }).toList();
+
+    return {'services': services, 'messages': messages};
+  } catch (e) {
+    throw Exception('Failed to parse .proto file: $e');
+  }
+}
+```
+
+- grpc reflection
+
+```
+import 'package:grpc/grpc.dart';
+import 'package:grpc_reflection/grpc_reflection.dart';
+
+Future<Map<String, dynamic>> fetchProtoViaReflection(String host, int port) async {
+  final channel = ClientChannel(
+    host,
+    port: port,
+    options: const ChannelOptions(credentials: ChannelCredentials.insecure()),
+  );
+
+  try {
+    final reflector = Reflector(channel);
+    final services = await reflector.listServices();
+    final protoData = <String, dynamic>{'services': []};
+
+    for (var service in services) {
+      final descriptor = await reflector.getServiceDescriptor(service);
+      protoData['services'].add({
+        'name': service,
+        'methods': descriptor.methods.map((method) => {
+          'name': method.name,
+          'inputType': method.inputType.name,
+          'outputType': method.outputType.name,
+        }).toList(),
+      });
+      protoData['messages'] = descriptor.messages.map((msg) => {
+        'name': msg.name,
+        'fields': msg.fields.map((field) => {
+          'name': field.name,
+          'type': field.type.name,
+          'isRepeated': field.isRepeated,
+        }).toList(),
+      }).toList();
+    }
+
+    return protoData;
+  } catch (e) {
+    throw Exception('Reflection failed: $e');
+  } finally {
+    await channel.shutdown();
+  }
+}
+```
+#### Dynamic UI Generation
+When parsing a message like:
+```proto
+message UserProfile {
+  string name = 1;
+  int32 age = 2;
+  repeated string hobbies = 3;
+}
+```
+
+APIDash will generate a form interface like:
+```
+Name: [__________]
+Age:  [____]
+Hobbies:
+- [__________]
+- [__________]
+[ + Add more ]
+```
+
+Or we can maintain the UI style consistent with the existing headers / params UI pattern.
+
+
+
+#### Required Packages
+| Package              | Purpose                                      |
+|----------------------|----------------------------------------------|
+| `grpc-dart`          | Making gRPC calls in Dart                    |
+| `protoc_plugin`      | Generating Dart files from `.proto`          |
+| `grpc_reflection`    | Fetching service definitions from servers    |
+| `protobuf`           | Working with Protocol Buffer messages        |
+| `dart:convert`       | Handling JSON<->Proto conversions            |
+
+#### Testing Plan
+- Test with multiple `.proto` files and different service types
+- Validate proto parser accuracy and UI rendering for complex message types
+- Verify end-to-end request → response flow
+- Test reflection capability with various gRPC servers
+- Add unit tests for parsing, UI generation, and client connection
+- Test error handling for malformed requests and server errors
 
 ## Conclusion
 
 This provides a brief breakdown of implementing authentication in APIDash. Each method has been explained with corresponding code generation snippet. Further enhancements will be made by updating Code generation to handle authentication requests for all other lanugages and adding relevant tests.
 This contribution will significantly expand the APIDash's capabilities by enabling support for multiple programming languages, making the CodeGen feature more robust and widely usable. By following a structured development, testing, and validation approach, the enhancements will ensure reliable and maintainable code generation.
+after completing auth and codegen first, offering flexibility via .proto import and reflection grpc support will be added. The 14-week timeline ensures thorough development, testing, and documentation.
+
 ### **Tasks Covered in This Proposal**  
 
 - **Implement Authentication Methods** – Integrate the suggested authentication methods .
 - **Expand Codegen feature** – Add support for more programming languages, enhancing the flexibility and usability of the feature for a wider range of developers.
+- **Add gRPC Support** – Enable gRPC testing with import and reflection options..
 
 
 ## Final Thoughts
