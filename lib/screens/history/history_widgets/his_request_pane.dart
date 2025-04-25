@@ -136,7 +136,8 @@ class HisRequestBody extends ConsumerWidget {
                 ContentType.formdata => Padding(
                     padding: kPh4,
                     child: RequestFormDataTable(
-                        rows: requestModel?.formData ?? [])),
+                        rows: requestModel?.formData ?? []),
+                  ),
                 ContentType.json => Padding(
                     padding: kPt5o10,
                     child: JsonTextFieldEditor(
