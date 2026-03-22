@@ -52,7 +52,7 @@ I am incredibly proud of taking the initiative to teach Artificial Intelligence 
 I am motivated by architectural decoupling and bridging human-centric developer tools with AI workflows. I thrive on challenges that require taking tightly coupled systems (like a GUI application) and extracting the core logic to make it headless, programmable, and accessible to autonomous agents. Removing repetitive developer friction is my primary drive.
 
 **4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?**
-Yes, I will be dedicating my time full-time to GSoC. I will easily be able to commit the required 30-40 hours per week during the coding period.
+Yes, I will be dedicating my time full-time to GSoC. I will easily be able to commit the required 25-30 hours per week during the coding period.
 
 **5. Do you mind regularly syncing up with the project mentors?**
 Not at all. I highly value mentor feedback and believe regular syncs are crucial for course-correcting early, discussing architectural edge cases, and ensuring alignment with the project's broader vision.
@@ -75,7 +75,7 @@ Currently, API Dash forces the developer to use the GUI to test the API. This pr
 
 **3. Detailed Description**
 
-*Note: I have already built a working Proof of Concept (PoC) demonstrating a shared Dart execution engine running as both a CLI and an MCP server to validate this architecture: `[Insert Your GitHub Repo Link Here]`.*
+*Note: I have already built a working Proof of Concept (PoC) demonstrating a shared Dart execution engine running as both a CLI and an MCP server to validate this architecture.*
 
 **System Architecture & Flow**
 **System Architecture and Flow**
