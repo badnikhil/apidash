@@ -5,11 +5,11 @@
 1. **Full Name:** Vikash
 2. **Contact info:** heyvkr@gmail.com
 3. **Discord handle:** vortex_71
-4. **Home page:** [Insert link, or remove if N/A]
-5. **GitHub profile link:** (https://github.com/vik05h)
-6. **Twitter, LinkedIn, other socials:** [Insert your LinkedIn profile link]
+4. **Home page:** https://portvk.web.app/
+5. **GitHub profile link:** https://github.com/vik05h
+6. **Twitter, LinkedIn, other socials:** [LinkedIN ](https://www.linkedin.com/in/vikash-kumar-9b0819277/)
 7. **Time zone:** India Standard Time (IST), UTC+5:30
-8. **Link to a resume:** [Insert PDF link, ensure it is publicly accessible]
+8. **Link to resume:** https://drive.google.com/file/d/1We6NsRTy8fhUvCyzCaYOfWzYcMoBbiyd/view?usp=sharing
 
 ### University Info
 
@@ -100,7 +100,10 @@ My architectural approach relies on the foundation laid during GSoC 2025 and pri
 
 * **Monorepo Integration:** I will add a new package at `packages/apidash_cli` and wire it into existing Melos workflows. This package will depend directly on `better_networking` to ensure consistency in request execution behavior.
 * **Shared Runtime Layer:** Instead of duplicating business logic in both CLI and MCP handlers, I will create a shared headless runtime layer responsible for workspace resolution, request and environment loading, variable substitution, request execution handoff to `better_networking`, and response normalization.
-* **Workspace Resolution Strategy:** In pure Dart (without Flutter's `path_provider`), workspace resolution will follow a deterministic order: explicit CLI flag, environment variable, saved workspace path from settings, then OS-specific fallback paths resolved using `dart:io`.
+* **File-Based Workspace Strategy:** To prevent concurrent access issues, the runtime will rely on a file-based architecture using a `.apidash/` directory. Workspace resolution will follow a deterministic fallback order:
+  1. Explicit CLI flag path
+  2. Local project workspace (`./.apidash/`)
+  3. Global user workspace (`~/.apidash/` or OS-specific AppData)
 * **CLI Layer:** Built using `package:args`, exposing commands such as `apidash list`, `apidash run <request_id_or_name>`, and `apidash run-url` for ad-hoc requests.
 * **MCP Server Layer:** Using `mcp_dart` over `stdio` transport, exposing tools such as `list_requests`, `get_request`, `execute_api_request`, and `list_environments`.
 
