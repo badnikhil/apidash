@@ -108,7 +108,7 @@ My architectural approach relies on the foundation laid during GSoC 2025 and pri
 * **MCP Server Layer:** Using `mcp_dart` over `stdio` transport, exposing tools such as `list_requests`, `get_request`, `execute_api_request`, and `list_environments`.
 
 This architecture ensures one execution path across GUI, CLI, and MCP, reducing maintenance overhead and preventing behavior drift
-<img width="1001" height="381" alt="Untitled Diagram drawio (2)" src="https://github.com/user-attachments/assets/cf5bdde0-4f28-4ebc-b822-73e986c3f9a9" />
+<img width="1161" height="461" alt="model" src="https://github.com/user-attachments/assets/8563d901-5552-4348-b6f6-07ffa7c9d3b4" />
 
 **Proof of Concept (PoC) Implementation**
 
@@ -126,23 +126,22 @@ To validate the technical feasibility of this proposal, I have already built a f
 
 **Challenges & Solutions**
 
-* **State Management and Hive Access without Flutter:** Since pure Dart CLI applications cannot rely on Flutter-only path helpers, the runtime will use deterministic workspace discovery:
-  * Explicit CLI flag
-  * Environment variable
-  * Stored user settings path
-  * OS fallback heuristics
+* **Architectural Blocker: Hive Concurrency & State Discovery**
+  **Challenge:** Hive relies on process-level file locks and is not ideal for concurrent multi-process access. If GUI and headless tooling access the same storage simultaneously, lock conflicts can occur. Also, pure Dart CLI runtimes should not depend on Flutter-only state helpers.
+  **Solution:** The headless runtime will use file-based workspace storage for requests and collections, persisted as JSON files. Workspace discovery will be deterministic and platform-safe in this order:
+   1) Explicit workspace flag (e.g., `--workspace`),
+   2) Local project workspace at `./.apidash/`, and
+   3) Global user fallback at `~/.apidash/` under user home or OS-specific AppData path.
+  **Impact:** This removes headless dependency on Flutter plugins, avoids common lock-conflict scenarios, enables version control of API assets, and works reliably across desktop and CI environments.
+
+* **Standardizing `stdio` for MCP**
+  **Challenge:** Large API payloads over `stdio` can increase memory pressure and reduce agent responsiveness.
+  **Mitigation:** The MCP server will implement response size caps, truncation metadata, output-to-file support for very large responses, and structured stable error codes so JSON-RPC communication remains resilient.
+
+* **Security & Secret Hygiene**
+  **Challenge:** Agent contexts and terminal logs can unintentionally expose sensitive tokens and credentials.
+  **Mitigation:** CLI and MCP outputs will pass through a sanitization layer that masks sensitive headers such as `Authorization` and `x-api-key`, and redacts secret environment values in logs, tool outputs, and error traces.
   
-  *This keeps the implementation reliable across desktop environments.*
-
-* **Standardizing `stdio` for MCP:** Large API responses over `stdio` can create memory pressure and degrade responsiveness. 
-  * **Mitigation:**
-    * Response size limits
-    * Truncation metadata
-    * Output-to-file option for very large payloads
-    * Structured error responses with stable codes
-
-* **Security and Secret Hygiene:** CLI and MCP outputs will avoid accidental secret leakage by masking sensitive headers and tokens in logs and error traces.
-
 **4. Weekly Timeline**
 
 **Community Bonding Period (May 8 - June 1)**
@@ -150,9 +149,9 @@ To validate the technical feasibility of this proposal, I have already built a f
 
 **Week 1 (June 2 - June 8)**
 * Scaffold `packages/apidash_cli` inside the Melos workspace.
-* Implement deterministic workspace discovery in pure Dart (CLI flag, environment variable, saved settings path, OS fallback).
-* Open and read API Dash Hive boxes in headless mode.
-* **Deliverable:** A working script that lists saved API Dash requests from local workspace storage.
+* Implement deterministic file-based workspace discovery (local `./.apidash/` falling back to global `~/.apidash/`).
+* Build headless parsers to read API Dash collections from JSON files.
+* **Deliverable:** A working script that safely reads and lists saved API Dash requests from the file system without Hive locks.
 
 **Week 2 (June 9 - June 15)**
 * Build core CLI commands using `package:args` (`list`, `run`, `run-url`).
