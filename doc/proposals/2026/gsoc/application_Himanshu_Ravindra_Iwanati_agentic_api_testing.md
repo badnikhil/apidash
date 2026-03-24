@@ -74,28 +74,26 @@ Beyond code, I have actively proposed improvements that align with the project's
 
 **2. What is your one project/achievement that you are most proud of? Why?**
 
-My most significant achievement is the **Agentic API Testing proof-of-concept** and the accompanying MCP server I built from scratch. Designing and implementing a TypeScript/Node.js MCP server that demonstrates bidirectional UI rendering inside an AI host required me to deeply understand the Model Context Protocol specification, structured tool-calling patterns, and sandboxed WebView communication—all without prior reference implementations to follow. It crystallised my understanding of how agentic systems can bridge the gap between structured data and interactive human decision-making, and it directly validates the core technical claims of this proposal.
+I have created a project where through leveraging LangGraph, Pinecone I have created a multi agentic system where I am calling different APIs based on the user request and retirving relevant information from Pinecone database to get the most relevant infromation (RAG), and also I had also add a grader node in that which through a binary_score grade the retrieved documentation, if the binary_score were not passing the hardcoded threshold then I would call the Tavily API key to get the infromation from the web. Also used FastAPI for serving and creating endpoints for our LangGraph project. The key take away from the project that I gain is that, we can integrate multiple-agentic systems all together into one and creating more complex pipelines from it, even though the major focus should be on reducing hallucinations as well as reducing the cost of the API that we are using.
 
 **3. What kind of problems or challenges motivate you the most to solve them?**
 
-I am most motivated by problems that sit at the intersection of **systems design and developer experience**—where the solution requires both low-level technical precision and a strong intuition for how real users will interact with the output. Specifically: building autonomous systems that reduce toil for other engineers, designing agent workflows where LLMs and rule-based logic complement each other's weaknesses, and creating feedback loops that make software more self-correcting over time. The self-healing testing problem is a perfect embodiment of this: it demands schema-level engineering rigour, LLM prompt design, and thoughtful UX for human-in-the-loop review.
+I am just curious how would the world would like after 5 years of AI, becuase in the last two years itself there is massive growth in the AI itself, solving many complex problems but creates a major issue of security and threat for the users using AI. The problems that AI causes like hallucination, reducings costs and the one of the major issue that is security, are the major problems that motivates me a lot and I thrive on problems that require creative and efficient solutions.
 
 **4. Will you be working on GSoC full-time? If not, what else will you be studying or working on?**
 
-I will be working on GSoC part-time alongside my ongoing coursework at IIT Kharagpur, which includes embedded systems work under Professor Aurobinda Routray (IoT and Signal Processing). My academic load during the summer term is lighter, so I plan to dedicate the majority of my productive hours to GSoC deliverables. I will communicate any scheduling constraints proactively with mentors.
+ Yes, I will be working full-time on GSoC. Occasionally, I may have exams, course projects, or job/internship responsibilities, but they will not impact my commitment to GSoC.
 
 **5. Do you mind regularly syncing up with the project mentors?**
 
-Not at all — I actively welcome it. Regular syncs are essential for an agentic framework of this scope to stay aligned with the maintainer's vision for API Dash. I am comfortable with weekly or bi-weekly video calls and async updates on Discord and GitHub.
+Not at all — I actively welcome it, can attend calls and dicuss the idea and implementation furthur.
 
 **6. What interests you the most about API Dash?**
 
-API Dash occupies a rare position: a genuinely cross-platform, open-source API client built on Flutter that is community-driven rather than VC-funded. What interests me most is its **extensibility philosophy**—the collection importer system, the DashBot AI layer, and the emerging MCP Apps support all point toward a platform that is designed to be built upon. For a project like Agentic API Testing, this extensibility is not a nice-to-have; it is the prerequisite. I also find the maintainer's responsiveness to contributor ideas (evidenced by the `gsoc26-idea` label on my PR) genuinely encouraging.
+API dash has clean UI, very modular repository structure and The codebase is remarkably easy to navigate. We as developers can actually trace a request from the UI layer to the network layer without getting lost in a forest of nested folders.
 
 **7. Can you mention some areas where the project can be improved?**
 
-- **Collection Importer Completeness:** As surfaced in PR #1356, several Postman v2.1 features (auth schemes, urlencoded bodies, collection-level variables) are silently dropped during import, leading to silent data loss that is hard for users to diagnose.
-- **Response Type Detection:** The current handling of `application/octet-stream` responses lacks true-format detection. My ongoing magic byte sniffing contribution addresses this, but it points to a broader need for more intelligent response interpretation.
 - **Agentic / AI Testing Layer:** No existing API client — open or commercial — offers a self-healing, spec-driven agentic testing framework natively. This is the central gap this proposal targets.
 - **CI/CD Integration:** Structured JSON and JUnit-compatible report output would enable API Dash test suites to plug into standard CI pipelines, broadening adoption beyond interactive desktop use.
 
