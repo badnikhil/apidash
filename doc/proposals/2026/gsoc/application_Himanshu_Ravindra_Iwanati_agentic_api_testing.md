@@ -74,11 +74,11 @@ Beyond code, I have actively proposed improvements that align with the project's
 
 **2. What is your one project/achievement that you are most proud of? Why?**
 
-I have created a project where through leveraging LangGraph, Pinecone I have created a multi agentic system where I am calling different APIs based on the user request and retirving relevant information from Pinecone database to get the most relevant infromation (RAG), and also I had also add a grader node in that which through a binary_score grade the retrieved documentation, if the binary_score were not passing the hardcoded threshold then I would call the Tavily API key to get the infromation from the web. Also used FastAPI for serving and creating endpoints for our LangGraph project. The key take away from the project that I gain is that, we can integrate multiple-agentic systems all together into one and creating more complex pipelines from it, even though the major focus should be on reducing hallucinations as well as reducing the cost of the API that we are using.
+- I have created a project where through leveraging LangGraph, Pinecone I have created a multi agentic system where I am calling different APIs based on the user request and retirving relevant information from Pinecone database to get the most relevant infromation (RAG), and also I had also add a grader node in that which through a binary_score grade the retrieved documentation, if the binary_score were not passing the hardcoded threshold then I would call the Tavily API key to get the infromation from the web. Also used FastAPI for serving and creating endpoints for our LangGraph project. The key take away from the project that I gain is that, we can integrate multiple-agentic systems all together into one and creating more complex pipelines from it, even though the major focus should be on reducing hallucinations as well as reducing the cost of the API that we are using.
 
 **3. What kind of problems or challenges motivate you the most to solve them?**
 
-I am just curious how would the world would like after 5 years of AI, becuase in the last two years itself there is massive growth in the AI itself, solving many complex problems but creates a major issue of security and threat for the users using AI. The problems that AI causes like hallucination, reducings costs and the one of the major issue that is security, are the major problems that motivates me a lot and I thrive on problems that require creative and efficient solutions.
+I am just curious how the world would look like after 5 years of AI, becuase in the last two years itself there is massive growth in the AI itself, solving many complex problems but creates a major issue of security and threat for the users using AI. The problems that AI causes like hallucination, reducings costs and the one of the major issue that is security, are the major problems that motivates me a lot and I thrive on problems that require creative and efficient solutions.
 
 **4. Will you be working on GSoC full-time? If not, what else will you be studying or working on?**
 
@@ -100,8 +100,6 @@ API dash has clean UI, very modular repository structure and The codebase is rem
 **8. Have you interacted with and helped the API Dash community?**
 
 Yes. My engagement includes:
-- **PR #1356** — Postman v2.1 importer fix (labelled `gsoc26-idea` by maintainer `@animator`)
-- **Magic byte sniffing PR** — Open PR with ongoing discussion with `@animator` about zero-dependency implementation approach
 - Active participation in the API Dash GitHub repository through issue discussions and code review commentary
 
 <!-- Add Discord server interaction links here if applicable -->
