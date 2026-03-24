@@ -67,16 +67,6 @@ Beyond code, I have actively proposed improvements that align with the project's
 | [#1135](https://github.com/foss42/apidash/issues/1135) | `feat: Multi-select requests with bulk delete` (labelled `priority: low`) |
 | [#1129](https://github.com/foss42/apidash/issues/1129) | `[Feature]: Auto-generate meaningful names for imported requests (cURL & HAR)` |
 
----
-
-**API Dash — GSoC 2026 Idea Submissions**
-
-| PR | Description | Status |
-|---|---|---|
-| [#1325](https://github.com/foss42/apidash/pull/1325) | GSoC 2026 initial idea submission — Agentic API Testing | ✅ Approved, labelled `gsoc26-idea` |
-| [#1318](https://github.com/foss42/apidash/pull/1318) / [#1324](https://github.com/foss42/apidash/pull/1324) | Earlier draft submissions | Superseded by #1325 |
-
----
 
 **Other FOSS Projects**
 
