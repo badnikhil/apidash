@@ -2,7 +2,7 @@
 
 ## Abstract
 
-This proposal presents the design, prototype evidence, and execution plan for building an **agentic AI testing lifecycle** inside [API Dash](https://github.com/foss42/apidash). The system combines LLM-powered test generation with deterministic state-machine orchestration and human-in-the-loop approval gates to deliver a closed-loop workflow: **Generate → Review → Execute → Diagnose → Heal → Report**. A working prototype ([PR #1425](https://github.com/foss42/apidash/pull/1425/)) with 8 incremental commits already demonstrates the core architecture across all stages. The remaining GSoC work (~65-70% of the 175-hour budget) extends this foundation into contract-aware intelligence, multi-step workflow testing, assertion DSL expansion, and MCP Apps integration.
+This proposal presents the design, prototype evidence, and execution plan for building an **agentic AI testing lifecycle** inside [API Dash](https://github.com/foss42/apidash). The system combines LLM-powered test generation with deterministic state-machine orchestration and human-in-the-loop approval gates to deliver a closed-loop workflow: **Generate → Review → Execute → Diagnose → Heal → Report**. A working **Proof of Concept (POC) prototype** ([PR #1425](https://github.com/foss42/apidash/pull/1425/)) with 8 incremental commits already demonstrates the core architecture across all stages. The remaining GSoC work (~65-70% of the 175-hour budget) extends this foundation into contract-aware intelligence, multi-step workflow testing, assertion DSL expansion, and MCP Apps integration.
 
 **Key differentiators:** deterministic state transitions with guarded approvals, strict healing that never silently mutates assertions, and contract-aware generation that uses API structure (not just raw text) to produce higher-quality tests.
 
@@ -659,11 +659,11 @@ Additional stage variants used for evidence completeness:
 
 The prototype covers ~30-35% of the full GSoC scope. The remaining work extends the foundation into production-grade capabilities:
 
-### 6.1 What the prototype already proves
+### 6.1 What the POC prototype already proves
 
-The prototype ([PR #1425](https://github.com/foss42/apidash/pull/1425/)) is not a mockup — it is a working, runnable implementation that proves the following:
+The POC prototype ([PR #1425](https://github.com/foss42/apidash/pull/1425/)) is not a mockup — it is a working, runnable implementation that proves the following:
 
-| Question a Mentor Might Ask | What the Prototype Proves | Evidence |
+| Question a Mentor Might Ask | What the POC Proves | Evidence |
 |---|---|---|
 | "Can you actually build a state machine in Dart/Flutter?" | Yes — 9-state deterministic state machine with guarded transitions, unit tested | Commits `9ef6835`, `ae5c2c9`, `874df49` |
 | "Can LLM output be reliably parsed into structured tests?" | Yes — structured JSON parsing with fallback for malformed output | Commit `9ef6835` |
