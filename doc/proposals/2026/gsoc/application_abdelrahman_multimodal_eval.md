@@ -8,7 +8,7 @@
 6. GitHub profile links: https://github.com/KERDAWY-2 (active) | https://github.com/Kerdawy-1 (older projects)
 7. LinkedIn: https://www.linkedin.com/in/abdelrahman-alkerdawy
 8. Time zone: Africa/Cairo (UTC+2, EET)
-9. Link to a resume: N/A (will be added before final submission)
+9. Link to a resume: https://www.linkedin.com/in/abdelrahman-alkerdawy
 
 ### University Info
 
@@ -57,7 +57,10 @@
 
    - Posted an introduction on Discussion #1048 (GSoC Application Guide): https://github.com/foss42/apidash/discussions/1048
    - Commented on Issue #1269 (Revamp Model Selector dialog): https://github.com/foss42/apidash/issues/1269
-   - This proposal PR itself is the most substantive contribution so far.
+   - Commented on Discussion #1226 (Idea #2 — Multimodal AI and Agent API Eval Framework) with technical architecture notes: https://github.com/foss42/apidash/discussions/1226
+   - Commented on Issue #1180 (AI-powered smart request suggestions) proposing a SuggestRequestTool implementation approach: https://github.com/foss42/apidash/issues/1180
+   - Sent an introduction in the #gsoc-foss-apidash Discord channel (handle: kerdawy)
+   - This proposal PR is the most substantive contribution so far.
 
 ### Project Proposal Information
 
@@ -79,21 +82,18 @@
 
    The framework has four main pieces:
 
-   **a) Dataset Manager**
-   A simple UI to upload test datasets in CSV, JSON, or JSONL format. Each row represents one test case: an input (text, image URL, or audio file path) and an expected output. The data model integrates cleanly with the existing API Dash workspace.
+   **a) Dataset Manager** A simple UI to upload test datasets in CSV, JSON, or JSONL format. Each row represents one test case: an input (text, image URL, or audio file path) and an expected output. The data model integrates cleanly with the existing API Dash workspace.
 
-   **b) Eval Request Configuration**
-   An extension of the existing AI request panel. Once you have a dataset, you can bind its fields to request parameters — so instead of sending one request manually, you are sending the whole dataset through. You can also pick multiple providers to run the same eval against side by side.
+   **b) Eval Request Configuration** An extension of the existing AI request panel. Once you have a dataset, you can bind its fields to request parameters — so instead of sending one request manually, you are sending the whole dataset through. You can also pick multiple providers to run the same eval against side by side.
 
-   **c) Eval Runner**
-   A lightweight Python service (FastAPI) that handles the actual execution. It batches the requests, manages concurrency, streams progress back to the Flutter client, and stores results locally. I will design it to be compatible with the interfaces used by lm-harness and lighteval so that existing benchmark configs can be reused.
+   **c) Eval Runner** A lightweight Python service (FastAPI) that handles the actual execution. It batches the requests, manages concurrency, streams progress back to the Flutter client, and stores results locally. I will design it to be compatible with the interfaces used by lm-harness and lighteval so that existing benchmark configs can be reused.
 
-   **d) Results View**
-   A results table that shows each test case with its input, expected output, actual output, and pass/fail. Aggregate metrics (accuracy, BLEU, ROUGE, exact match) displayed at the top. Export to CSV or JSON.
+   **d) Results View** A results table that shows each test case with its input, expected output, actual output, and pass/fail. Aggregate metrics (accuracy, BLEU, ROUGE, exact match) displayed at the top. Export to CSV or JSON.
 
    For agent APIs, I also want to add basic tool-call chain inspection — so you can see not just the final answer but the intermediate steps the agent took, and validate those against expected tool call sequences.
 
    **Tech Stack**
+
    - Flutter/Dart for all UI components
    - Python (FastAPI + asyncio) for the eval runner service
    - lm-harness / lighteval for benchmark integration
@@ -101,26 +101,18 @@
 
 4. **Weekly Timeline:**
 
-   **Community Bonding (Weeks 1-2)**
-   Deep dive into the codebase, specifically the AI request execution flow and DashBot. Set up local dev environment, run all tests. Study lm-harness and lighteval APIs. Finalize architecture with mentors and get early feedback.
+   **Community Bonding (Weeks 1-2)** Deep dive into the codebase, specifically the AI request execution flow and DashBot. Set up local dev environment, run all tests. Study lm-harness and lighteval APIs. Finalize architecture with mentors and get early feedback.
 
-   **Weeks 3-4**
-   Design and implement the Dataset Manager: data models, file parsing for CSV/JSON/JSONL, and the basic Dart UI (list view, upload, preview).
+   **Weeks 3-4** Design and implement the Dataset Manager: data models, file parsing for CSV/JSON/JSONL, and the basic Dart UI (list view, upload, preview).
 
-   **Weeks 5-6**
-   Build the Eval Request Configuration UI. Extend the AI request panel to support dataset binding and field mapping. Handle text and image input types first.
+   **Weeks 5-6** Build the Eval Request Configuration UI. Extend the AI request panel to support dataset binding and field mapping. Handle text and image input types first.
 
-   **Weeks 7-8**
-   Implement the Python eval runner service. Batch execution logic, concurrency handling, progress streaming to Flutter client via Server-Sent Events or WebSocket.
+   **Weeks 7-8** Implement the Python eval runner service. Batch execution logic, concurrency handling, progress streaming to Flutter client via Server-Sent Events or WebSocket.
 
-   **Weeks 9-10**
-   Build the Results view: per-example table, aggregate metrics, export functionality. Wire everything end to end and test with real providers (OpenAI, Gemini).
+   **Weeks 9-10** Build the Results view: per-example table, aggregate metrics, export functionality. Wire everything end to end and test with real providers (OpenAI, Gemini).
 
-   **Weeks 11-12**
-   Add audio input support. Begin agent eval support: tool-call chain display and validation.
+   **Weeks 11-12** Add audio input support. Begin agent eval support: tool-call chain display and validation.
 
-   **Week 13**
-   Bug fixes, UI polish, write documentation and tests for the critical paths.
+   **Week 13** Bug fixes, UI polish, write documentation and tests for the critical paths.
 
-   **Week 14**
-   Code freeze, final review with mentors, submit.
+   **Week 14** Code freeze, final review with mentors, submit.
