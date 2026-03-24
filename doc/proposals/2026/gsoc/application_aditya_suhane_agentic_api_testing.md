@@ -850,6 +850,45 @@ Quality strategy:
 
 ---
 
+### 4.6 Prototype Progress Update (March 2026)
+
+As requested by mentors in discussion, I built and shared a working prototype PR that validates the end-to-end approach incrementally.
+
+Implemented prototype slice:
+
+1. State-machine orchestration with explicit workflow states.
+2. LLM-based test generation with optional custom prompt.
+3. Human-in-the-loop review (`Approve` / `Reject`).
+4. Approved-test execution with per-test pass/fail diagnostics.
+5. Failure analysis and healing recommendation flow.
+6. Strict healing mode: re-run occurs **without silent assertion mutation**, so contract changes remain explicit and auditable.
+
+#### Screenshot Evidence (Current Working Build)
+
+**1) IDLE state with contract-aware generation signal**
+![IDLE state with contract-aware generation available](images/01_idle_contract_aware.png)
+
+**2) AWAITING_APPROVAL with generated test cards**
+![Generated tests awaiting approval](images/02_awaiting_approval_generated_1.png)
+
+**3) Execution results with failure visibility**
+![Execution/results-ready view](images/03_executing_or_results_ready_1.png)
+
+**4) Healing recommendations awaiting approval**
+![Healing recommendation stage](images/04_healing_recommendations_1.png)
+
+**5) FINAL_REPORT after `Approve All Heal + Re-run (Keep Assertions)`**
+![Final report showing strict healing behavior](images/05_rerun_keep_assertions.png)
+
+What this final screenshot demonstrates:
+
+1. Workflow reaches `FINAL_REPORT` successfully.
+2. Healing loop executed (`Heal Applied` > 0).
+3. Failed checks remain visible when root cause is unresolved.
+4. No silent assertion drift; user trust and reviewability are preserved.
+
+---
+
 **Total Hours:** 175 hours (within GSoC small project scope)
 
 **Success Metrics for Evaluation:**
