@@ -17,9 +17,17 @@
 
 ### Motivation & Past Experience
 
-1. **Have you worked on or contributed to a FOSS project before?**
-   - Yes. I've contributed to ApiDash , 
+1. **Have you worked on or contributed to a FOSS project before?**  
+   - Yes, I have actively contributed to ApiDash, an open-source API development tool.  
 
+      My contributions include:
+
+      - Implemented support for parameters with multiple values  
+      - Worked on Swift code generation (Alamofire)  
+      - Contributed to Rust code generation improvements  
+      - Fixed UI issues (code pane horizontal scrolling ) 
+      - Improved project documentation (README updates)  
+      - Proposed and worked on new features like MQTT support  
 2. **What is your one project/achievement that you are most proud of? Why?**
    - My most proud achievement is building an inventory management app from scratch during my internship. I developed it individually, which meant taking ownership of both the product experience and the implementation. What makes me most proud of it is that I did not approach it as just a coding task — I focused on creating a clear and practical user experience while also keeping the code modular and organized. Working on it taught me how good software depends not only on functionality, but also on thoughtful UX and maintainable structure. This experience strongly shaped the way I now think about building applications and contributing to projects like ApiDash.
 
