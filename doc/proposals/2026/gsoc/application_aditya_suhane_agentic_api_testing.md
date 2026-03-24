@@ -24,7 +24,7 @@ This proposal presents the design, prototype evidence, and execution plan for bu
 | GitHub | [adityasuhane-06](https://github.com/adityasuhane-06) |
 | LinkedIn | [aditya-suhane-530103255](https://linkedin.com/in/aditya-suhane-530103255) |
 | Timezone | IST (UTC+5:30) |
-| Resume | [Public Resume Link](https://drive.google.com/file/d/12zJvrIma6cPOJ99OTc4Jiq7Fit1ld2_c/view?usp=sharing) |
+| Resume | [Public Resume Link](https://drive.google.com/file/d/1ugvG03nYobaQvBKlIIVlNAsRfh4sYbdH/view?usp=sharing) |
 
 ### 1.2 University Information
 
