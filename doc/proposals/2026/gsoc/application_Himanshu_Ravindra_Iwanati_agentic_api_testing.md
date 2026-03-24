@@ -78,29 +78,29 @@ Beyond code, I have actively proposed improvements that align with the project's
 
 **3. What kind of problems or challenges motivate you the most to solve them?**
 
-I am just curious how the world would look like after 5 years of AI, becuase in the last two years itself there is massive growth in the AI itself, solving many complex problems but creates a major issue of security and threat for the users using AI. The problems that AI causes like hallucination, reducings costs and the one of the major issue that is security, are the major problems that motivates me a lot and I thrive on problems that require creative and efficient solutions.
+- I am just curious how the world would look like after 5 years of AI, becuase in the last two years itself there is massive growth in the AI itself, solving many complex problems but creates a major issue of security and threat for the users using AI. The problems that AI causes like hallucination, reducings costs and the one of the major issue that is security, are the major problems that motivates me a lot and I thrive on problems that require creative and efficient solutions.
 
 **4. Will you be working on GSoC full-time? If not, what else will you be studying or working on?**
 
- Yes, I will be working full-time on GSoC. Occasionally, I may have exams, course projects, or job/internship responsibilities, but they will not impact my commitment to GSoC.
+ - Yes, I will be working full-time on GSoC. Occasionally, I may have exams, course projects, or job/internship responsibilities, but they will not impact my commitment to GSoC.
 
 **5. Do you mind regularly syncing up with the project mentors?**
 
-Not at all — I actively welcome it, can attend calls and dicuss the idea and implementation furthur.
+- Not at all — I actively welcome it, can attend calls and dicuss the idea and implementation furthur.
 
 **6. What interests you the most about API Dash?**
 
-API dash has clean UI, very modular repository structure and The codebase is remarkably easy to navigate. We as developers can actually trace a request from the UI layer to the network layer without getting lost in a forest of nested folders.
+- API dash has clean UI, very modular repository structure and The codebase is remarkably easy to navigate. We as developers can actually trace a request from the UI layer to the network layer without getting lost in a forest of nested folders.
 
 **7. Can you mention some areas where the project can be improved?**
 
 - **Agentic / AI Testing Layer:** No existing API client — open or commercial — offers a self-healing, spec-driven agentic testing framework natively. This is the central gap this proposal targets.
-- **CI/CD Integration:** Structured JSON and JUnit-compatible report output would enable API Dash test suites to plug into standard CI pipelines, broadening adoption beyond interactive desktop use.
+  **CI/CD Integration:** Structured JSON and JUnit-compatible report output would enable API Dash test suites to plug into standard CI pipelines, broadening adoption beyond interactive desktop use.
 
 **8. Have you interacted with and helped the API Dash community?**
 
-Yes. My engagement includes:
-- Active participation in the API Dash GitHub repository through issue discussions and code review commentary
+- Yes. My engagement includes:
+  Active participation in the API Dash GitHub repository through issue discussions and code review commentary.
 
 <!-- Add Discord server interaction links here if applicable -->
 
