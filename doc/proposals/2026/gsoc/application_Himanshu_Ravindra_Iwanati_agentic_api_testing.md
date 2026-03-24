@@ -1,3 +1,5 @@
+![GSOC 2026](images/gsoc_api.png)
+
 # GSoC 2026 — API Dash Application
 
 ---
@@ -5,7 +7,7 @@
 ## About
 
 1. **Full Name:** Himanshu Ravindra Iwanati
-2. **Contact Info (public email):** work.himanshu.r.v@gmail.com
+2. **Contact Info (public email):** work.himanshu.r.v@gmail.com +91 8329614201
 3. **Discord Handle:** hihry
 4. **GitHub Profile:** https://github.com/hihry
 5. **LinkedIn / Other Socials:** https://www.linkedin.com/in/himanshu-iwanati-87459b282/
@@ -29,9 +31,56 @@
 
 Yes. I have contributed to multiple open-source projects:
 
-- **API Dash** — Submitted PR #1356 fixing gaps in the Postman v2.1 Collection Importer (silently dropped auth, urlencoded body, and collection variables). The maintainer labelled it `gsoc26-idea`, signalling a positive reception. I am also actively working on a magic byte sniffing feature to detect true file formats from `application/octet-stream` responses, with a zero-dependency Dart 3.0 implementation using pattern matching.
-- **MoveIt2** — Contributed to MoveIt2, an industry-standard robotics motion planning framework widely used in robotics research and industry.
-- **MCP Server POC** — Built a working TypeScript/Node.js MCP server proof-of-concept (`hihry/MCP_APP_testing`) demonstrating MCP Apps integration relevant to this proposal.
+Yes. My open-source contributions span bug fixes, feature implementations, test coverage, and feature proposals — primarily within the **API Dash** repository (`foss42/apidash`) over the past month, alongside prior work on **MoveIt2**.
+
+---
+
+**API Dash — Bug Fixes & Code Quality (Merged / Approved)**
+
+| PR | Description | Status |
+|---|---|---|
+| [#1146](https://github.com/foss42/apidash/pull/1146) | Fix typo: `occured` → `occurred` in `intro_message.dart` | ✅ Approved |
+| [#1160](https://github.com/foss42/apidash/pull/1160) | Add tooltip labels to all four navigation rail `IconButton`s | ✅ Approved |
+
+---
+
+**API Dash — Feature PRs (Technical, Under Review)**
+
+| PR | Description | Significance |
+|---|---|---|
+| [#1356](https://github.com/foss42/apidash/pull/1356) | Extend Postman Collection models with auth, urlencoded body, and collection variables — fixing silent data loss in the v2.1 importer | 
+| [#1171](https://github.com/foss42/apidash/pull/1171) | `test: Add unit tests for import/export IO parsers` (Postman, cURL, HAR, Insomnia) | Addresses a gap in test coverage for the importer subsystem |
+| [#1134](https://github.com/foss42/apidash/pull/1134) / [#1130](https://github.com/foss42/apidash/pull/1130) | `feat: Auto-generate meaningful names for imported cURL and HAR requests` | UX improvement for the import workflow |
+
+---
+
+**API Dash — Feature Issues (Proposals)**
+
+Beyond code, I have actively proposed improvements that align with the project's roadmap:
+
+| Issue | Proposal |
+|---|---|
+| [#1330](https://github.com/foss42/apidash/issues/1330) | `[FEATURE]: Enhance Postman Collection Importer` — broader follow-up to PR #1356 |
+| [#1202](https://github.com/foss42/apidash/issues/1202) | `[Feature]: Enable Streaming Responses in DashBot` — SSE/chunked transfer support for the AI assistant |
+| [#1180](https://github.com/foss42/apidash/issues/1180) | `[Feat]: AI-powered smart request suggestions based on URL pattern` |
+| [#1170](https://github.com/foss42/apidash/issues/1170) | `test: Add unit tests for import/export IO parsers` — issue tracking test gap before submitting PR #1171 |
+| [#1135](https://github.com/foss42/apidash/issues/1135) | `feat: Multi-select requests with bulk delete` (labelled `priority: low`) |
+| [#1129](https://github.com/foss42/apidash/issues/1129) | `[Feature]: Auto-generate meaningful names for imported requests (cURL & HAR)` |
+
+---
+
+**API Dash — GSoC 2026 Idea Submissions**
+
+| PR | Description | Status |
+|---|---|---|
+| [#1325](https://github.com/foss42/apidash/pull/1325) | GSoC 2026 initial idea submission — Agentic API Testing | ✅ Approved, labelled `gsoc26-idea` |
+| [#1318](https://github.com/foss42/apidash/pull/1318) / [#1324](https://github.com/foss42/apidash/pull/1324) | Earlier draft submissions | Superseded by #1325 |
+
+---
+
+**Other FOSS Projects**
+
+- **MoveIt2** ([moveit/moveit2](https://github.com/moveit/moveit2)) — Contributed [PR #3543](https://github.com/moveit/moveit2/pull/3543): improved Doxygen documentation for `composeMultiArrayMessage` in the `moveit_servo` module (`common.cpp` and its header), clarifying parameters, return value, and usage for controllers that accept `std_msgs::msg::Float64MultiArray` messages. Reviewed and approved by two maintainers (`@sea-bass`, `@nbbrooks`) and merged into `main` on November 27, 2025.
 
 **2. What is your one project/achievement that you are most proud of? Why?**
 
