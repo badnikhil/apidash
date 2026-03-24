@@ -67,18 +67,44 @@ I have already contributed in areas directly related to this proposal:
 | **Prototype implementation (8 commits)** | **Full working agentic flow: generate → review → execute → heal → report** | [**PR #1425**](https://github.com/foss42/apidash/pull/1425/) |
 | Prototype branch | Clean, review-ready codebase | [codex/agentic-testing-prototype-clean](https://github.com/adityasuhane-06/apidash/tree/codex/agentic-testing-prototype-clean) |
 
-### 2.3 Relevant project experience
+### 2.3 What is your proudest project/achievement? Why?
 
-My strongest related project is **Project Samarth** (AI-powered agricultural Q&A):
+**Project Samarth** — an AI-powered agricultural Q&A system I built from scratch:
+- GitHub: [Project-Samarth](https://github.com/adityasuhane-06/Project-Samarth)
+- Demo: [project-samarth-beta.vercel.app](https://project-samarth-beta.vercel.app/)
 
-1. GitHub: [Project-Samarth](https://github.com/adityasuhane-06/Project-Samarth)
-2. Demo: [project-samarth-beta.vercel.app](https://project-samarth-beta.vercel.app/)
+I'm proudest of this because it forced me to solve the same core problem this proposal addresses: **making AI reliable enough to trust**. Farmers needed accurate answers, not hallucinated advice. I had to build multi-path fallback orchestration, handle LLM failures gracefully, and iterate based on real user feedback — not just lab conditions. That experience directly shaped my approach to agentic testing: structured parsing with fallbacks, approval checkpoints, and never trusting AI output without validation.
 
-Key relevance to this proposal:
+### 2.4 What kind of problems or challenges motivate you the most?
 
-1. Agent-style orchestration with multiple fallback paths.
-2. LLM reliability engineering under real usage constraints.
-3. Production-focused debugging, iteration, and user feedback loops.
+I'm drawn to problems where **AI capability meets real-world trust requirements**. The gap between "AI can generate something useful" and "a developer can confidently rely on it" is where the hardest engineering lives. Agentic API testing hits this exactly — the AI is powerful enough to generate diverse test scenarios, but without deterministic orchestration, human checkpoints, and immutable contracts, it's just a toy. Making it production-trustworthy is what motivates me.
+
+### 2.5 Will you be working on GSoC full-time?
+
+My final-year coursework concludes in May 2026, so I'll be effectively **full-time available** (20-25 hours/week) throughout the coding period. I have no competing internships, projects, or commitments during the summer. GSoC will be my primary focus.
+
+### 2.6 Do you mind regularly syncing up with project mentors?
+
+Not at all — I actively prefer it. In my prototype work, I found that early feedback on architectural decisions (like the strict healing policy) saved days of rework. I plan to share **weekly progress summaries**, submit incremental PRs for review, and proactively flag blockers rather than let them stall. I'm available on Discord, GitHub, and video calls in IST timezone.
+
+### 2.7 What interests you most about API Dash?
+
+Two things: **its design philosophy and its technical stack**. API Dash treats developer tools as first-class products, not afterthoughts — the clean Flutter UI, the multi-provider AI integration via DashBot, and the Riverpod-based architecture show real engineering care. On the technical side, building agentic infrastructure in Dart/Flutter is genuinely novel — most agentic testing tools are Python-centric. API Dash has the chance to pioneer rich, cross-platform AI-assisted API testing.
+
+### 2.8 Can you mention areas where the project can be improved?
+
+1. **Testing lifecycle gap.** DashBot can generate test suggestions, but there's no closed loop from generation → execution → healing → report. This is exactly what my proposal addresses.
+2. **API drift resilience.** When APIs evolve, existing tests break silently. Contract-aware generation and safe healing would make API Dash proactively resilient.
+3. **Multi-step workflow support.** Real-world API testing often involves chained requests (register → login → use token). API Dash currently handles single requests well but lacks workflow orchestration.
+4. **MCP integration depth.** The MCP server foundations exist, but rich interactive testing surfaces (MCP Apps) would make API Dash uniquely valuable as an AI-accessible testing platform.
+
+### 2.9 Community interaction and contributions
+
+I have been actively engaged in the API Dash community:
+
+- **GitHub Discussion:** Participated in [#1230](https://github.com/foss42/apidash/discussions/1230#discussioncomment-15959507) with detailed architecture feedback on the hybrid agent design, LLM provider flexibility, and MCP integration strategy.
+- **Discord:** Active member (`adityasuhane01`) — discussing design decisions, getting feedback on prototype approach, and helping other contributors understand the agentic testing scope.
+- **PRs:** Submitted 5 PRs covering documentation ([#1248](https://github.com/foss42/apidash/pull/1248)), testing ([#1223](https://github.com/foss42/apidash/pull/1223)), idea submission ([#1370](https://github.com/foss42/apidash/pull/1370)), and the working prototype ([#1425](https://github.com/foss42/apidash/pull/1425/)).
 
 ---
 
