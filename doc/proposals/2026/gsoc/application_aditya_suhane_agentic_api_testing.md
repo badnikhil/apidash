@@ -871,10 +871,14 @@ Implemented prototype slice:
 **2) AWAITING_APPROVAL with generated test cards**
 ![Generated tests awaiting approval](images/02_awaiting_approval_generated_1.png)
 ![Generated tests awaiting approval (part 2)](images/02_awaiting_approval_generated_2.png)
+![Generated tests awaiting approval (part 3)](images/02_awaiting_approval_generated_3.png)
+![Generated tests awaiting approval (part 4)](images/02_awaiting_approval_generated_4.png)
 
 **3) Execution results with failure visibility**
 ![Execution/results-ready view](images/03_executing_or_results_ready_1.png)
 ![Execution/results-ready view (part 2)](images/03_executing_or_results_ready_2.png)
+![Execution/results-ready view (part 3)](images/03_executing_or_results_ready_3.png)
+![Execution/results-ready view (part 4)](images/03_executing_or_results_ready_4.png)
 
 **4) Healing recommendations awaiting approval**
 ![Healing recommendation stage](images/04_healing_recommendations_1.png)
