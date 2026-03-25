@@ -19,7 +19,6 @@
 
 ### Motivation & Past Experience
 
-Short answers to the following questions (Add relevant links wherever you can):
 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
 
    This is my first time contributing to open source, and a big reason I applied to GSoC. I’ve built projects on my own, but I want to work on something real that people actually use and get feedback from experienced developers. API Dash feels like the perfect place to start that journey.
