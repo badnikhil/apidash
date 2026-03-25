@@ -216,12 +216,12 @@ The key insight: the user never thinks about blobs, trees, or API calls. They th
 
 **Usage: Git Support UI from the POC**
 
-<img src="images/git_connect.png" width="250" alt="Connect to GitHub" />
-<img src="images/git_authorize.png" width="250" alt="Authorize with GitHub" />
-<img src="images/git_import.png" width="250" alt="Import from GitHub" />
-<img src="images/git_push.png" width="300" alt="Push changes" />
-<img src="images/git_history.png" width="300" alt="Commit history" />
-<img src="images/git_branches.png" width="300" alt="Branch management" />
+<img src="images/git_connect.png" width="280" alt="Connect to GitHub" />
+<img src="images/git_authorize.png" width="280" alt="Authorize with GitHub" />
+<img src="images/git_import.png" width="280" alt="Import from GitHub" />
+<img src="images/git_push.png" width="400" alt="Push changes" />
+<img src="images/git_history.png" width="400" alt="Commit history" />
+<img src="images/git_branches.png" width="400" alt="Branch management" />
 
 ---
 
