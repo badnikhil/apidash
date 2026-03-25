@@ -208,12 +208,17 @@ Converts Hive data to/from Git-friendly JSON files:
 
 Handles edge cases: malformed request files are skipped with warnings, request order is preserved, duplicate names get suffixed.
 
+**Import from GitHub:**
+
+This is how collaboration starts. A teammate shares a GitHub repo URL, and the user imports it as a new collection. The user pastes the repo (e.g., `owner/repo-name` or a full URL) and optionally picks a branch. The app fetches the tree from that branch via the GitHub API, downloads the JSON blobs, deserializes them through `GitCollectionSerializer`, and creates a new local collection already linked to that repo. From that point on, the user can push their own changes and pull updates from others.
+
 The key insight: the user never thinks about blobs, trees, or API calls. They think about their collection. GitHub is just a button that lets them share it, version it, and roll back with one click.
 
 **Usage: Git Support UI from the POC**
 
 ![Connect to GitHub](images/git_connect.png)
 ![Authorize with GitHub](images/git_authorize.png)
+![Import from GitHub](images/git_import.png)
 ![Push changes](images/git_push.png)
 ![Commit history](images/git_history.png)
 ![Branch management](images/git_branches.png)
