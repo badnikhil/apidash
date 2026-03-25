@@ -46,8 +46,6 @@ API Dash combines AI and APIs, and I like how it simplifies complex responses in
 
 7. Can you mention some areas where the project can be improved?
 
-# A few things stood out after exploring the project
-
 1. AI API responses are raw JSON with no clear separation between reasoning tool calls and final output which feels like the biggest gap
 
 2. A sandbox mode to paste JSON and preview the UI would help a lot
