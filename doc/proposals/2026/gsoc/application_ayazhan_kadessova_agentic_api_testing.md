@@ -83,7 +83,7 @@ API Dash's DashBot can suggest test cases, but there is no infrastructure to:
 - Self-heal when APIs change
 - Measure whether the generated tests are actually good
 
-Existing proposals for this project focus on single-agent test generation with a directed graph engine. My proposal adds a layer that other proposals lack: **multi-agent quality assurance for the test strategies themselves**, inspired by the adversarial review patterns we use in Agentize.
+This proposal explores a **multi-agent approach to test strategy quality assurance**, inspired by the adversarial review patterns we use in Agentize. The idea is that using multiple specialized agents (generator, critic, reducer) can help produce more diverse and validated test plans than a single LLM call.
 
 #### 3.2 Architecture Overview
 
@@ -254,15 +254,12 @@ Every component reuses existing infrastructure:
 | `Riverpod` providers | State management for test runs and results |
 | `apidash_design_system` | Consistent UI for test dashboard |
 
-#### 3.5 What Makes This Proposal Different
+#### 3.5 Key Focus Areas of This Proposal
 
-| Aspect | Other Proposals | This Proposal |
-|--------|----------------|---------------|
-| Test generation | Single LLM call | Multi-agent pipeline (Generator → Critic → Reducer) |
-| Quality assurance | Trust AI output | Adversarial validation between agents |
-| Execution engine | Custom graph engine | FSM with checkpoint persistence (proven in Agentize) |
-| KPI measurement | Not addressed | Built-in metrics dashboard |
-| Research backing | Project-based | Graduate research on AI agent systems |
+- **Multi-agent test generation:** Using a pipeline of specialized agents (Generator → Critic → Reducer) to improve test plan quality through iterative refinement
+- **FSM-based execution:** Leveraging patterns from Agentize's FSM orchestrator for deterministic, checkpoint-persistent workflow execution
+- **KPI measurement:** Providing quantitative metrics (coverage, assertion density, self-heal rate) to help developers and mentors evaluate testing effectiveness
+- **Research-informed design:** Drawing on graduate research experience with multi-agent systems and adversarial validation
 
 **4. Weekly Timeline (175 hours)**
 
