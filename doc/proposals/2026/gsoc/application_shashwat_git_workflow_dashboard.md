@@ -464,3 +464,11 @@ My goals for bonding are to learn more about the project and to gel with the tea
 * **Final Week (August 17 - August 24)**
   - Submit final work product and mentor evaluation. Final polish, any remaining bug fixes, project report.
 
+#### 5. Why I should be selected for this project
+
+My first experience with open source was through API Dash. Seeing what it accomplishes with Flutter really resonates with me as a Flutter enthusiast. It was a great learning experience on the importance of design and performance, especially when it comes to developer tools. 
+
+If I get this opportunity, I’ll dedicate consistent time and effort to the project, even beyond the program. I approach development with a focus on quality, precision, and building solutions that genuinely make an impact.
+
+This is not just an internship to me, this is a chance to really make a meaningful contribution to a project that I’m really passionate about. I’m willing to put in the consistent work necessary to produce quality results and leave a quality impact in my overall developer journey. Thank You.
+
