@@ -37,7 +37,13 @@
 
 **2. What is your one project/achievement that you are most proud of? Why?**
 
-- I have created a project where through leveraging LangGraph, Pinecone I have created a multi agentic system where I am calling different APIs based on the user request and retirving relevant information from Pinecone database to get the most relevant infromation (RAG), and also I had also add a grader node in that which through a binary_score grade the retrieved documentation, if the binary_score were not passing the hardcoded threshold then I would call the Tavily API key to get the infromation from the web. Also used FastAPI for serving and creating endpoints for our LangGraph project. The key take away from the project that I gain is that, we can integrate multiple-agentic systems all together into one and creating more complex pipelines from it, even though the major focus should be on reducing hallucinations as well as reducing the cost of the API that we are using.
+- Built a multi-agent system using **LangGraph** and **Pinecone** that routes user queries
+  to the appropriate API, retrieves relevant context via vector search (RAG), and grades
+  the retrieved documents using a `binary_score` node. If the score falls below a set
+  threshold, the system automatically falls back to **Tavily** for live web search —
+  keeping responses grounded and reducing hallucination risk. The pipeline is served via
+  **FastAPI**. The key engineering insight was that cost and accuracy in agentic systems
+  are best managed through explicit verification steps in the graph, not just prompt tuning.
 
 **3. What kind of problems or challenges motivate you the most to solve them?**
 
@@ -65,16 +71,12 @@
 - Yes. My engagement includes:
   Active participation in the API Dash GitHub repository through issue discussions and code review commentary.
 
----
-
 **API Dash — Bug Fixes & Code Quality (Merged / Approved)**
 
 | PR | Description | Status |
 |---|---|---|
 | [#1146](https://github.com/foss42/apidash/pull/1146) | Fix typo: `occured` → `occurred` in `intro_message.dart` | ✅ Approved |
 | [#1160](https://github.com/foss42/apidash/pull/1160) | Add tooltip labels to all four navigation rail `IconButton`s | ✅ Approved |
-
----
 
 
 **API Dash — Feature PRs (Technical, Under Review)**
@@ -84,8 +86,6 @@
 | [#1356](https://github.com/foss42/apidash/pull/1356) | Extend Postman Collection models with auth, urlencoded body, and collection variables — fixing silent data loss in the v2.1 importer | 
 | [#1171](https://github.com/foss42/apidash/pull/1171) | `test: Add unit tests for import/export IO parsers` (Postman, cURL, HAR, Insomnia) | Addresses a gap in test coverage for the importer subsystem |
 | [#1134](https://github.com/foss42/apidash/pull/1134) / [#1130](https://github.com/foss42/apidash/pull/1130) | `feat: Auto-generate meaningful names for imported cURL and HAR requests` | UX improvement for the import workflow |
-
----
 
 **API Dash — Feature Issues (Proposals)**
 
