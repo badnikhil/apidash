@@ -18,7 +18,7 @@
 ### Motivation & Past Experience
 
 1. **Have you worked on or contributed to a FOSS project before?**  
-   - Yes, I have actively contributed to ApiDash, an open-source API development tool.  
+   - Yes, I have actively contributed to ApiDash, an open-source API development tool. I had started working on MQTT support earlier and opened a PR for it. While the PR was eventually closed , the process gave me a strong understanding of protocol integration challenges and influenced the architectural decisions in this proposal.
 
       My contributions include:
 
