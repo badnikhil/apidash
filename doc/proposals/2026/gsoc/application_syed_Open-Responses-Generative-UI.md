@@ -73,6 +73,8 @@ Right now API Dash shows raw JSON for AI responses, making it hard to understand
 
 ---
 
+![A2UI Flow](https://github.com/Syed-Abdullah-G/apidash/blob/20b7d6b06e7d8e6d7f41b92f0fdbb1c3b24daef2/doc/proposals/2026/gsoc/images/understanding-A2UI.png)
+
 ### The Problem in Plain English
 
 Imagine you send a request to an AI API and it comes back with something like this:
@@ -128,6 +130,12 @@ For A2UI responses, this renders real UI components like buttons, cards, or tabl
 
 **Piece 5 — The Code Exporter**
 Lets developers export the rendered UI as clean Flutter or React code, ready to copy-paste into their own apps.
+
+---
+
+### Architecture Flow Diagram
+
+![System Architecture Flow](https://github.com/Syed-Abdullah-G/apidash/blob/4a9cba934fc79eac6f97777e62dc4e211f20ba95/doc/proposals/2026/gsoc/images/system_architecture_updated_flow.svg)
 
 ---
 
