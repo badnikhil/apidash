@@ -148,9 +148,10 @@ Each assertion is a standalone function that takes traces/responses and returns 
 |----------|-------|-----------------|
 | Transport | 5+ | stdio lifecycle, HTTP connection, graceful shutdown |
 | Protocol | 8+ | `initialize` handshake, capability negotiation, version matching |
-| Discovery | 5+ | `tools/list` response structure, schema completeness |
+| Discovery | 5+ | `tools/list`, `resources/list`, `prompts/list` response structure, schema completeness |
 | Execution | 8+ | `tools/call` with valid/invalid params, error handling |
 | Edge cases | 6+ | malformed JSON, unknown tools, oversized payloads, concurrent requests |
+| MCP Apps | 4+ | `ui://` resource registration, MIME type (`text/html;profile=mcp-app`), `ui/initialize` handshake, `hostContext` support, CSP declaration checks |
 
 **Network Recording:**
 Captures real MCP traffic (JSON-RPC messages) and serializes to fixture files:
@@ -311,18 +312,32 @@ Interactive web interface built on top of the same engine.
 
 5. **CI-native from day one.** JUnit XML output means any CI system can consume results immediately. Not an afterthought — it's Week 4.
 
+## Risk Mitigation
+
+**"What if the engine takes longer than 4 weeks?"**
+The transport layer and JSON-RPC client are already proven in the PoC. Weeks 1-2 are expansion of working code, not greenfield. Risk is low.
+
+**"What if UI work extends beyond Week 12?"**
+The engine is the core deliverable. By midterm (Week 4), `npx mcp-conformance run` works end-to-end with CI output. The project delivers value even if UI polish is deferred — this is why we chose protocol-first architecture.
+
+**"What if mock server complexity grows?"**
+The YAML-based configuration and replay mode are intentionally simple. Failure injection (Week 7) is the riskiest feature — if it slips, the mock server still works for basic deterministic testing.
+
+**"What about part-time availability?"**
+The 175-hour scope at ~14.6h/week over 12 weeks is well within my ~20h/week availability. My professional work with AI systems and API integrations is complementary — it keeps me close to real-world MCP pain points that directly inform design decisions.
+
 ## Proof of Concept
 
 I've built a working prototype of the `mcp-conformance` engine: [**github.com/vinimlo/mcp-conformance**](https://github.com/vinimlo/mcp-conformance)
 
-It demonstrates the core architecture — StdioTransport adapter, MCPClient, composable assertions, and CLI runner — with **10 passing conformance tests** across 4 categories (Protocol, Discovery, Schema, Execution) against a real MCP server:
+It demonstrates the core architecture — StdioTransport adapter, MCPClient, composable assertions, and CLI runner — with **19 passing conformance tests** across 5 categories (Protocol, Discovery, Schema, Execution, Edge Cases) against a real MCP server:
 
 ```
 mcp-conformance v0.1.0
 Testing: npx tsx fixtures/test-server.ts
 
 Protocol
-  ✓ initialize returns valid result (344ms)
+  ✓ initialize returns valid result (355ms)
   ✓ server reports protocol version
   ✓ server reports name and version
   ✓ capabilities is an object
@@ -338,8 +353,19 @@ Execution
   ✓ tools/call with valid params succeeds
   ✓ tools/call with unknown tool returns error
   ✓ tool result contains typed content
+  ✓ tools/call to each discovered tool succeeds
+  ✓ tool content items have text field
 
-10 passed (0.3s)
+Edge Cases
+  ✓ unknown method returns error code
+  ✓ duplicate initialize is idempotent
+  ✓ concurrent tool calls resolve independently
+  ✓ tools/call with extra params does not crash
+  ✓ tools/call with empty arguments object
+  ✓ JSON-RPC response has correct version field
+  ✓ error response includes message field
+
+19 passed (0.4s)
 ```
 
 ## Why Me
@@ -352,10 +378,22 @@ I bring production experience that goes beyond academic knowledge:
 - **Published researcher:** My paper at Computer on the Beach 2023 demonstrates the ability to systematically design, implement, and validate a technical solution through peer review.
 - **Full-stack TypeScript/Python:** The exact stack required for this project matches my daily working stack.
 
+## MCP Apps Testing
+
+The conformance engine extends to validate [MCP Apps](https://dev.to/ashita/a-practical-guide-to-building-mcp-apps-1bfm) — rich HTML UI components served by MCP servers as sandboxed iframes in AI hosts. This incorporates patterns from the practical guide shared by mentors:
+
+- **Resource registration:** Verify `ui://` resource URIs are correctly registered via `resources/list`, with MIME type `text/html;profile=mcp-app`
+- **Tool-to-app linking:** Validate tools expose `_meta.ui.resourceUri` pointing to the correct `ui://` resource
+- **Handshake compliance:** Test the `ui/initialize` → `hostContext` → `ui/notifications/initialized` lifecycle
+- **Host context support:** Verify the app correctly receives and applies `hostContext` CSS variables for theme adaptation
+- **CSP declarations:** Check that apps declaring external requests include proper `connectDomains` and `resourceDomains` in `_meta.ui.csp`
+
+This ensures developers can validate their MCP Apps are correctly built before deploying to hosts like VS Code or Claude Desktop.
+
 ## Future Extensions (post-GSoC)
 
 - **Security profiling:** Extend schema validator to flag destructive operations, detect tool poisoning patterns, and check for injection vulnerabilities — building on the validation infrastructure already in place.
-- **MCP Apps testing:** Add support for validating MCP Apps (interactive UI components) including `ui/initialize` handshake verification, `hostContext` CSS injection, and iframe sandbox compliance.
+- **Extended MCP Apps testing:** Deeper iframe sandbox compliance, multi-host theme validation, and interactive app preview rendering.
 - **Additional transports:** SSE legacy support for older MCP servers.
 
 **4. Weekly Timeline**
@@ -374,5 +412,5 @@ I bring production experience that goes beyond academic knowledge:
 | 8 | Web UI | UI scaffold + server connection panel + tool explorer. Connect to server, browse tools/schemas, execute calls. | #8 |
 | 9 | Web UI | Test runner panel + conformance scorecard. Run suite from UI, view pass/fail results by category. | #9 |
 | 10 | Web UI | Recording viewer + replay controls. Inspect captured traffic, step through sessions, compare recordings. | #10 |
-| 11 | Web UI | Polish, responsive design, user guide with examples and screenshots. | #11 |
+| 11 | Web UI + MCP Apps | MCP Apps conformance tests (`ui://` validation, handshake, `hostContext`), UI polish, responsive design, user guide. | #11 |
 | 12 | Final | Integration tests against 3+ real MCP servers, GitHub Actions CI workflow example, documentation, GSoC final report. | #12 |
