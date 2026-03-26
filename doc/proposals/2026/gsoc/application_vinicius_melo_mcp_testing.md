@@ -311,6 +311,37 @@ Interactive web interface built on top of the same engine.
 
 5. **CI-native from day one.** JUnit XML output means any CI system can consume results immediately. Not an afterthought — it's Week 4.
 
+## Proof of Concept
+
+I've built a working prototype of the `mcp-conformance` engine: [**github.com/vinimlo/mcp-conformance**](https://github.com/vinimlo/mcp-conformance)
+
+It demonstrates the core architecture — StdioTransport adapter, MCPClient, composable assertions, and CLI runner — with **10 passing conformance tests** across 4 categories (Protocol, Discovery, Schema, Execution) against a real MCP server:
+
+```
+mcp-conformance v0.1.0
+Testing: npx tsx fixtures/test-server.ts
+
+Protocol
+  ✓ initialize returns valid result (344ms)
+  ✓ server reports protocol version
+  ✓ server reports name and version
+  ✓ capabilities is an object
+
+Discovery
+  ✓ tools/list returns valid array
+
+Schema
+  ✓ all tools have name and description
+  ✓ all tools have valid inputSchema
+
+Execution
+  ✓ tools/call with valid params succeeds
+  ✓ tools/call with unknown tool returns error
+  ✓ tool result contains typed content
+
+10 passed (0.3s)
+```
+
 ## Why Me
 
 I bring production experience that goes beyond academic knowledge:
