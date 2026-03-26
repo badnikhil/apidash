@@ -103,7 +103,7 @@ API Dash currently stores all requests in a flat local list with no version cont
 
 **Relevant Issues & Discussions:**
 
-- **Save/Autosave feature** [#1034](https://github.com/foss42/apidash/discussions/1034) - Prerequisite, my PR [#1061](https://github.com/foss42/apidash/pull/1061) implements this
+- **Save/Autosave feature** [#1034](https://github.com/foss42/apidash/discussions/1034) - PR [#1061](https://github.com/foss42/apidash/pull/1061) has similiar approach.
 - **Shared Community Collections** [#964](https://github.com/foss42/apidash/issues/964) - Enabled by Git Support, collections shared via GitHub repos
 
 #### 3. Detailed Description
@@ -115,15 +115,13 @@ API Dash currently stores all requests in a flat local list with no version cont
 **Problem:**
 API Dash stores all data locally in Hive. There is no way to version-control requests, share collections with teammates, or roll back to a previous state. For teams, this means manually exporting and importing API collections, which is error-prone and fragile.
 
-**Prerequisite: Request Autosave ([#1034](https://github.com/foss42/apidash/issues/1034))**
-
 Before Git support or collections can work, the storage layer needs to change. Today the app uses a **Load All / Save All** model: `dataBox` is a regular Hive `Box` that loads every request into memory at startup, and `saveData()` re-serializes the entire map back to Hive when the user clicks Save. Every mutation calls `unsave()` which only sets a dirty flag, nothing is persisted until the manual save.
 
 This breaks Git support in two ways:
 1. **No per-request persistence** - Git push needs to know which specific requests changed since the last commit. With bulk save, there's no granular change tracking.
 2. **Data loss risk** - If the app is killed, all unsaved changes are lost. Collections that sync with GitHub cannot afford silent data loss.
 
-The fix is a **Lazy Load / Granular Save** architecture: change `dataBox` from `Box` to `LazyBox`, load only request metadata (id, name, method, URL) at startup, load full request data on demand when the user opens a request, and save each individual request to Hive immediately on every change (debounced). I already attempted this refactoring in [PR #1061](https://github.com/foss42/apidash/pull/1061), which changes `CollectionStateNotifier` to call `hiveHandler.setCollectionRequestModel()` directly on each mutation instead of bulk-saving.
+The fix is a **Lazy Load / Granular Save** architecture: change `dataBox` from `Box` to `LazyBox`, load only request metadata (id, name, method, URL) at startup, load full request data on demand when the user opens a request, and save each individual request to Hive immediately on every change (debounced). This approach updates `CollectionStateNotifier` to call `hiveHandler.setCollectionRequestModel()` directly on each mutation instead of bulk-saving.
 
 This autosave refactoring is the first deliverable of GSoC and unblocks everything else.
 
