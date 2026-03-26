@@ -172,3 +172,6 @@ Generates production-ready UI code from the rendered structure.
 
 > **Weeks 11–12:** Reserved for additional open-source best practices, documentation, cleanup, and final project polishing.
 > I planned 12 weeks instead of 10 to allow extra time for testing and documentation, ensuring everything is stable and well-polished.
+
+## My PoC
+[![Watch the video](https://img.youtube.com/vi/Hs0ZgFOqBRk/0.jpg)](https://youtu.be/Hs0ZgFOqBRk)
