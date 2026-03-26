@@ -276,29 +276,7 @@ Interactive web interface built on top of the same engine.
 
 ## Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────┐
-│                  MCP Testing UI                      │
-│  ┌────────────┐ ┌──────────┐ ┌───────────────────┐  │
-│  │   Tool     │ │   Test   │ │    Recording      │  │
-│  │  Explorer  │ │  Runner  │ │    Viewer         │  │
-│  └─────┬──────┘ └────┬─────┘ └────────┬──────────┘  │
-│        │              │                │              │
-│        ▼              ▼                ▼              │
-│  ┌──────────────────────────────────────────────┐    │
-│  │            mcp-conformance (engine)           │    │
-│  │  transport │ schema   │ assertions │ recorder │    │
-│  │  adapters  │ validator│ framework  │          │    │
-│  └──────────────────────┬───────────────────────┘    │
-└─────────────────────────┼────────────────────────────┘
-                          │
-            ┌─────────────┼─────────────┐
-            ▼             ▼             ▼
-     ┌──────────┐  ┌──────────┐  ┌──────────┐
-     │ Real MCP │  │ mcp-mock │  │ Fixture  │
-     │ Server   │  │ (mock)   │  │ Files    │
-     └──────────┘  └──────────┘  └──────────┘
-```
+[![](images/vinicius_mcp_architecture.png)](images/vinicius_mcp_architecture.png)
 
 ## Why This Architecture
 
