@@ -92,7 +92,7 @@ With proper state management, Dashbot could remember previous queries, understan
 
 ## 8. Have you interacted with and helped API Dash community? 
 
-**Yes, I have interacted with the API Dash community by participating in discussions on github and discord. I have also work with other contributors to discussing on issue and dividing responsibility to solve it
+**Yes, I have interacted with the API Dash community by participating in discussions on GitHub and Discord. I have also collaborated with other contributors on issues and helped in dividing responsibilities to solve them.**
 
 - [#1132](https://github.com/foss42/apidash/issues/1132)
 - [#966](https://github.com/foss42/apidash/issues/966)
@@ -102,7 +102,7 @@ With proper state management, Dashbot could remember previous queries, understan
 
 **Project Title:** - CLI and MCP Support for API Dash
 
-Relevant Discussion:** [#1228 - Idea #6](https://github.com/foss42/apidash/discussions/1228)
+Relevant Discussion: **[#1228 - Idea #6](https://github.com/foss42/apidash/discussions/1228)**
 
 # Problem Statement
 
