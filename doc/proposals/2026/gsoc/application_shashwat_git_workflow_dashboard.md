@@ -191,6 +191,13 @@ A `GitHubApiAdapter` class handles all GitHub communication:
 
   This is a single atomic operation, either the entire commit succeeds or nothing changes.
 
+- **How changed files are tracked before push (preview logic):**
+  The implementation will build a local Git file snapshot from Hive (`collection.json`, `environments.json`, `requests/*.json`) and use a SHA-first diff strategy against the remote branch tree. It will first compare path-level tree/blob SHAs and fetch full file content only for candidate changed files. Final change type is computed as:
+  - path in local only -> `added`
+  - path in remote only -> `deleted`
+  - path in both but different content -> `modified`
+  This result powers the "Changes to push" preview card before commit.
+
 - **Pull / Rollback / Branch switch:** Fetch tree at target commit, get blobs, deserialize JSON, replace collection in Hive.
 
 - **Conflict detection:** Before push, compare local `lastSyncedCommitSha` with remote HEAD. If they differ, someone else pushed. Show a conflict dialog with options to pull first or view commits.
