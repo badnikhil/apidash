@@ -282,6 +282,12 @@ Interactive web interface built on top of the same engine.
 
 [![](images/vinicius_mcp_architecture.png)](images/vinicius_mcp_architecture.png)
 
+## UI Vision
+
+[![](images/vinicius_mcp_ui_mockup.png)](images/vinicius_mcp_ui_mockup.png)
+
+Proposed MCP Testing UI showing three-panel layout: server connection with capability discovery (left), JSON-RPC protocol log with message inspector (center), and conformance test runner with pass/fail results by category (right). Bottom bar shows conformance scorecard with coverage metrics. Self-contained HTML mockup available in the [PoC repository](https://github.com/vinimlo/mcp-conformance).
+
 ## Why This Architecture
 
 1. **Standalone packages.** `mcp-conformance` and `mcp-mock` are usable without the UI — in CI pipelines, as libraries, or from the command line. This aligns with API Dash's pattern of extracting reusable packages (like `better_networking`, `curl_parser`, `genai`).
@@ -310,7 +316,7 @@ The 175-hour scope at ~14.6h/week over 12 weeks is well within my ~20h/week avai
 
 ## Proof of Concept
 
-I've built a working prototype of the `mcp-conformance` engine: [**github.com/vinimlo/mcp-conformance**](https://github.com/vinimlo/mcp-conformance) — [**watch the demo**](https://asciinema.org/a/HzXJlnMZkkGMGs44)
+I've built a working prototype of the `mcp-conformance` engine: [**github.com/vinimlo/mcp-conformance**](https://github.com/vinimlo/mcp-conformance) — [**watch the full demo**](https://asciinema.org/a/qbQRBS3CLtxvFFXW) (40s — runs against both a test fixture and the official MCP SDK reference server)
 
 It demonstrates the core architecture — StdioTransport adapter, MCPClient, composable assertions, and CLI runner — with **19 passing conformance tests** across 5 categories (Protocol, Discovery, Schema, Execution, Edge Cases) against a real MCP server. The PoC runs in ~0.4s and exits with code 0/1 for CI integration:
 
