@@ -221,8 +221,9 @@ This is how collaboration starts. A teammate shares a GitHub repo URL, and the u
 
 The key insight: the user never thinks about blobs, trees, or API calls. They think about their collection. GitHub is just a button that lets them share it, version it, and roll back with one click.
 
-**Usage: Git Support UI from the POC**
+**Usage: Git Support UI**
 
+<img src="images/git_collections_sidebar.png" width="520" alt="Collections list with GitHub sync entry point" />
 <img src="images/git_connect.png" width="280" alt="Connect to GitHub" />
 <img src="images/git_authorize.png" width="280" alt="Authorize with GitHub" />
 <img src="images/git_import.png" width="280" alt="Import from GitHub" />
