@@ -77,7 +77,7 @@ The Model Context Protocol (MCP) ecosystem lacks standardized testing tooling. D
 
 This project builds a **protocol-first** testing system designed for automation from day one. The core is a conformance engine that runs headless (CLI, CI pipelines) or interactive (web UI), delivered as **three standalone packages**:
 
-1. **`mcp-conformance`** — Schema validator, assertion framework, conformance test suite, network recording, and CLI with JUnit XML / TAP / JSON output
+1. **`mcp-conformance`** — Schema validator, assertion framework, 45+ conformance tests covering all six MCP primitives (Tools, Resources, Prompts, Sampling, Roots, Notifications), network recording, and CLI with JUnit XML / TAP / JSON output
 2. **`mcp-mock`** — Configurable mock MCP server with replay mode and failure injection
 3. **MCP Testing UI** — React web interface for interactive exploration, test execution, and recording inspection
 
@@ -142,15 +142,19 @@ Composable, protocol-based assertions inspired by testing framework patterns:
 Each assertion is a standalone function that takes traces/responses and returns pass/fail with detailed error context. This makes assertions testable, composable, and extensible without modifying the runner.
 
 **Conformance Test Suite:**
-30+ pre-built test cases organized by category:
+45+ pre-built test cases covering **all six MCP primitives** plus transport, edge cases, and MCP Apps:
 
 | Category | Tests | What they verify |
 |----------|-------|-----------------|
-| Transport | 5+ | stdio lifecycle, HTTP connection, graceful shutdown |
-| Protocol | 8+ | `initialize` handshake, capability negotiation, version matching |
-| Discovery | 5+ | `tools/list`, `resources/list`, `prompts/list` response structure, schema completeness |
-| Execution | 8+ | `tools/call` with valid/invalid params, error handling |
-| Edge cases | 6+ | malformed JSON, unknown tools, oversized payloads, concurrent requests |
+| Transport | 5+ | stdio lifecycle, Streamable HTTP connection, graceful shutdown, reconnection |
+| Protocol | 8+ | `initialize` handshake, capability negotiation, protocol version matching, JSON-RPC 2.0 compliance |
+| Tools | 8+ | `tools/list` discovery, `tools/call` with valid/invalid params, error codes (-32601, -32602), schema validation |
+| Resources | 4+ | `resources/list` enumeration, URI resolution, content type validation, `resources/subscribe` notification delivery |
+| Prompts | 3+ | `prompts/list` discovery, argument validation (required/optional), `prompts/get` message generation with correct roles |
+| Sampling | 3+ | `createMessage` request format compliance, mock LLM response handling, `includeContext` behavior, timeout handling |
+| Roots | 2+ | Root boundary enforcement, `roots/list_changed` notification on root updates |
+| Notifications | 3+ | `tools/list_changed` and `resources/list_changed` delivery, `progress` token tracking, event ordering, notification format (no `id` field) |
+| Edge Cases | 6+ | malformed JSON, unknown methods, oversized payloads, concurrent requests, duplicate initialize idempotency |
 | MCP Apps | 4+ | `ui://` resource registration, MIME type (`text/html;profile=mcp-app`), `ui/initialize` handshake, `hostContext` support, CSP declaration checks |
 
 **Network Recording:**
@@ -253,7 +257,7 @@ Interactive web interface built on top of the same engine.
 
 **Server Connection Panel:**
 - Connect to any MCP server (stdio command or HTTP URL)
-- Auto-discover tools, resources, and prompts
+- Auto-discover all six primitives: tools, resources, prompts, sampling capabilities, roots, and notification subscriptions
 - Display server capabilities and protocol version
 
 **Tool Explorer:**
@@ -302,13 +306,13 @@ The engine is the core deliverable. By midterm (Week 4), `npx mcp-conformance ru
 The YAML-based configuration and replay mode are intentionally simple. Failure injection (Week 7) is the riskiest feature — if it slips, the mock server still works for basic deterministic testing.
 
 **"What about part-time availability?"**
-The 175-hour scope at ~14.6h/week over 12 weeks is well within my ~20h/week availability. My professional work with AI systems and API integrations is complementary — it keeps me close to real-world MCP pain points that directly inform design decisions.
+The 175-hour scope at ~14.6h/week over 12 weeks is well within my ~20h/week availability. Critically, the protocol-first architecture was designed specifically to de-risk part-time delivery: by Week 4, `npx mcp-conformance run` works end-to-end — each weekly PR stands alone as a shippable increment, never accumulating into a big-bang delivery. My professional work with AI systems and API integrations at Rumo Tecnologias is directly complementary — it keeps me close to real-world MCP pain points that inform design decisions daily, and I've consistently delivered production software on this schedule.
 
 ## Proof of Concept
 
-I've built a working prototype of the `mcp-conformance` engine: [**github.com/vinimlo/mcp-conformance**](https://github.com/vinimlo/mcp-conformance)
+I've built a working prototype of the `mcp-conformance` engine: [**github.com/vinimlo/mcp-conformance**](https://github.com/vinimlo/mcp-conformance) — [**watch the demo**](https://asciinema.org/a/HzXJlnMZkkGMGs44)
 
-It demonstrates the core architecture — StdioTransport adapter, MCPClient, composable assertions, and CLI runner — with **19 passing conformance tests** across 5 categories (Protocol, Discovery, Schema, Execution, Edge Cases) against a real MCP server:
+It demonstrates the core architecture — StdioTransport adapter, MCPClient, composable assertions, and CLI runner — with **19 passing conformance tests** across 5 categories (Protocol, Discovery, Schema, Execution, Edge Cases) against a real MCP server. The PoC runs in ~0.4s and exits with code 0/1 for CI integration:
 
 ```
 mcp-conformance v0.1.0
@@ -348,12 +352,13 @@ Edge Cases
 
 ## Why Me
 
-I bring production experience that goes beyond academic knowledge:
+I bring a combination of production experience, open source track record, and research discipline:
 
-- **AI agent systems in production:** As co-founder of Seu AgenteIA and CTO of Rumo Tecnologias, I've built and shipped AI-powered systems using the Anthropic API with tool calling, multi-agent architectures, and API integrations for enterprise clients.
+- **AI agent systems in production:** As co-founder of Seu AgenteIA and CTO of Rumo Tecnologias, I've built and shipped AI-powered systems using the Anthropic API with tool calling, multi-agent architectures, and API integrations for enterprise clients. This isn't academic familiarity with MCP — I've debugged JSON-RPC transport failures, handled capability negotiation edge cases, and built the exact kind of testing infrastructure this project needs.
+- **Proven open source maintainer:** [galaxy-profile](https://github.com/vinimlo/galaxy-profile) (458+ stars, GPL-3.0) demonstrates I can build, maintain, and grow a project that others actually use. I also coordinated FLISOL Salvador 2018 (the largest free software event in Latin America), contributed to Wokwi and Noosfero, and maintain tabAla (Chrome extension, Apache 2.0).
 - **API integration at scale:** At Bloxs (fintech), I designed data infrastructure on AWS and built API integrations handling real-world concerns: auth flows, rate limiting, error handling, and schema validation.
 - **Testing framework architecture:** I've designed and built behavior testing frameworks for AI agents — protocol-based assertion systems, trace collection models, and multi-turn test state threading — which directly inform the conformance engine design.
-- **Published researcher:** My paper at Computer on the Beach 2023 demonstrates the ability to systematically design, implement, and validate a technical solution through peer review.
+- **Published researcher:** My [paper at Computer on the Beach 2023](https://doi.org/10.14210/cotb.v14.p544-549) demonstrates the ability to systematically design, implement, and validate a technical solution through peer review — the same rigor applied to this proposal.
 - **Full-stack TypeScript/Python:** The exact stack required for this project matches my daily working stack.
 
 ## MCP Apps Testing
@@ -381,7 +386,7 @@ This ensures developers can validate their MCP Apps are correctly built before d
 | CB | Community Bonding | Dev setup, MCP spec deep dive, API Dash codebase study, architecture discussion with mentors | — |
 | 1 | Engine Core | Transport adapters (stdio + Streamable HTTP) + JSON-RPC client. Connect to any MCP server, send `initialize`, discover tools. | #1 |
 | 2 | Engine Core | Schema validator + composable assertion framework. Validate tool definitions against spec, run assertions on responses. | #2 |
-| 3 | Engine Core | Conformance test suite: 30+ pre-built tests covering `initialize`, `tools/list`, `tools/call`, error codes, edge cases. | #3 |
+| 3 | Engine Core | Conformance test suite: 45+ pre-built tests covering all 6 MCP primitives (Tools, Resources, Prompts, Sampling, Roots, Notifications), edge cases, and protocol compliance. | #3 |
 | 4 | Engine Core | CLI interface + output formats (JUnit XML, TAP, JSON, rich terminal). `npx mcp-conformance run` works end-to-end. | #4 |
 | — | **Midterm** | **Engine runs headless against any MCP server, outputs conformance report. CI-ready.** | — |
 | 5 | Mock + Recording | Mock MCP server core: configurable tools with deterministic responses. `npx mcp-mock --config mock.yaml` serves responses. | #5 |
