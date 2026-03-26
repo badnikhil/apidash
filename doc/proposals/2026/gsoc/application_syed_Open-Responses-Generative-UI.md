@@ -29,36 +29,36 @@
 
 ## Motivation & Past Experience
 
-**Have you worked on or contributed to a FOSS project before?**
+**1. Have you worked on or contributed to a FOSS project before?**
 
 This is my first time contributing to open source, and a big reason I applied to GSoC. I've built projects on my own, but I want to work on something real that people actually use and get feedback from experienced developers. API Dash feels like the perfect place to start that journey.
 
-**What is your one project/achievement that you are most proud of?**
+**2. What is your one project/achievement that you are most proud of?**
 
 My proudest project is a "Swipe to Apply" job app — like Tinder for jobs — simplifying job search into a single swipe. I built swipe gestures, animations, and state management from scratch, learning a lot in the process. [View on App Store](https://apps.apple.com/in/app/applybee-ai-swipe-to-apply/id6757182350)
 
-**What kind of problems or challenges motivate you the most?**
+**3. What kind of problems or challenges motivate you the most?**
 
 I enjoy turning complex systems into simple experiences. In my swipe app, I simplified job hunting and fine-tuned AI APIs to show relevant, scam-free posts. Similarly, transforming large AI JSON into a clean UI is a challenge I enjoy.
 
-**Will you be working on GSoC full-time?**
+**4. Will you be working on GSoC full-time?**
 
 Yes, full-time. I'm currently in college but can dedicate ~4 hours daily (≈30 hrs/week), with no other commitments during GSoC.
 
-**Do you mind regularly syncing up with the project mentors?**
+**5. Do you mind regularly syncing up with the project mentors?**
 
 Not at all — I actually like regular check-ins. They help me stay on track and catch things early, and honestly that's why I'm here: to learn and get real guidance from experienced developers.
 
-**What interests you the most about API Dash?**
+**6. What interests you the most about API Dash?**
 
 API Dash combines AI and APIs, and I like how it simplifies complex responses into clean, usable output. It's also open source with strong developer support, making it a great place to learn and contribute.
 
-**Can you mention some areas where the project can be improved?**
+**7. Can you mention some areas where the project can be improved?**
 
 1. A sandbox mode to paste JSON and preview the UI would help a lot.
 2. The response history could be more visual with a timeline view for easier debugging.
 
-**Have you interacted with and helped the API Dash community?**
+**8. Have you interacted with and helped the API Dash community?**
 
 I haven't actively contributed yet, but I've gone through the documentation, explored the codebase, and regularly attended the weekly meet discussions to understand the project and community better.
 
@@ -113,11 +113,11 @@ Instead of just showing this raw JSON, my project parses this and shows the resp
 
 ### The Five Pieces I Will Build
 
-**Piece 1 — The Request Handler (Open Responses Integration)**
+### Piece 1 — The Request Handler (Open Responses Integration)
 Implements support for sending AI API requests using the Open Responses format, ensuring structured outputs (type, output[], content[]).
 This guarantees compatibility with downstream parsing and UI rendering.
 
-**Piece 2 — The Response Parser (Structured JSON → Internal Model)**
+### Piece 2 — The Response Parser (Structured JSON → Internal Model)
 Builds a parsing layer that converts raw JSON into strongly-typed internal models (e.g., Message, Reasoning, UIComponent).
 Handles:
 *nested content[] arrays*
@@ -126,7 +126,7 @@ Handles:
 
 This acts as the core abstraction layer between raw API data and UI.
 
-**Piece 3 — The A2UI Renderer (GenUI SDK Integration)**
+### Piece 3 — The A2UI Renderer (GenUI SDK Integration)
 
 Detects A2UI-compatible structures (UI bindings/mappings in JSON) and renders them using the GenUI Flutter SDK.
 
@@ -135,13 +135,13 @@ Detects A2UI-compatible structures (UI bindings/mappings in JSON) and renders th
 *Supports extensibility for new components*
 *Reference (GenUI repo): https://github.com/flutter/genui*
 
-**Piece 4 — The Dual View System (Inspector + Renderer)**
+### Piece 4 — The Dual View System (Inspector + Renderer)
 Implements a split/toggle UI:
 
 *Raw View → formatted JSON with syntax highlighting*
 *Visual View → rendered widgets via GenUI*
 
-**Piece 5 — The Code Exporter (UI → Source Code)**
+### Piece 5 — The Code Exporter (UI → Source Code)
 Generates production-ready UI code from the rendered structure.
 
 *Converts internal UI tree → Flutter / React code*
@@ -159,16 +159,16 @@ Generates production-ready UI code from the rendered structure.
 
 | Week | Focus | What I Will Do | Deliverable |
 |------|-------|----------------|-------------|
-| Week 1 | Setup and Research | Study Open Responses format and A2UI UI-binding structure, explore API Dash codebase and response flow | Clear architecture plan and integration points |
-| Week 2 | Open Responses Request Handler | Implement sending all AI API requests using Open Responses format in API Dash | Working Open Responses request pipeline |
-| Week 3 | A2UI Detection Layer | Detect presence of A2UI UI bindings/mappings within Open Responses JSON | Reliable A2UI detection system |
-| Week 4 | A2UI Mapping | Extract and normalize A2UI UI bindings into a format usable by the rendering layer | Structured A2UI mapping ready for rendering |
-| Week 5 | GenUI Renderer (Basics) | Integrate GenUI Flutter SDK to convert A2UI mappings into basic interactive UI (text, button, card) | Basic real-time UI rendering |
-| Week 6 | Advanced UI Rendering | Support complex UI components and layouts (lists, images, structured cards) via GenUI | Full interactive UI rendering support |
-| Week 7 | Dual View System | Implement toggle between raw Open Responses JSON and rendered UI view | Seamless JSON ↔ UI switch |
-| Week 8 | Code Exporter | Generate clean Flutter/React code from rendered UI (based on A2UI mappings) | Working export feature |
-| Week 9 | Streaming / Real-time Updates | Show responses updating live as data arrives | Real-time UI updates |
-| Week 10 | Testing and Refinement | Test full pipeline (Open Responses → A2UI → GenUI render → export), fix bugs | Stable and polished system |
+| 1 | Setup and Research | Study Open Responses format and A2UI UI-binding structure, explore API Dash codebase and response flow | Clear architecture plan and integration points |
+| 2 | Open Responses Request Handler | Implement sending all AI API requests using Open Responses format in API Dash | Working Open Responses request pipeline |
+| 3 | A2UI Detection Layer | Detect presence of A2UI UI bindings/mappings within Open Responses JSON | Reliable A2UI detection system |
+| 4 | A2UI Mapping | Extract and normalize A2UI UI bindings into a format usable by the rendering layer | Structured A2UI mapping ready for rendering |
+| 5 | GenUI Renderer (Basics) | Integrate GenUI Flutter SDK to convert A2UI mappings into basic interactive UI (text, button, card) | Basic real-time UI rendering |
+| 6 | Advanced UI Rendering | Support complex UI components and layouts (lists, images, structured cards) via GenUI | Full interactive UI rendering support |
+| 7 | Dual View System | Implement toggle between raw Open Responses JSON and rendered UI view | Seamless JSON ↔ UI switch |
+| 8 | Code Exporter | Generate clean Flutter/React code from rendered UI (based on A2UI mappings) | Working export feature |
+| 9 | Streaming / Real-time Updates | Show responses updating live as data arrives | Real-time UI updates |
+| 10 | Testing and Refinement | Test full pipeline (Open Responses → A2UI → GenUI render → export), fix bugs | Stable and polished system |
 
 > **Weeks 11–12:** Reserved for additional open-source best practices, documentation, cleanup, and final project polishing.
 > I planned 12 weeks instead of 10 to allow extra time for testing and documentation, ensuring everything is stable and well-polished.
