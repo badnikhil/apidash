@@ -105,6 +105,8 @@ API Dash currently stores all requests in a flat local list with no version cont
 
 - **Save/Autosave feature** [#1034](https://github.com/foss42/apidash/discussions/1034) - PR [#1061](https://github.com/foss42/apidash/pull/1061) has similiar approach.
 - **Shared Community Collections** [#964](https://github.com/foss42/apidash/issues/964) - Enabled by Git Support, collections shared via GitHub repos
+- **Git support and version control** [#502](https://github.com/foss42/apidash/issues/502) - Core issue for repository-backed collaboration and history.
+- **Dashboard and analytics visibility** [#120](https://github.com/foss42/apidash/issues/120) - Tracks monitoring/reporting expectations for collection and workflow health.
 
 #### 3. Detailed Description
 
@@ -230,6 +232,17 @@ Testing multi-step API flows today requires writing scripts or manually sequenci
 
 **Design Principle:**
 The workflow builder is a new section in the navigation rail (alongside Requests and Dashboard). It uses a node-based canvas where users visually compose API workflows by connecting nodes with edges. Each workflow is a directed acyclic graph (DAG) that the engine walks at runtime. The official idea also mentions **Agentic AI** for generating workflows from prompts, this will be integrated through DashBot.
+
+**AI Integration Plan (DashBot -> Workflow Graph):**
+
+AI is implemented as an assisted scaffold step, not a replacement for manual editing. The user opens "Generate with AI" in DashBot, writes a prompt such as "Create login -> fetch profile -> update profile flow", and DashBot uses the currently configured available model to generate a workflow draft constrained by the internal workflow schema. The JSON draft is an internal transport format and is not shown as the primary user experience.
+
+The generation pipeline:
+1. **Prompt + context collection** - Include selected collection requests, detected variables, and optional constraints (max nodes, include retry, include condition branch).
+2. **Model generation constrained by schema** - DashBot is instructed to generate only allowed node types and valid connections based on the workflow schema contract.
+3. **Validation + repair pass** - Run graph validation (single Start, at least one End, reachable nodes, no cycles). If invalid, attempt one deterministic repair; otherwise surface actionable errors.
+4. **Direct canvas implementation** - If valid, the generated nodes and edges are instantiated directly on the canvas (no manual JSON review step).
+5. **Human review gate on canvas** - User edits labels, conditions, request links, and variable mappings directly in the visual editor before first execution.
 
 **Node Types (6 types):**
 
@@ -462,7 +475,9 @@ My goals for bonding are to learn more about the project and to gel with the tea
 * **Final Week (August 17 - August 24)**
   - Submit final work product and mentor evaluation. Final polish, any remaining bug fixes, project report.
 
-#### 5. Why I should be selected for this project
+---
+
+### Why I should be selected for this project
 
 My first experience with open source was through API Dash. Seeing what it accomplishes with Flutter really resonates with me as a Flutter enthusiast. It was a great learning experience on the importance of design and performance, especially when it comes to developer tools. 
 
