@@ -127,6 +127,7 @@ Handles:
 This acts as the core abstraction layer between raw API data and UI.
 
 **Piece 3 — The A2UI Renderer (GenUI SDK Integration)**
+
 Detects A2UI-compatible structures (UI bindings/mappings in JSON) and renders them using the GenUI Flutter SDK.
 
 *Maps JSON → widget tree using a registry pattern*
