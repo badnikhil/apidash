@@ -55,9 +55,8 @@ API Dash combines AI and APIs, and I like how it simplifies complex responses in
 
 **Can you mention some areas where the project can be improved?**
 
-1. AI API responses are raw JSON with no clear separation between reasoning, tool calls, and final output — which feels like the biggest gap.
-2. A sandbox mode to paste JSON and preview the UI would help a lot.
-3. The response history could be more visual with a timeline view for easier debugging.
+1. A sandbox mode to paste JSON and preview the UI would help a lot.
+2. The response history could be more visual with a timeline view for easier debugging.
 
 **Have you interacted with and helped the API Dash community?**
 
@@ -69,7 +68,7 @@ I haven't actively contributed yet, but I've gone through the documentation, exp
 
 ### Abstract
 
-Right now API Dash shows raw JSON for AI responses, making it hard to understand what actually happened. This project will convert those into clean visuals — like reasoning timelines or interactive UI components — with one-click export to Flutter or React code. It uses Open Responses and A2UI standards, so it works across different AI providers.
+Right now API Dash shows raw JSON for AI responses, making it hard to understand what actually happened. This project will convert those into clean visuals — like interactive UI components — with one-click export to Flutter or React code. It uses Open Responses and A2UI standards
 
 ---
 
@@ -83,53 +82,75 @@ Imagine you send a request to an AI API and it comes back with something like th
 {
   "type": "response",
   "output": [
-    { "type": "reasoning", "content": "..." },
     {
       "type": "message",
       "content": [
-        { "type": "card", "title": "Weather in Chennai" }
+        { "type": "text", "value": "Hello, user!" },
+        { "type": "button", "label": "Click Me" }
       ]
     }
   ]
 }
 ```
 
-That JSON is actually telling you: "here's my reasoning, and here's a card UI to show the result." But right now in API Dash, you just see raw text. My project makes API Dash decode it for you and show you what it actually means — visually.
+Instead of just showing this raw JSON, my project parses this and shows the respective "UI card" itself, which the end user can look and also export its code.
 
 ---
 
 ### How It Works — The Flow
 
-**Step 1** — The user sends an AI API request from API Dash using any provider (OpenAI, Gemini, or Anthropic).
+**Step 1** — The user sends an AI API request from API Dash complying Open Responses format.
 
-**Step 2** — The response comes back as JSON and the parser checks whether it is Open Responses format, A2UI format, or plain JSON.
+**Step 2** — The response comes back as JSON
 
-**Step 3** — If it is Open Responses, it is converted into a structured timeline showing reasoning, tool calls, function outputs, and final message.
+**Step 3** — If the JSON contains A2UI format bindings/mapping, then GenUI SDK for Flutter is used to render the UI components
 
-**Step 4** — If it is A2UI, it is rendered as a live interactive UI component inside API Dash — like buttons, cards, or tables.
+**Step 4** — The developer can switch between raw JSON view and visual view at any time.
 
-**Step 5** — The developer can switch between raw JSON view and visual view at any time.
-
-**Step 6** — Once satisfied, they can click Export Code to get clean Flutter or React code ready to use.
+**Step 5** — They can click Export Code to get clean Flutter/React code ready to use.
 
 ---
 
 ### The Five Pieces I Will Build
 
-**Piece 1 — The Parser**
-The core engine that reads raw JSON from the AI API and understands what it contains — reasoning, tool calls, or UI components. It validates responses using Open Responses and converts them into clean internal structures, while also supporting streaming data.
+**Piece 1 — The Request Handler (Open Responses Integration)
+**
+Implements support for sending AI API requests using the Open Responses format, ensuring structured outputs (type, output[], content[]).
+This guarantees compatibility with downstream parsing and UI rendering.
 
-**Piece 2 — The Format Detector**
-Identifies the type of response — Open Responses, A2UI, or plain JSON — so each can be handled correctly with its own rendering logic.
+**Piece 2 — The Response Parser (Structured JSON → Internal Model)
+**
+Builds a parsing layer that converts raw JSON into strongly-typed internal models (e.g., Message, Reasoning, UIComponent).
+Handles:
+*nested content[] arrays*
+*different type values (text, card, button, etc.)*
+*streaming updates (incremental parsing)*
 
-**Piece 3 — The Structured Timeline**
-For Open Responses, this creates a visual timeline instead of raw JSON, with separate cards for reasoning, tool calls, and final output, making everything easy to understand.
+This acts as the core abstraction layer between raw API data and UI.
 
-**Piece 4 — The Widget Renderer**
-For A2UI responses, this renders real UI components like buttons, cards, or tables inside API Dash using a registry that maps JSON to Flutter widgets or React elements.
+**Piece 3 — The A2UI Renderer (GenUI SDK Integration)
+**
+Detects A2UI-compatible structures (UI bindings/mappings in JSON) and renders them using the GenUI Flutter SDK.
 
-**Piece 5 — The Code Exporter**
-Lets developers export the rendered UI as clean Flutter or React code, ready to copy-paste into their own apps.
+*Maps JSON → widget tree using a registry pattern*
+*Example: {"type": "button"} → Flutter ElevatedButton*
+*Supports extensibility for new components*
+*Reference (GenUI repo): https://github.com/flutter/genui*
+
+**Piece 4 — The Dual View System (Inspector + Renderer)
+**
+Implements a split/toggle UI:
+
+*Raw View → formatted JSON with syntax highlighting*
+*Visual View → rendered widgets via GenUI*
+
+**Piece 5 — The Code Exporter (UI → Source Code)
+**
+Generates production-ready UI code from the rendered structure.
+
+*Converts internal UI tree → Flutter / React code*
+*Maintains hierarchy, props, and layout*
+*Output is copy-paste ready*
 
 ---
 
