@@ -155,22 +155,20 @@ Generates production-ready UI code from the rendered structure.
 ![System Architecture Flow](https://github.com/Syed-Abdullah-G/apidash/blob/4a9cba934fc79eac6f97777e62dc4e211f20ba95/doc/proposals/2026/gsoc/images/system_architecture_updated_flow.svg)
 
 ---
-
-### Weekly Timeline — 12 Weeks
+## 📅 Weekly Timeline — 10 Weeks
 
 | Week | Focus | What I Will Do | Deliverable |
 |------|-------|----------------|-------------|
-| Week 1 | Setup and Research | Understand Open Responses and A2UI, explore API Dash codebase | Architecture plan and notes |
-| Week 2 | Parser Core | Build a parser to read AI JSON and handle streaming responses | Working parser with tests |
-| Week 3 | Format Detection | Detect response type and handle errors safely | Reliable detection system |
-| Week 4 | Timeline UI | Design timeline view with cards for each AI step | Basic timeline UI |
-| Week 5 | Timeline Integration | Connect real API responses to the timeline | Fully working timeline |
-| Week 6 | Streaming Support | Show responses updating live as data arrives | Real-time updates |
-| Week 7 | A2UI Renderer Basics | Map JSON to basic UI components like text, button, and card | Basic UI rendering |
-| Week 8 | Advanced UI Components | Add support for tables, images, and more components | Full UI rendering support |
-| Week 9 | Code Export | Let users export UI as Flutter or React code | One-click export feature |
-| Week 10 | Simulate Mode and Split View | Add JSON sandbox and side-by-side view | Preview and testing tools |
-| Week 11 | Testing and Fixes | Test everything and fix bugs | Stable working version |
-| Week 12 | Docs and Final PR | Write docs and submit final code | Documentation and final submission |
+| Week 1 | Setup and Research | Study Open Responses format and A2UI UI-binding structure, explore API Dash codebase and response flow | Clear architecture plan and integration points |
+| Week 2 | Open Responses Request Handler | Implement sending all AI API requests using Open Responses format in API Dash | Working Open Responses request pipeline |
+| Week 3 | A2UI Detection Layer | Detect presence of A2UI UI bindings/mappings within Open Responses JSON | Reliable A2UI detection system |
+| Week 4 | A2UI Mapping | Extract and normalize A2UI UI bindings into a format usable by the rendering layer | Structured A2UI mapping ready for rendering |
+| Week 5 | GenUI Renderer (Basics) | Integrate GenUI Flutter SDK to convert A2UI mappings into basic interactive UI (text, button, card) | Basic real-time UI rendering |
+| Week 6 | Advanced UI Rendering | Support complex UI components and layouts (lists, images, structured cards) via GenUI | Full interactive UI rendering support |
+| Week 7 | Dual View System | Implement toggle between raw Open Responses JSON and rendered UI view | Seamless JSON ↔ UI switch |
+| Week 8 | Code Exporter | Generate clean Flutter/React code from rendered UI (based on A2UI mappings) | Working export feature |
+| Week 9 | Streaming / Real-time Updates | Show responses updating live as data arrives | Real-time UI updates |
+| Week 10 | Testing and Refinement | Test full pipeline (Open Responses → A2UI → GenUI render → export), fix bugs | Stable and polished system |
 
+> **Weeks 11–12:** Reserved for additional open-source best practices, documentation, cleanup, and final project polishing.
 > I planned 12 weeks instead of 10 to allow extra time for testing and documentation, ensuring everything is stable and well-polished.
