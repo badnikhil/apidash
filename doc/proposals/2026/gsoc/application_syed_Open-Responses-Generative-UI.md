@@ -113,13 +113,11 @@ Instead of just showing this raw JSON, my project parses this and shows the resp
 
 ### The Five Pieces I Will Build
 
-**Piece 1 — The Request Handler (Open Responses Integration)
-**
+**Piece 1 — The Request Handler (Open Responses Integration)**
 Implements support for sending AI API requests using the Open Responses format, ensuring structured outputs (type, output[], content[]).
 This guarantees compatibility with downstream parsing and UI rendering.
 
-**Piece 2 — The Response Parser (Structured JSON → Internal Model)
-**
+**Piece 2 — The Response Parser (Structured JSON → Internal Model)**
 Builds a parsing layer that converts raw JSON into strongly-typed internal models (e.g., Message, Reasoning, UIComponent).
 Handles:
 *nested content[] arrays*
@@ -128,8 +126,7 @@ Handles:
 
 This acts as the core abstraction layer between raw API data and UI.
 
-**Piece 3 — The A2UI Renderer (GenUI SDK Integration)
-**
+**Piece 3 — The A2UI Renderer (GenUI SDK Integration)**
 Detects A2UI-compatible structures (UI bindings/mappings in JSON) and renders them using the GenUI Flutter SDK.
 
 *Maps JSON → widget tree using a registry pattern*
@@ -137,15 +134,13 @@ Detects A2UI-compatible structures (UI bindings/mappings in JSON) and renders th
 *Supports extensibility for new components*
 *Reference (GenUI repo): https://github.com/flutter/genui*
 
-**Piece 4 — The Dual View System (Inspector + Renderer)
-**
+**Piece 4 — The Dual View System (Inspector + Renderer)**
 Implements a split/toggle UI:
 
 *Raw View → formatted JSON with syntax highlighting*
 *Visual View → rendered widgets via GenUI*
 
-**Piece 5 — The Code Exporter (UI → Source Code)
-**
+**Piece 5 — The Code Exporter (UI → Source Code)**
 Generates production-ready UI code from the rendered structure.
 
 *Converts internal UI tree → Flutter / React code*
