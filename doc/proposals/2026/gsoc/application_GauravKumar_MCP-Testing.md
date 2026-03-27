@@ -22,42 +22,44 @@
 Short answers to the following questions (Add relevant links wherever you can):
 
 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
+
 Yes, earlier I have worked on API DASH which is a FOSS project here is my links of contributions to API DASH -
+
 https://github.com/foss42/apidash/issues/1021#issuecomment-3757801171
-https://github.com/foss42/apidash/issues/1363#issuecomment-4093068441
-https://github.com/foss42/apidash/issues/1382#issuecomment-4108232229
+https://github.com/foss42/apidash/pull/1380
+https://github.com/foss42/apidash/pull/1413
 
 
-2. What is your one project/achievement that you are most proud of? Why?
+3. What is your one project/achievement that you are most proud of? Why?
 If I have to decide one project that I'm most proud of then it will be GlimpseIO. When I first came to college I mostly use to go to library and badmintion court initially becuase I like coding and plaing badmintion that time but going to library  with my Nitro 5 and coming back to my room just after realizing the library was closed feels me very tired and wasting of time specially when it's afternoon and same for the badmintion going to the court and waiting for my turn feels me like hope so I came at this time so I have to wait less and enjoy more the gameplay.
 Then, I made GlimpseIO (Glimpse means at the moment and IO means In and Out) and the aim was straight forward know about any place before you go there. How it's was working- I stick a QR code on the library gate so when the gatekeeper comes and open the library he scan the qr code and the update changes to Library Open with timestamp and when it's closes they scan again and it automatically detect the timestamp and mark as Library Closed. Same happend for Badmintion when somebody was playing they scan the QR and it automatically detect the badmintion QR and mark as Already occupied and so on.
 Later I did same thing for Cafeteria where each worker has assigned to their QR code and they update about the meal stocks, capacity of the Cafeteria, and everything that was possible to do and felt important at that moment.
 Now almost everyone from my class started using GlimpseIO and others loved it too and then I added support to get notified via Whatsapp and started adding more busy places where the integration was essential.
 And, a day my professor saw the QR code as I had sticked on the gate of Cafeteria and he contacted me & said how you got this idea? This is an amazing work you have done Gaurav! since I was in first year that time he appreciated me to solve a real problem almost everyone was facing. They also offered me to upgrade it and automate with integrating IOT, and AI.and Yes! this Glimpse moment I will never forget.
 
-3. What kind of problems or challenges motivate you the most to solve them?
+4. What kind of problems or challenges motivate you the most to solve them?
 Mostly, I like to solve those problems which I start to face repeatively again and again. I try to fix it by iterating suitable approaches and researching on exisitin solution if any exit on the internet.
 For eg. currently, I'm working with a automatic smart BIN system that catches any garbage by sensing your hand gesture.
 I'm working with a team and we're trying to make it helpful for lazy peoples, and also adding humour to the BIN to make it playful.
 So, I like to solve these types of problems which can help others and make their day better.
 
-4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
+5. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
 Yes! I will be working on GSoC full-time however I maybe limited to work for a week of two due to my university semester exams.
 
-5. Do you mind regularly syncing up with the project mentors?
+6. Do you mind regularly syncing up with the project mentors?
 Not at all, I will love to connect with them and ask for any feedbacks and helps I needed during those time.
 
-6. What interests you the most about API Dash?
+7. What interests you the most about API Dash?
 For me API Dash is not just like another API testing platform as I learned alot during my contributions and exploration of this project and It made understand alot things I never aware of like playing a video in the API DASH and get to know why the app crashed last time and why not this time in flutter, get to know MIME pkg, Possibilities of ASCII values in indentifying the binary file types and list goes on. My first issue I raised was #1021 in API DASH.
 
-7. Can you mention some areas where the project can be improved?
+8. Can you mention some areas where the project can be improved?
 I think following areas can improve API DASH and make it more interesting.
 -Adding a how to use Guide for begineers.
 -Adding a feature to compare multiple previous API calls.
 -Adding a Response Previewer for Binary or Unknown file type.
 -Adding a console to fetch and shows logs in the UI.
 
-8. Have you interacted with and helped API Dash community? (GitHub/Discord links)
+9. Have you interacted with and helped API Dash community? (GitHub/Discord links)
 https://github.com/foss42/apidash/issues/1021#issuecomment-3757801171
 https://github.com/foss42/apidash/issues/1363#issuecomment-4093068441
 https://github.com/foss42/apidash/issues/1382#issuecomment-4108232229
