@@ -96,6 +96,8 @@ Imagine you send a request to an AI API and it comes back with something like th
 Instead of just showing this raw JSON, my project parses this and shows the respective "UI card" itself, which the end user can look and also export its code.
 
 ---
+# Detailed Description
+---
 
 ### How It Works — The Flow
 
@@ -155,6 +157,52 @@ Generates production-ready UI code from the rendered structure.
 ![System Architecture Flow](https://github.com/Syed-Abdullah-G/apidash/blob/4a9cba934fc79eac6f97777e62dc4e211f20ba95/doc/proposals/2026/gsoc/images/system_architecture_updated_flow.svg)
 
 ---
+My Research
+---
+For this case, I forked the official [genui flutter repo](https://github.com/flutter/genui) and did the following :
+
+*1. Made requests to be made using Open Responses specification*
+
+*2. Modified the internal code to support Open Responses Specification*
+
+*3. Carefully Understood the full codebase and UI-component rendering process*
+
+# AiClient()
+This is the class that contains sendStream(prompt, history)
+
+![AiClient](https://github.com/Syed-Abdullah-G/apidash/blob/6388d878dd7368511394ca003a00a10b1c1ab809/doc/proposals/2026/gsoc/images/ai_client.png)
+
+# DartanticAiClient
+This is the flutter/dart specific implementation present in the *genui* repo
+
+![DartanticAiClient](https://github.com/Syed-Abdullah-G/apidash/blob/6388d878dd7368511394ca003a00a10b1c1ab809/doc/proposals/2026/gsoc/images/dart-based-ai-client.png)
+
+which I have modified into using the *Open Responses* specification as below :
+
+![OpenResponses](https://github.com/Syed-Abdullah-G/apidash/blob/6388d878dd7368511394ca003a00a10b1c1ab809/doc/proposals/2026/gsoc/images/open%20responses%20ai%20client.png)
+
+
+This is how the AiClient() gets connected to the ChatSession class, it is done throught the AiClientTransport()
+
+![ChatSession](https://github.com/Syed-Abdullah-G/apidash/blob/f29d1ee14ede1b48704d10351d8339f0be541d06/doc/proposals/2026/gsoc/images/chatsession%20and%20aiclient%20connection.png)
+
+inside ChatSession there is _init() method, which specifies state and event management, it listens for incoming events and performs the respective operation.
+
+![initmethod](https://github.com/Syed-Abdullah-G/apidash/blob/f29d1ee14ede1b48704d10351d8339f0be541d06/doc/proposals/2026/gsoc/images/initi%20method%20.png)
+
+# The UI Side
+On the app home screen there is a textcontroller and submit button at the bottom, in which prompt shall be given.
+
+![submit_button](https://github.com/Syed-Abdullah-G/apidash/blob/f29d1ee14ede1b48704d10351d8339f0be541d06/doc/proposals/2026/gsoc/images/textfield%20submit%20button.png)
+
+the _sendMessage() method calls the conversation.sendRequest(message), which send flow to the _init() method that checks the incoming response and performs the required operation
+
+
+# How normal vs UI responses are rendered
+This is done using the Surface() method, which looks if the respones has "surfaceId" then it uses the Surface() method to render those UI components, also for normal responses- the method just shows the message as a text.
+
+![surface_rendering](https://github.com/Syed-Abdullah-G/apidash/blob/f29d1ee14ede1b48704d10351d8339f0be541d06/doc/proposals/2026/gsoc/images/surface%20message%20renderer.png)
+
 ## 📅 Weekly Timeline — 10 Weeks
 
 | Week | Focus | What I Will Do | Deliverable |
@@ -173,5 +221,5 @@ Generates production-ready UI code from the rendered structure.
 > **Weeks 11–12:** Reserved for additional open-source best practices, documentation, cleanup, and final project polishing.
 > I planned 12 weeks instead of 10 to allow extra time for testing and documentation, ensuring everything is stable and well-polished.
 
-## My PoC
+## My PoC Video
 [![Watch the video](https://img.youtube.com/vi/Hs0ZgFOqBRk/0.jpg)](https://youtu.be/Hs0ZgFOqBRk)
