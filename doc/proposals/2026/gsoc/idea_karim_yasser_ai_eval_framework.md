@@ -133,8 +133,11 @@ To prove the technical feasibility of this architecture, **I have already built 
 - **The MVP Repository** validates the zero-config `SQLite` tracking, the `FastAPI` orchestration, and the `Flutter` frontend currently communicating via **Server-Sent Events (SSE)** streams.
 - During GSoC, the goal is not to "prototype," but to fully mature this MVP into a production-ready, standalone AI evaluation platform. We will deepen the SSE integration using API Dash's native `better_networking` architecture, wrap standard benchmarks (`lm-harness`, `lighteval`), introduce a dedicated **Agent Trace Viewer**, and—most crucially—extend the evaluation pipeline from text-only to **image and audio modalities** as first-class citizens.
 
-> **[MVP Demonstration Video — Link Pending](#)**
-> _A short video walkthrough will be linked here demonstrating the end-to-end MVP flow: configuring an API provider, launching a dataset evaluation, observing SSE log streaming, and viewing the final metrics._
+
+> **[MVP Demonstration Video](https://github.com/user-attachments/assets/f2740e60-8feb-4904-aabe-5a292b989fbd)**
+
+https://github.com/user-attachments/assets/f2740e60-8feb-4904-aabe-5a292b989fbd
+> *A short video walkthrough demonstrating the end-to-end MVP flow: configuring an API provider, launching a dataset evaluation, observing SSE log streaming, and viewing the final metrics.*
 
 ### **5.3 Integration Strategy: Why Native Flutter Beats Web-Wrappers**
 
