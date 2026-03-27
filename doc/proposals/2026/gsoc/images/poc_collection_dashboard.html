@@ -1,0 +1,194 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,sans-serif}
+body{background:#f1f5f9;display:flex;align-items:center;justify-content:center;height:100vh}
+.app{display:flex;width:1100px;height:750px;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.05)}
+
+/* Rail Styles */
+.rail{width:68px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:8px;flex-shrink:0}
+.rb{width:56px;height:56px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all 0.2s}
+.rb:hover{background:#f8fafc}
+.rb.active{background:#fff}
+.rb svg{width:20px;height:20px;stroke:#64748b;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.rb.active svg{stroke:#2563eb}
+.rb.active.logo-btn svg { fill: #2563eb; stroke: #2563eb; }
+.rb span{font-size:10px;color:#64748b;font-weight:500}
+.rb.active span{color:#2563eb}
+.rsp{flex:1}
+
+/* Sidebar (Requests Panel) Styles */
+.sidebar{width:260px;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;background:#fff;flex-shrink:0}
+.st{padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f1f5f9}
+.st .save-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:#94a3b8;background:none;border:none;cursor:pointer;font-weight:500}
+.st .save-btn svg{width:16px;height:16px;stroke:currentColor}
+.st .new-btn{margin-left:auto;padding:6px 14px;font-size:13px;border-radius:20px;border:1px solid #e2e8f0;background:#fff;color:#2563eb;font-weight:600;display:flex;align-items:center;gap:4px;cursor:pointer;transition:all 0.2s}
+.st .new-btn:hover{background:#f8fafc;border-color:#cbd5e1}
+.st .more-btn{padding:4px;color:#94a3b8;cursor:pointer}
+
+.sf{padding:10px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px}
+.sf-inner{position:relative;flex:1}
+.sf-inner svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:#94a3b8}
+.sf input{width:100%;padding:8px 10px 8px 32px;font-size:13px;border:1px solid #f1f5f9;border-radius:8px;background:#f8fafc;color:#1e293b;outline:none}
+.sf input::placeholder{color:#cbd5e1}
+
+.rl{flex:1;overflow-y:auto;padding:8px}
+.ri{display:flex;align-items:center;gap:10px;padding:10px 12px;font-size:14px;color:#1e293b;border-radius:8px;cursor:pointer;transition:all 0.2s}
+.ri:hover{background:#f8fafc}
+.ri.active{background:#eff6ff}
+.ri .mt{font-size:10px;font-weight:700;min-width:32px}
+.ri .more-item{margin-left:auto;opacity:0;transition:opacity 0.2s;color:#94a3b8}
+.ri:hover .more-item{opacity:1}
+
+.get{color:#059669}.post{color:#d97706}.put{color:#2563eb}.del{color:#dc2626}
+
+.main{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;background:#fff}
+/* Keep other main styles but refine slightly */
+.page-title{font-size:18px;font-weight:600;color:#0f172a}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi{background:#fff;border:1px solid #f1f5f9;border-radius:12px;padding:16px}
+.kl{font-size:12px;color:#64748b;margin-bottom:8px}
+.kv{font-size:24px;font-weight:600;color:#0f172a}
+.kd{font-size:11px;margin-top:6px}
+.up{color:#10b981}.dn{color:#ef4444}.neu{color:#94a3b8}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:#fff;border:1px solid #f1f5f9;border-radius:12px;padding:20px}
+.ct{font-size:14px;font-weight:600;color:#0f172a;margin-bottom:16px}
+.act-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #f8fafc;font-size:13px}
+</style>
+<div class="app">
+  <div class="rail">
+    <div class="rb active logo-btn">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor"/><path d="M9 4v16M15 4v16" stroke="#fff"/></svg>
+      <span>Requests</span>
+    </div>
+    <div class="rb">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6.5 2v20"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h6"/></svg>
+      <span>Variables</span>
+    </div>
+    <div class="rb">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>History</span>
+    </div>
+    <div class="rb">
+      <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span>Logs</span>
+    </div>
+    <div class="rsp"></div>
+    <div class="rb">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="rb">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="st">
+      <button class="save-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v13a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save
+      </button>
+      <button class="new-btn"><span>+</span> New</button>
+      <div class="more-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </div>
+    </div>
+    <div class="sf"><input placeholder="Filter by name or url"></div>
+    <div class="rl">
+      <div class="ri"><span class="mt post">POST</span> Auth Token</div>
+      <div class="ri"><span class="mt get">GET</span> Get User</div>
+      <div class="ri"><span class="mt get">GET</span> List Orders</div>
+      <div class="ri"><span class="mt put">PUT</span> Update Order</div>
+      <div class="ri"><span class="mt del">DEL</span> Delete Item</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="page-title">Collection Dashboard — Payment API</div>
+
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi"><div class="kl">Total Requests</div><div class="kv">1,284</div><div class="kd up">↑ 12% this week</div></div>
+      <div class="kpi"><div class="kl">Avg Response</div><div class="kv">143ms</div><div class="kd up">↓ 18ms faster</div></div>
+      <div class="kpi"><div class="kl">Success Rate</div><div class="kv">96.4%</div><div class="kd dn">↓ 1.2% vs last</div></div>
+      <div class="kpi"><div class="kl">Environments</div><div class="kv">3</div><div class="kd neu">dev · staging · prod</div></div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="charts">
+      <!-- Response time trend -->
+      <div class="card">
+        <div class="ct">Response time trend (ms)</div>
+        <svg viewBox="0 0 260 90" width="100%">
+          <defs><linearGradient id="af" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.15"/><stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/></linearGradient></defs>
+          <polygon points="10,78 50,62 90,70 130,44 170,54 210,36 250,40 250,86 10,86" fill="url(#af)"/>
+          <polyline points="10,78 50,62 90,70 130,44 170,54 210,36 250,40" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="250" cy="40" r="3" fill="#3b82f6"/>
+          <text x="10"  y="86" style="font-size:9px;fill:#94a3b8">Mon</text>
+          <text x="88"  y="86" style="font-size:9px;fill:#94a3b8">Wed</text>
+          <text x="168" y="86" style="font-size:9px;fill:#94a3b8">Fri</text>
+          <text x="238" y="86" style="font-size:9px;fill:#94a3b8">Sun</text>
+          <text x="10" y="10" style="font-size:9px;fill:#94a3b8">300ms</text>
+          <text x="10" y="50" style="font-size:9px;fill:#94a3b8">150ms</text>
+          <line x1="36" y1="8" x2="252" y2="8" stroke="#f1f5f9" stroke-width="0.5"/>
+          <line x1="36" y1="46" x2="252" y2="46" stroke="#f1f5f9" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <!-- Status pie -->
+      <div class="card">
+        <div class="ct">Status code distribution</div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <svg viewBox="0 0 100 100" width="90" height="90">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#22c55e" stroke-width="22" stroke-dasharray="150 89" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#ef4444" stroke-width="22" stroke-dasharray="23 216" stroke-dashoffset="-150" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#f59e0b" stroke-width="22" stroke-dasharray="16 223" stroke-dashoffset="-173" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="22" fill="#fff"/>
+            <text x="50" y="47" text-anchor="middle" style="font-size:11px;font-weight:600;fill:#0f172a">96.4%</text>
+            <text x="50" y="58" text-anchor="middle" style="font-size:8px;fill:#94a3b8">success</text>
+          </svg>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:2px;background:#22c55e"></div><span style="font-size:11px;color:#374151">2xx · 1,238</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:2px;background:#ef4444"></div><span style="font-size:11px;color:#374151">4xx · 34</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:10px;height:10px;border-radius:2px;background:#f59e0b"></div><span style="font-size:11px;color:#374151">5xx · 12</span></div>
+    </div>
+    <div class="rl">
+      <div class="ri active">
+        <span class="mt get">GET</span>
+        <span class="name">untitled</span>
+        <div class="more-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Method + Activity row -->
+    <div class="charts">
+      <div class="card">
+        <div class="ct">Method distribution</div>
+        <svg viewBox="0 0 240 80" width="100%">
+          <rect x="0" y="8"  width="152" height="16" rx="3" fill="#16a34a" opacity="0.85"/>
+          <text x="158" y="18" dominant-baseline="central" style="font-size:11px;fill:#374151">GET · 63%</text>
+          <rect x="0" y="32" width="87"  height="16" rx="3" fill="#d97706" opacity="0.85"/>
+          <text x="93"  y="42" dominant-baseline="central" style="font-size:11px;fill:#374151">POST · 36%</text>
+          <rect x="0" y="56" width="7"   height="16" rx="3" fill="#4338ca" opacity="0.85"/>
+          <text x="13"  y="66" dominant-baseline="central" style="font-size:11px;fill:#374151">PUT · 1%</text>
+        </svg>
+  </div>
+      <div class="card">
+        <div class="ct">Recent activity</div>
+        <div class="act-row"><div class="sd s2"></div><span style="flex:1;color:#374151">POST /auth</span><span style="color:#94a3b8;font-size:11px">200 · 142ms · 2m</span></div>
+        <div class="act-row"><div class="sd s4"></div><span style="flex:1;color:#374151">GET /orders/99</span><span style="color:#94a3b8;font-size:11px">404 · 5m</span></div>
+        <div class="act-row"><div class="sd s2"></div><span style="flex:1;color:#374151">GET /users/me</span><span style="color:#94a3b8;font-size:11px">200 · 88ms · 8m</span></div>
+        <div class="act-row"><div class="sd s5"></div><span style="flex:1;color:#374151">PUT /orders/12</span><span style="color:#94a3b8;font-size:11px">200 · 512ms · 12m</span></div>
+      </div>
+    </div>
+
+    <!-- Webhook -->
+    <div class="card" style="display:flex;align-items:center;gap:10px">
+      <div style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:500;color:#0f172a">Webhook — Slack #api-alerts</div>
+        <div style="font-size:11px;color:#94a3b8">Active · Last sent 2 min ago</div>
+      </div>
+      <button style="padding:4px 12px;font-size:11px;background:#1d4ed8;color:#fff;border:none;border-radius:5px;cursor:pointer">Configure</button>
+    </div>
+  </div>
+</div>
