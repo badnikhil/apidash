@@ -112,7 +112,7 @@
 
     ## Architecture
 
-    ![Eval Framework Architecture](../../images/eval_framework_architecture.png)
+    ![Eval Framework Architecture](images/eval_framework_architecture.png)
     
 
     **Deliverable 1 — Benchmark Runner UI**
