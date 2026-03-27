@@ -30,7 +30,7 @@ Not yet in terms of merged PRs, but I've been going through the API Dash codebas
 
 **2. What is your one project/achievement that you are most proud of? Why?**
 
-A Python-based automation tool I built that translates Korean web novels, formats chapters, and compiles them into Google Docs, then sends an email notification once the process completes. I focused on making the workflow reliable by handling failures in translation and document updates. This project helped me understand automation pipelines and API integrationsall of which are directly relevant to this project.
+A Python-based automation tool I built that translates Korean web novels, formats chapters, and compiles them into Google Docs, then sends an email notification once the process completes. I focused on making the workflow reliable by handling failures in translation and document updates. This project helped me understand automation pipelines and API integrations — all of which are directly relevant to this project.
 
 Project link: https://github.com/farheenimam/n8n-automations
 
@@ -56,7 +56,7 @@ The main gap is that API Dash only works through the GUI. You can't run a collec
 
 **8. Have you interacted with and helped the API Dash community? (GitHub/Discord links)**
 
-Yes, I've joined the API Dash Discord, introuduced myself, also joined the weekly connect and have been reading through the #gsoc-foss-apidash channel to follow ongoing discussions. I went through the 2026 ideas thread. 
+Yes, I've joined the API Dash Discord, introduced myself, also joined the weekly connect and have been reading through the #gsoc-foss-apidash channel to follow ongoing discussions. I went through the 2026 ideas thread.
 I'm working on my first GitHub contribution (link to be added once the PR is up).
 
 ---
@@ -86,14 +86,11 @@ The diagram below shows how everything fits together. Both the CLI and MCP serve
 
 #### CLI Tool
 
-A Dart executable (`bin/apidash.dart`) built using the `args` package.
+A Dart executable (`bin/apidash.dart`) built using the `args` package. All flags support both long and short forms — for example `--lang` / `-l`, `--id` / `-i`, `--env` / `-e`, `--collection` / `-c` — to keep terminal use fast.
 
 ```
-list                                  # list all saved requests and collections
-send --id <id> [--env <name>]         # send a single saved request
-run  --collection <name>              # run all requests in a collection or folder
-codegen --id <id> --lang <language>   # output integration code to stdout
-mcp --start                            # start the MCP server over stdio
+-http [METHOD] -post [URL] -k=[API_KEY] -lang=[LANG]   # send a request and generate code
+-logs                                                  # show request logs
 ```
 
 Sample output — `apidash run`:
@@ -112,23 +109,28 @@ Exit code `1` on any failure makes it usable directly in GitHub Actions and othe
 
 **On storage:** API Dash persists data locally using Hive. The CLI will attempt to initialise the same store via `Hive.init(path)`, this works in pure Dart without Flutter bindings. If any part of the existing box setup is tied to Flutter's app lifecycle, a thin shared storage abstraction will be introduced so both the GUI and CLI read from the same data. This will be confirmed with mentors during the bonding period.
 
-**On request IDs:** The `--id` flag refers to the internal identifiers API Dash already assigns to each saved request. Running `apidash list` displays these IDs so users know what to pass.
+**On request IDs:** The `--id` / `-i` flag refers to the internal identifiers API Dash already assigns to each saved request. Running `apidash list` displays these IDs so users know what to pass.
 
 **On collections:** API Dash already organises requests into collections and folders. The `run` command works on these existing groupings, no new data structures needed.
 
-**On code generation:** `apidash_core` already has well-tested generators for Python, JavaScript, Dart, Kotlin, cURL, HAR, and more. The `codegen` command calls these directly and prints to stdout.
+**On code generation:** `apidash_core` already has well-tested generators for Python, JavaScript, Dart, Kotlin, cURL, HAR, and more. The `codegen` command calls these directly and prints to stdout. The language is specified via `--lang` / `-l` (e.g. `-l=python`, `-l=javascript`).
 
 **On error handling:** The CLI will handle network errors, invalid IDs, and malformed requests gracefully, clear error messages printed to stderr and non-zero exit codes so scripts and CI pipelines can detect failures reliably.
 
 **On testing:** Unit tests will cover each CLI command and MCP tool handler. Integration tests will cover end-to-end request execution using real HTTP calls.
 
-**Extended CLI features:** Users can filter output (body, headers, full), select environments, save responses to files, and enable verbose logging. These options make the CLI flexible for both scripting and interactive use.
-
-#### Mock ups of 
+#### Mockups
+Basic request — no code generation:
 ![cli_mockup_image1.png](images/mockup_images_farheen/cli_mockup_image1.png)
-![cli_mockup_image1.png](images/mockup_images_farheen/cli_mockup_image2.png)
-![cli_mockup_image1.png](images/mockup_images_farheen/cli_mockup_image3.png)
-![cli_mockup_image1.png](images/mockup_images_farheen/cli_mockup_image4.png)
+Request with code generation:
+![cli_mockup_image2.png](images/mockup_images_farheen/cli_mockup_image2.png)
+POST request with API key and JavaScript code gen:
+![cli_mockup_image3.png](images/mockup_images_farheen/cli_mockup_image3.png)
+View logs after running a few requests:
+![cli_mockup_image4.png](images/mockup_images_farheen/cli_mockup_image4.png)
+Help command:
+![cli_mockup_image4.png](images/mockup_images_farheen/cli_mockup_image5.png)
+
 
 ---
 
@@ -142,15 +144,12 @@ The MCP server runs over stdio, the standard transport used by VS Code Copilot, 
 
 Registered tools:
 
-| Tool              | Description                                                                                                                                                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `send_request`    | Send a **saved request** by ID. Returns status code, headers, and body.                                                                                                                                             |
-| `run_collection`  | Run all requests in a named collection or folder. Returns pass/fail per request.                                                                                                                                    |
-| `list_requests`   | List saved requests, optionally filtered by collection.                                                                                                                                                             |
-| `generate_code`   | Output integration code in any language API Dash already supports.                                                                                                                                                  |
-| `ai_send_request` | An AI agent describes a request in plain English (new or unsaved API request). The tool creates a dynamic `HttpRequestModel` and sends it via `apidash_core`. Returns status code, headers, and body. |
-
-> **Note:** The `ai_send_request` tool allows testing **new API endpoints** without manually saving them in API Dash first. This is an **enhancement feature** and is only implemented if core MCP work (handling saved requests and collections) finishes ahead of schedule.
+| Tool | Description |
+|------|-------------|
+| `send_request` | Send a saved request by ID. Returns status code, headers, and body. |
+| `run_collection` | Run all requests in a named collection or folder. Returns pass/fail per request. |
+| `list_requests` | List saved requests, optionally filtered by collection. |
+| `generate_code` | Output integration code in any language API Dash already supports. |
 
 Other transports (SSE, HTTP) are out of scope for this 90-hour project and can be added later.
 
@@ -206,14 +205,17 @@ lib/
       run_collection_tool.dart
       list_requests_tool.dart
       generate_code_tool.dart
-      ai_send_request_tool.dart     ← dynamic request creation from English
+      ai_send_request_tool.dart     ← stretch goal only
 ```
+
+All new files only. No existing files in `lib/`, `packages/apidash_core/`, or the GUI are modified.
 
 ---
 
 #### Stretch Goals (if time allows)
 
-* SSE transport for the MCP server.
+- `ai_send_request` MCP tool — an agent describes a new API request in plain English, the tool creates a dynamic `HttpRequestModel` and sends it via `apidash_core`. Only attempted if core work finishes ahead of schedule.
+- SSE transport for the MCP server.
 
 ---
 
