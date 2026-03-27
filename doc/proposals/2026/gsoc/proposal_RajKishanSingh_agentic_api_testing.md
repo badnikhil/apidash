@@ -7,7 +7,7 @@ Contact info :
 
 Time Zone : Kolkata/Asia (IST)
 
-Univsersity info :
+University info :
 1. Name : Kalinga Institute of Industrial Technology
 2. Program : Bachelors in Technology - Computer Science
 3. First year student
@@ -35,7 +35,7 @@ Observe the API response → Assert + Extract from the response → Chain into n
 ### Details on the stages:
 #### Stage 1 — Selectors : 
 There will be **selectors** that will point at parts of an API response using JSONPath, regex, header name, body size, or status code. 
-The selectors will server two purposes simultaneously: 
+The selectors will serve two purposes simultaneously: 
 1. To evaluate assertion rules to validate the response is correct and mark it Pass/Fail.
 2. To extract the values required for 2nd stage.
 
@@ -286,7 +286,7 @@ exact schema:
 ---
 ````
 
-APIDash parses it and renders the suggestion to the UI. We won't show the promt, just the result.
+APIDash parses it and renders the suggestion to the UI. We won't show the prompt, just the result.
 
 ---
 
@@ -449,7 +449,7 @@ The basic steps for assertion generation are :
 4. Render in UI
 
 Failure explanation:
-AI gets more more context here than just response.
+AI gets more context here than just response.
 There are 4 steps in this method :
 1. Build context payload
 2. Build prompt
