@@ -176,3 +176,5 @@ Complete documentation, demo video, and final UI adjustments. Prepare the final 
 
 ![Console](images/console-mcpdash.png)
 
+Demo Video on YouTube- https://youtu.be/HfXrkBhgQmc
+
