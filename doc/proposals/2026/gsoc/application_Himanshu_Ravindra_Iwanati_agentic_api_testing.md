@@ -153,6 +153,8 @@ The system is composed of six coordinated components:
 | `SelfHealingEngine` | Detects schema drift, classifies severity, auto-patches compatible changes, and escalates breaking changes for human review |
 | `ReportGenerator` | Produces JSON, HTML, and Markdown reports for CI/CD and documentation integration |
 
+![Workflow](images/hihry_workflow.png)
+
 ##### 3.2.2 Data Flow
 
 | Flow | Data | Purpose |
