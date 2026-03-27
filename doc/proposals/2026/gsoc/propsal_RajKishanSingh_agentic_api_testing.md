@@ -378,11 +378,8 @@ Create this chain?  [Yes] [Edit] [Cancel]
 Once Yes is clicked, a 5-step chain with extraction rules is created. 
 
 ---
-
-The three parts will actually form a loop:
-```
+Three parts will actually form a loop:
 1. Send request
-        ↓
 2. AI Assertion Generation
    → proposes assertions based on response
         ↓
@@ -403,7 +400,82 @@ The three parts will actually form a loop:
 9. Run chain → assertions gate each step
         ↓
    Back to step 4 if anything fails
-```
+
+
+## Weekly Timeline of this Project 
+
+---
+### Week 1 & 2 - Build a selector model.
+Week 1 will be mainly focused on building the selector model, that either extracts a value, or checks a condition against the API response.
+This will contain 5 steps
+1. Data model - Creating a selector class. This class will contain multiple selector type such as 'regex', 'header', 'response_time' etc.
+2. Value resolver - Writing the core function of the model.
+3. Assertion evaluator - Check if the value is matching the expected value (pass or fail)
+4. Extractor - Resolved value is stored into a runtime variable.
+5. AssertionGroup Wrapper - Wraps multiple selectors into a group with AND/OR Logic.
+
+Besides building the logic, work will also be done on building the UI panel in APIDash for attaching assertion groups to a request.
+
+### Week 3 & 4 - Building WorkFlow Engine Skeleton.
+This week will mainly consist of building Workflow Engine skeleton.
+Workflow engine is a *sequential runner* that processes a chain of requests one by one, with gates between each step.
+There are total 6 steps in this:
+1. Input - takes an ordered lists of requests.
+2. Main Loop - iterates through each step in order. For every step it resolves variables, sends the requests, runs selectors on response, etc.
+3. Variable injection - before each request is sent, {{VAR}} placeholders in URL are substituted from the current variable store.
+4. Failure get - any failure in the chain will either stop the chain, skip the next step or logs the failure and continues.
+5. Run record - after each step, record is written which contains the history of the request (type, response, assertion results etc.)
+6. Output - once all steps are finished, full list of step records is displayed in the UI
+
+### Week 5 - Building a Spec System using OpenAPI 3.1 Spec Engine
+This week will focus on building a *spec generator* that will, after every run, open a document in JSON or YAML that reflects what the API actually does
+There is also spec gap detector that scans the collection and flags any endpoint that has never contributed a response to the spec.
+Here are key things to be built :
+1. Response Collector - pull raw response bodies out of run history.
+2. Schema Inferencer - Takes a single JSON response body and walks through every field inferring its type.
+3. Schema Merger - Takes freshly inferred schema and merges it into accumulated schema stored from previous runs.
+4. Example Value Updater - Overwrite stored example with latest data acquired.
+5. OpenAPI 3.1 Document Builder - Takes accumulated schema and makes a valid OpenAPI 3.1 structure.
+6. Spec-gap detector - scan collection for every endpoint present. Any endpoint in collection not present in spec gets flagged as a gap.
+7. Persistence - Store it on APIDash's local storage after every merge.
+
+### Week 6 - AI assist in assertion generation & failure explanation
+In this week, assertion generation and failure explanation will be prioritized using AI assistance.
+Assertion generation : The trigger is the moment a response is recieved from any request. AI will have all it needs - status code, headers etc.
+The basic steps for assertion generation are :
+1. Build prompt
+2. Call LLM
+3. Parse and validate
+4. Render in UI
+
+Failure explanation:
+AI gets more more context here than just response.
+There are 4 steps in this method :
+1. Build context payload
+2. Build prompt
+3. Call the LLM
+4. Render in UI
+
+The only difference between these two methods is what context goes in and what structure comes out.
+
+### Week 7 - Request Chain builder and Spec exporting.
+This week will focus on building request chain and exporting spec.
+
+Request chain will be built using Natural Language
+1. Take user's plain english input and all endpoints from all the collection.
+2. Send both to the LLM and ask it to map workflow onto the real endpoints.
+3. Parse the returned chain config, order, extractions rules etc.
+4. Show the preview to the user. (Render in UI)
+
+Exporting spec is quite simple
+1. Using the spec system that was built, serialise the OpenAPI 3.1 structure into YAML or JSON
+2. Let the user download or copy the file
+
+### Week 8 - Testing all the things that have been implemented
+1. Full integration tests against real-world APIs
+2. Handling edge cases such as *circular variable references*, *empty/malformed responses*, LLM API failures etc.
+3. Bug fixes
+
 
 
 **THAT'S ALL FOLKS!!**
