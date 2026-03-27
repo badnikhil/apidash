@@ -155,6 +155,12 @@ The system is composed of six coordinated components:
 
 ![Workflow](images/hihry_workflow.png)
 
+The Agentic API Testing system transforms **static API specifications into dynamic, intelligent test suites** through a multi-stage pipeline. Upon specification ingestion, the **SpecParser** normalizes diverse formats into a unified **AgentTask graph**—a directed acyclic graph representing API operations, their dependencies, and data flows.
+
+The **TestStrategyPlanner** then operates on this graph as a planning problem. Using an LLM with tool-calling capabilities, it generates **test strategies** for each operation considering: happy path validation, boundary value analysis, equivalence class partitioning, error injection, security testing, and performance baseline establishment.
+
+Each strategy is instantiated into **concrete test cases** with generated test data, expected response assertions, and dependency specifications. The result is a **comprehensive, prioritized test suite** that maximizes coverage within execution time constraints.
+
 ##### 3.2.2 Data Flow
 
 | Flow | Data | Purpose |
