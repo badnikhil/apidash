@@ -63,8 +63,10 @@
 
 **7. Can you mention some areas where the project can be improved?**
 
-- **Agentic / AI Testing Layer:** No existing API client — open or commercial — offers a self-healing, spec-driven agentic testing framework natively. This is the central gap this proposal targets.
-  **CI/CD Integration:** Structured JSON and JUnit-compatible report output would enable API Dash test suites to plug into standard CI pipelines, broadening adoption beyond interactive desktop use.
+- - **Request history and diffing:** API Dash lacks a persistent request history that lets
+  users compare responses across multiple executions of the same endpoint. A lightweight
+  diff view between two historical responses would be valuable for spotting unintended
+  API behaviour changes during development.
 
 **8. Have you interacted with and helped the API Dash community?**
 
@@ -102,9 +104,9 @@ Beyond code, I have actively proposed improvements that align with the project's
 
 ---
 
-## Project Proposal Information
+## Project Details
 
-### 1. Proposal Title
+### 1. Project Title
 
 **Agentic API Testing for API Dash: An Autonomous, Self-Healing Test Generation Framework**
 
@@ -124,7 +126,7 @@ This proposal introduces **Agentic API Testing**, a comprehensive AI-powered tes
 
 ##### 3.1.1 Schema Drift in Production APIs
 
-When an API changes — for example, an `order.total` field migrating from a `number` to an object with `currency` and `amount` sub-fields — existing integration tests that assert `typeof response.total === 'number'` cause 100% test suite failure despite the API itself being correct. Developers spend hours diagnosing intentional changes, and production monitoring lacks coverage for the new structure during the diagnosis window.
+When an API changes — for example, an `order.total` field migrating from a `number` to an object with `currency` and `amount` sub-fields — existing integration tests that assert `typeof response.total === 'number'` cause 100% test suite failure despite the API itself being correct. Developers spend hours diagnosing intentional changes, and production monitoring lacks coverage for the new structure during the diagnosis window
 
 ##### 3.1.2 Broken Authentication Flows in Multi-Step Workflows
 
