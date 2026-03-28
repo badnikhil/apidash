@@ -169,7 +169,9 @@ The **TestStrategyPlanner** then operates on this graph as a planning problem. U
 
 Each strategy is instantiated into **concrete test cases** with generated test data, expected response assertions, and dependency specifications. The result is a **comprehensive, prioritized test suite** that maximizes coverage within execution time constraints.
 
-##### 3.2.2 Data Flow
+##### 3.2.2 Data Flow Directionality
+
+Data flows **unidirectionally** from specification to report, with **feedbackloops** for healing and user interaction:
 
 | Flow | Data | Purpose |
 |---|---|---|
@@ -199,7 +201,6 @@ The `AgentCore` serves as the **central nervous system**, coordinating all other
 The core implements `event-driven architecture` using Dart’s Stream API, enabling reactive UI updates and parallel processing without blocking.
 
 ```dart
-// lib/agents/agent_core.dart
 
 enum AgentState { idle, parsing, planning, executing, validating, healing, reporting, failed }
 
@@ -262,12 +263,20 @@ class AgentCore {
 ```
 #### 3.3.2 SpecParser: Multi-Format Schema Ingestion
 
+The SpecParser abstracts **format heterogeneity** behind a unified interface, supporting:
+
 | Format | Version | Features | Complexity |
 |---|---|---|---|
 | OpenAPI | 3.0.x, 3.1.x | Full schema, links, callbacks, webhooks | High |
 |  Collection folders | v2.1 | Variables, scripts, auth, folders | Medium |
 | GraphQL | Introspection | Queries, mutations, subscriptions, fragments | High |
 | API Blueprint | 1A | Legacy support for migration scenarios | Low |
+
+Parsing proceeds in three stages:
+
+1. **Syntactic validation** — checks the spec against its format schema (OpenAPI / Postman / GraphQL)
+2. **Semantic normalisation** — converts the validated spec into an `AgentTask` graph
+3. **Relationship enrichment** — infers dependencies between endpoints (e.g. `POST /users` creates a resource later fetched by `GET /users/{id}`); LLM-assisted for complex cases
 
 #### 3.3.3 TestStrategyPlanner: LLM-Powered Test Strategy Generation
 
