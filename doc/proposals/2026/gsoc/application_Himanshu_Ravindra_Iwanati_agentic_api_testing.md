@@ -608,6 +608,14 @@ cached output rather than the entire spec, keeping redundant API calls minimal.
 
 ---
 
+## 5. Flutter UI Integration
+
+### 5.1 UI Architecture
+
+![User Interface](images/hihry_ui.png)
+
+For Now I have just roughly draw it on Excalidraw
+
 #### 3.8 MCP Apps Integration: Bidirectional UI Layer for Agentic Workflows
 
 ##### 3.8.1 Why Plain Text Output Fails at Two Critical Pipeline Nodes
