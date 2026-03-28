@@ -298,7 +298,70 @@ The `TestStrategyPlanner` transforms a parsed spec into a test suite through thr
 Planner output is generated via **structured tool-calling APIs**, producing type-safe, parseable
 `APITestCase` definitions — no fragile regex extraction.
 
+```dart
+
+enum TestType { happyPath, boundaryValue, errorInjection, securityProbe, rateLimit, schemaValidation }
+
+class APITestCase {
+  final String id;
+  final String name;
+  final TestType type;
+  final String method;
+  final String path;
+  final int expectedStatusCode;
+
+  const APITestCase({
+    required this.id,
+    required this.name,
+    required this.type,
+    required this.method,
+    required this.path,
+    required this.expectedStatusCode,
+  });
+}
+
+class StrategyPlanner {
+  /// Transforms AgentTask graph → prioritised List<APITestCase>
+  /// Uses structured tool-calling output — no fragile regex extraction
+  static Future<List<APITestCase>> plan(
+    List<AgentTask> tasks, {
+    Map<String, dynamic> context = const {},
+  }) async {
+    final prompt = _buildPrompt(tasks, context);
+
+    // LLM call via tool-calling API → returns structured JSON
+    final raw = await LlmClient.call(prompt);
+
+    // Coverage analysis + risk prioritisation applied before returning
+    return _parse(raw)
+      ..sort((a, b) => _riskScore(b).compareTo(_riskScore(a)));
+  }
+
+  /// Risk score weights: security > error injection > boundary > happy path
+  static int _riskScore(APITestCase t) => switch (t.type) {
+        TestType.securityProbe   => 4,
+        TestType.errorInjection  => 3,
+        TestType.boundaryValue   => 2,
+        TestType.rateLimit       => 2,
+        TestType.schemaValidation => 1,
+        TestType.happyPath       => 0,
+      };
+
+  static String _buildPrompt(List<AgentTask> tasks, Map context) {
+    // TODO: inject tasks + session context into prompt template
+    return '';
+  }
+
+  static List<APITestCase> _parse(String raw) {
+    // TODO: parse structured JSON from LLM tool-call response
+    return [];
+  }
+}
+```
+
 #### 3.3.4 WorkflowExecutor: Multi-Step API Call Chain Execution
+
+The `WorkflowExecutorhandles` the runtime complexity of API testing:
 
 - **Context management**: Maintaining `ExecutionContext` with token storage, variable substitution, and cross-step data extraction
 - **Dynamic substitution**: Supporting template expressions (`{{step1.response.body.id}}`, `{{env.BASE_URL}}`, `{{random.email}}`)
