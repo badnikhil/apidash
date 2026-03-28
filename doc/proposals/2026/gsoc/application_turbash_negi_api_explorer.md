@@ -67,9 +67,9 @@ Not at all—I'd actually prefer it. I missed some earlier API Dash meetup calls
 
 6. What interests you the most about API Dash?
 
-API Dash solves something I *feel* inside the space I've been building in. When I made Shawtie, I learned that deterministic + AI-fallback transformation works at scale. API Explorer is that exact pattern applied to APIs: parse → normalize → categorize → enrich → export. I've already proven I can architect and ship that workflow in Python with production reliability.
+API Dash solves something I *feel* inside the space I've been building in. When I made Shawtie, I learned that deterministic + AI-fallback transformation works at scale. API Explorer is that exact pattern applied to APIs: parse → normalize → categorize → enrich → export. I've already proven I can architect and ship that workflow in Python.
 
-What excites me about API Dash specifically: the community values solid fundamentals (I see it in PRs—good testing, clear code architecture, thoughtful design decisions), the project is *real* (solving actual developer pain), and the scope of this GSoC project perfectly fits my skill set and delivery style. I'm not coming in to "learn on the job"—I'm coming in to execute something I've already built and proven works.
+What excites me about API Dash specifically: the community values solid fundamentals (I see it in PRs—good testing, clear code architecture, thoughtful design decisions), the project is *real* (solving actual developer pain), and the scope of this GSoC project perfectly fits my skill set and delivery style. 
 
 7. Can you mention some areas where the project can be improved?
 
@@ -87,9 +87,9 @@ API Explorer for API Dash: Automated OpenAPI and HTML Ingestion Pipeline with Sm
 
 #### Abstract
 
-API Dash users currently spend time manually discovering APIs and setting up repetitive request boilerplate (method, URL, headers, auth, payload examples). This project will build the complete backend automation pipeline for API Explorer so API Dash can provide a curated, searchable, and importable API template library.
+API Dash users currently spend too much time discovering APIs and setting up the same request boilerplate again and again (method, URL, headers, auth, payload examples). In this project, I will build the backend automation pipeline for API Explorer so API Dash can offer a curated, searchable, import-ready API template library.
 
-The system will ingest OpenAPI and HTML sources, parse and normalize endpoints, auto-tag categories, enrich metadata, and generate request templates that are directly importable into API Dash. The pipeline will include strict validation, CI automation, and a maintainable contribution workflow for continuous growth of the catalog. Optional community-facing capabilities such as ratings/reviews and GitHub-based submissions will be added as scoped extensions.
+The system will ingest OpenAPI and HTML sources, parse and normalize endpoints, auto-tag categories, enrich metadata, and generate request templates directly importable into API Dash. It will include strict validation, CI automation, and a maintainable contribution workflow so the catalog can grow continuously. Optional community-facing capabilities such as ratings/reviews and GitHub-based submissions will stay as scoped extensions.
 
 #### Detailed Description
 
@@ -101,11 +101,11 @@ Developers often start API testing from scratch even for widely used APIs. This 
 - higher onboarding friction,
 - and lower exploration speed.
 
-API Explorer should solve this by offering trusted, ready-to-import templates with structured metadata and discoverability.
+API Explorer solves this by offering trusted, ready-to-import templates with structured metadata and strong discoverability.
 
 #### 3.2 Project Goals
 
-- Build a deterministic backend pipeline to ingest and transform API sources.
+- Build a deterministic backend pipeline to ingest and transform API sources reliably.
 - Support both OpenAPI (JSON/YAML) and HTML documentation extraction paths.
 - Auto-categorize APIs into domains (AI, finance, weather, social, developer tools, etc.).
 - Enrich each template with auth info, sample payloads, response examples, and metadata.
@@ -231,7 +231,7 @@ CI outputs:
 
 - API Dash consumes index manifest for list/search.
 - User opens API detail card and previews endpoint metadata.
-- User clicks Import -> template converts to request model and is inserted into workspace.
+- User clicks Import -> template maps to the request model and is inserted into the workspace.
 
 Mockup: Intended API Explorer browse/discovery experience.
 
@@ -247,7 +247,7 @@ Mockup: Intended API detail page and one-click import workflow.
 - Sanitize extracted HTML content.
 - Rate-limit and retry network fetches with bounded backoff.
 - Protect pipeline from malformed specs through guarded parsers.
-- Keep provenance metadata for every generated template.
+- Keep provenance metadata for every generated template for traceability.
 
 #### 3.10 Community Contribution Model (optional extension)
 
@@ -285,7 +285,7 @@ Stretch deliverables:
 
 ### Weekly Timeline
 
-Total scope: 90 hours (90-hour project)
+Total scope: 90 hours (8-week small project)
 
 #### Community Bonding (before coding)
 
@@ -330,71 +330,46 @@ Deliverable:
 
 - Implement categorization engine (rule-based scoring).
 - Implement enrichment layer and quality indicators.
+- Finalize template contract mapping for API Dash import model.
 
 Deliverable:
-- Categorized and enriched template-ready records.
+- Categorized/enriched records + finalized template generation contract.
 
 #### Week 6
 
 - Build template generator and manifest builder.
 - Add deterministic output and diff-safe generation.
+- Add validation report generation baseline.
 
 Deliverable:
-- Generated templates + index manifest for sample catalog.
+- Generated templates + index manifest + baseline validation reports.
 
 #### Week 7
 
 - Integrate with API Dash import path and verify compatibility.
 - Add integration tests for one-click import flow.
+- Improve validation reports and enforce CI quality gates.
+- Add maintainer/contributor documentation and troubleshooting guide.
 
 Deliverable:
-- End-to-end flow from source to imported request.
+- End-to-end import flow with CI-backed validation + maintainer docs.
 
 #### Week 8
 
-- Improve validation reports and CI quality gates.
-- Add docs for maintainers and contributors.
-
-Deliverable:
-- CI checks + maintainer docs + troubleshooting guide.
-
-#### Week 9
-
 - Stabilization, bug fixes, and mentor feedback iteration.
 - Optimize parsing reliability and category accuracy.
+- Validate final dataset quality and release readiness.
+- Final polishing and final report/demo handover.
+- Stretch goal if time permits: freshness checks or ratings/reviews metadata scaffold.
 
 Deliverable:
-- Production-ready v1 scope completion.
-
-#### Week 10
-
-- Stretch goals: ratings/reviews metadata scaffold or freshness checks.
-- Improve observability and pipeline summaries.
-
-Deliverable:
-- At least one stretch feature merged.
-
-#### Week 11
-
-- Final polishing, documentation updates, and release preparation.
-- Validate final dataset quality and import behavior.
-
-Deliverable:
-- Candidate release artifacts and final docs.
-
-#### Week 12
-
-- Final report, demo, and handover.
-- Post-GSoC maintenance roadmap discussion.
-
-Deliverable:
-- Final submission with demo assets and roadmap.
+- Production-ready v1 scope completion + final submission artifacts.
 
 ### Availability and Communication Plan
 
-- Weekly sync with mentors.
-- Mid-week async progress update.
-- Rapid blocker escalation when decisions are required.
+- Weekly sync with mentors (more often when needed).
+- Mid-week async progress update with clear milestone status.
+- Fast blocker escalation whenever decisions are required.
 
 ### Risk Management
 
@@ -407,4 +382,4 @@ Deliverable:
 
 ### Post-GSoC Plan
 
-I plan to continue contributing to API Dash after GSoC by maintaining API Explorer quality, reviewing community template submissions, improving categorization accuracy, and extending coverage to more APIs and documentation sources.
+I plan to keep contributing to API Dash after GSoC by maintaining API Explorer quality, reviewing community template submissions, improving categorization accuracy, and extending coverage to more APIs and documentation sources.
