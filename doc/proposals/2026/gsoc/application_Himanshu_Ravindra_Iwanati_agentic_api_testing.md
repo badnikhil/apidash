@@ -198,6 +198,7 @@ The `AgentCore` serves as the **central nervous system**, coordinating all other
 
 The core implements `event-driven architecture` using Dart’s Stream API, enabling reactive UI updates and parallel processing without blocking.
 
+```dart
 // lib/agents/agent_core.dart
 
 enum AgentState { idle, parsing, planning, executing, validating, healing, reporting, failed }
@@ -258,7 +259,7 @@ class AgentCore {
 
   void dispose() => _stateController.close();
 }
-
+```
 #### 3.3.2 SpecParser: Multi-Format Schema Ingestion
 
 | Format | Version | Features | Complexity |
