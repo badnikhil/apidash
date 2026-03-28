@@ -395,31 +395,16 @@ routing low-confidence cases to human review regardless of severity.
 - **Markdown**: Repository-friendly for documentation, PR descriptions, and issue comments
 
 
-
-
-#### 3.6 SelfHealingEngine: Drift Classification and Auto-Remediation
-
-| Drift Severity | Automated Action | Human Notification |
-|---|---|---|
-| Cosmetic (whitespace, ordering) | Silent acceptance | None |
-| Compatible (new optional fields) | Test update | Summary digest |
-| Breaking (required field changes) | Proposed patch | Immediate alert with diff |
-| Architectural (endpoint removal) | Suite restructuring | Blocking review required |
-
----
-
 #### 3.7 Error Handling and Graceful Degradation
 
-When LLM output is invalid or the LLM provider is unavailable, the system degrades gracefully to rule-based test generation:
+When LLM output is invalid or the provider is unavailable, the system degrades gracefully
+to **rule-based test generation** — covering required field presence, type-based boundary
+values, status code enumeration, and security scheme validation — ensuring baseline test
+coverage is always produced regardless of LLM availability.
 
-| Rule Category | Coverage |
-|---|---|
-| Required field presence | Generate tests with all required fields, then omit each one |
-| Type-based boundaries | Min/max for numbers, length limits for strings |
-| Status code enumeration | Test all documented success and error codes |
-| Security scheme application | Apply each security scheme, then test without authentication |
-
-LLM failure handling follows a provider fallback chain (Primary → Secondary → Local Ollama) with exponential backoff and a SHA-indexed generation cache for unchanged specs.
+LLM failures follow a provider fallback chain — **Primary → Secondary → Local Ollama** —
+with exponential backoff between retries and a SHA-indexed cache that reuses previously
+generated output for unchanged specs, avoiding redundant API calls.
 
 ---
 
