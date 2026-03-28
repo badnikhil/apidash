@@ -556,7 +556,35 @@ class ReportGenerator {
       generate(results, format: ReportFormat.json, errors: errors);
 }
 ```
+## 4. Technical Implementation Details
 
+### 4.1 Agent Workflow State Machine
+
+![State Machine](images/hihry_stateMachine.png)
+
+#### 4.4.1 State Transition Table
+
+| Transition | Condition | Action |
+|---|---|---|
+| IDLE → PARSING | User submits specification | Initialize parser, validate format hint |
+| PARSING → PLANNING | Parser returns valid AgentTaskGraph | Load templates, initialize LLM client |
+| PARSING → FAILED | ParseException or timeout | Log error, notify user with diagnostics |
+| PLANNING → EXECUTING | Non-empty strategy generated | Initialize execution context, queue tests |
+| EXECUTING → HEALING | Schema mismatch detected with drift pattern | Pause execution, invoke healing analysis |
+| HEALING → EXECUTING | Patch validated with confidence ≥ threshold | Apply patch, resume from failed test |
+| HEALING → FAILED | Max iterations (default: 3) exceeded | Escalate to human with full context |
+| Any → FAILED | Unhandled exception or cancellation | Cleanup resources, preserve partial state |
+
+### 4.7 Error Handling and Fallback Strategies
+
+#### 4.7.1 LLM Output Validation and Retry Logic
+
+| Failure Mode | Detection | Retry Strategy | Escalation |
+|---|---|---|---|
+| Invalid JSON | ParseException | Retry with stricter temperature (0.0) | After 3 retries: use JSON mode fallback |
+| Missing required fields | Schema validation failure | Retry with explicit field enumeration | After 2 retries: rule-based generation |
+| Hallucinated endpoints | Unknown taskId references | Cross-reference with input graph | After 2 retries: filter invalid, continue |
+| LLM API failure | Timeout, rate limit, 5xx | Exponential backoff with provider switch | After all providers fail: offline mode |
 
 #### 3.7 Error Handling and Graceful Degradation
 
