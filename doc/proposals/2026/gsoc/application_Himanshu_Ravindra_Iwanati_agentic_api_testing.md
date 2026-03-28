@@ -159,6 +159,8 @@ The system is composed of six coordinated components:
 | `SelfHealingEngine` | Detects schema drift, classifies severity, auto-patches compatible changes, and escalates breaking changes for human review |
 | `ReportGenerator` | Produces JSON, HTML, and Markdown reports for CI/CD and documentation integration |
 
+##### 3.2.2 System Architecture Overview
+
 ![Workflow](images/hihry_workflow.png)
 
 The Agentic API Testing system transforms **static API specifications into dynamic, intelligent test suites** through a multi-stage pipeline. Upon specification ingestion, the **SpecParser** normalizes diverse formats into a unified **AgentTask graph**—a directed acyclic graph representing API operations, their dependencies, and data flows.
@@ -193,6 +195,69 @@ The `AgentCore` serves as the **central nervous system**, coordinating all other
 - **State machine enforcement**: Ensuring valid transitions between IDLE, PARSING, PLANNING, EXECUTING, VALIDATING, REPORTING, and HEALING states
 - **Resource scheduling**: Prioritizing test execution based on risk, coverage gaps, and user-specified urgency
 - **Error aggregation**: Collecting and categorizing failures across components for unified reporting
+
+The core implements `event-driven architecture` using Dart’s Stream API, enabling reactive UI updates and parallel processing without blocking.
+
+// lib/agents/agent_core.dart
+
+enum AgentState { idle, parsing, planning, executing, validating, healing, reporting, failed }
+
+/// Central orchestrator — coordinates all nodes and manages the agent lifecycle.
+/// Implements event-driven architecture using Dart's Stream API so the Flutter
+/// UI can reactively listen to state changes without blocking the main thread.
+class AgentCore {
+  AgentState _state = AgentState.idle;
+
+  // Stream controller — UI listens to this for real-time state updates
+  final _stateController = StreamController<AgentState>.broadcast();
+  Stream<AgentState> get stateStream => _stateController.stream;
+
+  // Session management — persists user context and preferences across runs
+  // e.g. "this user prioritises security tests over performance"
+  final Map<String, dynamic> _sessionContext = {};
+
+  // Error aggregation — collects failures across all nodes for unified reporting
+  final List<String> _errors = [];
+
+  /// Entry point — accepts a natural language objective or a spec path.
+  /// Workflow decomposition breaks it into ordered tasks with dependency analysis.
+  Future<void> run(String specPath, {String? userIntent}) async {
+    try {
+      _transition(AgentState.parsing);
+      final tasks = await SpecParser.parse(specPath);
+
+      _transition(AgentState.planning);
+      // Resource scheduling: tasks prioritised by risk score and user-specified urgency
+      final testCases = await StrategyPlanner.plan(tasks, context: _sessionContext);
+
+      _transition(AgentState.executing);
+      final results = await WorkflowExecutor.execute(testCases);
+
+      _transition(AgentState.validating);
+      // TODO: validate results against spec contracts
+
+      final drifted = results.where((r) => r.hasDrift).toList();
+      if (drifted.isNotEmpty) {
+        _transition(AgentState.healing);
+        await SelfHealingEngine.heal(drifted);
+      }
+
+      _transition(AgentState.reporting);
+      await ReportGenerator.generate(results, errors: _errors);
+    } catch (e) {
+      _errors.add(e.toString());
+      _transition(AgentState.failed);
+    }
+  }
+
+  /// Enforces valid state transitions and broadcasts to UI via Stream
+  void _transition(AgentState next) {
+    _state = next;
+    _stateController.add(next);
+  }
+
+  void dispose() => _stateController.close();
+}
 
 #### 3.3.2 SpecParser: Multi-Format Schema Ingestion
 
