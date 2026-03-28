@@ -652,11 +652,103 @@ The `SelfHealingEngine` implements continuous specification alignment through th
 Healing generates **confidence scores** based on change type, test coverage, and historical accuracy,
 routing low-confidence cases to human review regardless of severity.
 
+```dart
+
+/// Detects schema drift from test failures and generates healing patches.
+/// Patches are auto-applied, flagged for review, or escalated based on confidence score.
+class SelfHealingEngine {
+  SelfHealingEngine({
+    required SchemaDiffer schemaDiffer,
+    required PatchGenerator patchGenerator,
+    required ConfidenceScorer confidenceScorer,
+    required LlmClient llmClient,
+  });
+
+  // Confidence thresholds — tune based on acceptable automation risk
+  static const _autoApplyThreshold = 0.85;
+  static const _reviewThreshold = 0.60;
+
+  /// Analyses failures, generates patches, and classifies each by confidence score.
+  Future<List<HealingPatch>> generatePatches(
+    List<TestResult> failures, {
+    required ExecutionContext context,
+  }) async {
+    final List<HealingPatch> patches = [];
+
+    for (final failure in failures) {
+      if (!failure.isSchemaMismatch) continue;
+
+      // Diff expected schema vs actual response schema → classifies drift severity
+      final drift = await _schemaDiffer.analyze(
+        expected: failure.expectedSchema,
+        actual: failure.actualResponse.schema,
+      );
+
+      final patch = await _patchGenerator.generate(
+        drift: drift,
+        originalTest: failure.testCase,
+      );
+
+      final confidence = _confidenceScorer.score(patch);
+
+      if (confidence >= _autoApplyThreshold) {
+        patches.add(patch.copyWith(autoApply: true));
+      } else if (confidence >= _reviewThreshold) {
+        // Surfaces in healing-diff MCP App for human approve / reject / edit
+        patches.add(patch.copyWith(requiresReview: true));
+      }
+      // Below reviewThreshold → escalate to human, no patch emitted
+    }
+
+    return patches;
+  }
+}
+```
+
 #### 3.3.6 ReportGenerator: Multi-Format Output
 
 - **JSON**: Machine-parseable for CI/CD integration, with detailed execution traces and timing
 - **HTML**: Rich visualization with collapsible request/response details, coverage heatmaps, and trend comparison
 - **Markdown**: Repository-friendly for documentation, PR descriptions, and issue comments
+
+```dart
+// lib/agents/nodes/report_generator.dart
+
+enum ReportFormat { json, html, markdown }
+
+/// Generates test reports in multiple output formats.
+/// JSON for CI/CD pipelines, HTML for visual review, Markdown for documentation.
+class ReportGenerator {
+  ReportGenerator({
+    required JsonFormatter jsonFormatter,
+    required HtmlFormatter htmlFormatter,
+    required MarkdownFormatter markdownFormatter,
+  });
+
+  Future<String> generate(
+    List<TestResult> results, {
+    required ReportFormat format,
+    ReportOptions? options,
+    List<String> errors = const [],
+  }) async {
+    final report = TestReport.fromResults(results, errors: errors);
+
+    return switch (format) {
+      ReportFormat.json     => _jsonFormatter.format(report, options),
+      ReportFormat.html     => _htmlFormatter.format(report, options),
+      ReportFormat.markdown => _markdownFormatter.format(report, options),
+    };
+  }
+
+  /// Partial report — emitted when executeSuite fails mid-run.
+  /// Preserves all results collected before the failure for debugging.
+  Future<String> generatePartial(
+    List<TestResult> results, {
+    List<String> errors = const [],
+  }) =>
+      generate(results, format: ReportFormat.json, errors: errors);
+}
+```
 
 
 #### 3.7 Error Handling and Graceful Degradation
