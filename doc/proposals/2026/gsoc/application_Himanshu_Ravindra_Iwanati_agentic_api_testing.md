@@ -748,7 +748,7 @@ naturally between planning and execution.
 
 | | This POC | Full System (GSoC) |
 |---|---|---|
-| Spec ingestion | Hardcoded JSONPlaceholder spec | Real OpenAPI / Postman / GraphQL files |
+| Spec ingestion | Hardcoded spec File | Real OpenAPI / Postman / GraphQL files |
 | Execution | Sequential `async/await` | Parallel Dart isolates |
 | MCP Apps | `test-review` + `healing-diff` | + `execution-monitor`, `report-viewer` |
 | MCP Host | VS Code Insiders | Flutter `webview_flutter` in API Dash |
@@ -790,3 +790,14 @@ naturally between planning and execution.
 
 ---
 
+### About the Contributor
+
+I am Himanshu Ravindra Iwanati, a third-year B.Tech student in Electrical Engineering
+at IIT Kharagpur (expected graduation May 2027). My technical interests span AI/ML systems
+engineering, multi-agent architectures, and robotics — areas I pursue well beyond my
+core curriculum. I have built multi-agent RAG pipelines using LangGraph and Pinecone,
+contributed to MoveIt2 (an industry-standard robotics motion planning framework), and
+spent the past month making consistent open-source contributions to API Dash across bug
+fixes, feature implementations, and test coverage. This proposal is the natural extension
+of that engagement — combining my background in agentic systems with a deep familiarity
+with the API Dash codebase I have been actively contributing to.
