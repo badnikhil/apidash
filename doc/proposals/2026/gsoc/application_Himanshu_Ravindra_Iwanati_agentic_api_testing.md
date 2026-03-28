@@ -124,17 +124,23 @@ This proposal introduces **Agentic API Testing**, a comprehensive AI-powered tes
 
 #### 3.1 Problem Statement
 
-##### 3.1.1 Schema Drift in Production APIs
+#### 3.1.1 Schema Drift in Production APIs
 
-When an API changes — for example, an `order.total` field migrating from a `number` to an object with `currency` and `amount` sub-fields — existing integration tests that assert `typeof response.total === 'number'` cause 100% test suite failure despite the API itself being correct. Developers spend hours diagnosing intentional changes, and production monitoring lacks coverage for the new structure during the diagnosis window
+**Scenario**: E-commerce platform "ShopFlow" releases API v2.3, changing `order.total` from `number` to `object` with `currency` and `amount` fields. Existing integration tests assert `typeof response.total === 'number'`, causing **100% test suite failure** despite API correctness. Developers spend **8 hours** diagnosing the intentional change. Meanwhile, production monitoring lacks coverage for the new structure, causing **$47K in incorrect international charges** before detection.
 
-##### 3.1.2 Broken Authentication Flows in Multi-Step Workflows
+**Agentic Prevention**: The self-healing engine detects the type migration during canary deployment, generates updated assertions for the new structure, flags the semantic change in `currency` default for human review, and maintains **continuous coverage** without CI breakage.
 
-Manual test suites frequently validate each step of an OAuth 2.0 flow independently but never exercise the full chain (e.g., refresh → immediate API call with new token → verify no 401). When a token endpoint begins returning `expires_in` as a string `"3600"` rather than a number `3600`, the type discrepancy goes undetected until production users experience random session logouts.
+#### 3.1.2 Broken Authentication Flows in Multi-Step Workflows
 
-##### 3.1.3 Undetected Rate Limiting Edge Cases
+**Scenario**: Fintech "PaySecure" implements OAuth 2.0 with PKCE for mobile clients. A **manual test suite** validates each step independently but never exercises the **full chain**: refresh → immediate API call with new token → verify no 401. When the token endpoint begins returning `expires_in` as string `"3600"` rather than number `3600`, the mobile client's parsing fails. **Production users experience random logouts**; **2-star app rating crash** costs an estimated **$200K in acquisition spend waste**.
 
-Tiered rate limits are commonly tested at steady-state but miss burst behavior. A pro tier's 1000 req/min enforced as a 100 req/6sec sliding window produces unexpected 429 responses for legitimate burst patterns — a class of failure that purely manual test design rarely anticipates.
+**Agentic Prevention**: The workflow executor maintains **execution context** across steps, validating that `access_token` successfully authenticates subsequent requests. Schema validation on the token response catches the type discrepancy.
+
+#### 3.1.3 Undetected Rate Limiting Edge Cases
+
+**Scenario**: SaaS "DataStream" implements tiered rate limits: 100 req/min for free, 1000 req/min for pro. Manual tests verify limits at **steady-state** but miss **burst behavior**: the pro tier's 1000 req/min is enforced as a **100 req/6sec sliding window**, causing **unexpected 429 responses** for legitimate burst patterns. Support spends **40 hours** reproducing before engineering identifies the window implementation. **3 enterprise trials churn** due to reliability concerns.
+
+**Agentic Prevention**: The test strategy planner generates **edge case scenarios** including burst patterns, sliding window verification, and backoff behavior.
 
 ---
 
@@ -176,46 +182,62 @@ Each strategy is instantiated into **concrete test cases** with generated test d
 
 ---
 
-#### 3.3 Agent Workflow State Machine
+#### 3.3 Core Component Specifications
 
-The `AgentCore` enforces a well-defined state machine to ensure valid transitions and predictable recovery:
+#### 3.3.1 AgentCore: Orchestration and Workflow Decomposition
 
-| Transition | Condition | Action |
-|---|---|---|
-| IDLE → PARSING | User submits specification | Initialise parser, validate format hint |
-| PARSING → PLANNING | Parser returns valid `AgentTaskGraph` | Load templates, initialise LLM client |
-| PARSING → FAILED | `ParseException` or timeout | Log error, notify user with diagnostics |
-| PLANNING → EXECUTING | Non-empty strategy generated | Initialise execution context, queue tests |
-| EXECUTING → HEALING | Schema mismatch detected | Pause execution, invoke healing analysis |
-| HEALING → EXECUTING | Patch validated with confidence ≥ threshold | Apply patch, resume from failed test |
-| HEALING → FAILED | Max iterations (default: 3) exceeded | Escalate to human with full context |
-| Any → FAILED | Unhandled exception or cancellation | Cleanup resources, preserve partial state |
+The `AgentCore` serves as the **central nervous system**, coordinating all other components. Its responsibilities include:
 
----
+- **Session management**: Maintaining user context across multiple test generation and execution requests
+- **Workflow decomposition**: Breaking complex natural language objectives into discrete, ordered tasks with dependency analysis
+- **State machine enforcement**: Ensuring valid transitions between IDLE, PARSING, PLANNING, EXECUTING, VALIDATING, REPORTING, and HEALING states
+- **Resource scheduling**: Prioritizing test execution based on risk, coverage gaps, and user-specified urgency
+- **Error aggregation**: Collecting and categorizing failures across components for unified reporting
 
-#### 3.4 SpecParser: Multi-Format Ingestion
+#### 3.3.2 SpecParser: Multi-Format Schema Ingestion
 
-| Format | Version | Features |
-|---|---|---|
-| OpenAPI | 3.0.x, 3.1.x | Full schema, links, callbacks, webhooks |
-| Postman Collection | v2.1 | Variables, scripts, auth, folders |
-| GraphQL | Introspection | Queries, mutations, subscriptions, fragments |
-| API Blueprint | 1A | Legacy support |
+| Format | Version | Features | Complexity |
+|---|---|---|---|
+| OpenAPI | 3.0.x, 3.1.x | Full schema, links, callbacks, webhooks | High |
+|  Collection folders | v2.1 | Variables, scripts, auth, folders | Medium |
+| GraphQL | Introspection | Queries, mutations, subscriptions, fragments | High |
+| API Blueprint | 1A | Legacy support for migration scenarios | Low |
 
----
-
-#### 3.5 TestStrategyPlanner: LLM-Powered Strategy Generation
+#### 3.3.3 TestStrategyPlanner: LLM-Powered Test Strategy Generation
 
 | Test Type | Trigger | LLM Prompt Focus |
 |---|---|---|
-| Happy path | All endpoints | Verify nominal behaviour with valid inputs |
+| Happy path | All endpoints | Verify nominal behavior with valid inputs |
 | Boundary value | Numeric/string parameters | Test min, max, and edge values |
 | Error injection | Error-prone operations | Verify graceful failure handling |
 | Security probe | Auth-required endpoints | Test authentication bypass, injection, traversal |
-| Rate limit | Documented limits | Verify throttling behaviour and headers |
+| Rate limit | Documented limits | Verify throttling behavior and headers |
 | Schema validation | All responses | Validate against specification with strictness tiers |
 
----
+#### 3.3.4 WorkflowExecutor: Multi-Step API Call Chain Execution
+
+- **Context management**: Maintaining `ExecutionContext` with token storage, variable substitution, and cross-step data extraction
+- **Dynamic substitution**: Supporting template expressions (`{{step1.response.body.id}}`, `{{env.BASE_URL}}`, `{{random.email}}`)
+- **Parallel execution**: Using Dart isolates for CPU-bound operations while maintaining async I/O for network requests
+- **Resilience patterns**: Exponential backoff, circuit breaking, and timeout handling with configurable policies
+
+#### 3.3.5 SelfHealingEngine: Schema Drift Detection and Auto-Remediation
+
+| Drift Severity | Automated Action | Human Notification |
+|---|---|---|
+| Cosmetic (whitespace, ordering) | Silent acceptance | None |
+| Compatible (new optional fields) | Test update | Summary digest |
+| Breaking (required changes) | Proposed patch | Immediate alert with diff |
+| Architectural (endpoint removal) | Suite restructuring | Blocking review required |
+
+#### 3.3.6 ReportGenerator: Multi-Format Output
+
+- **JSON**: Machine-parseable for CI/CD integration, with detailed execution traces and timing
+- **HTML**: Rich visualization with collapsible request/response details, coverage heatmaps, and trend comparison
+- **Markdown**: Repository-friendly for documentation, PR descriptions, and issue comments
+
+
+
 
 #### 3.6 SelfHealingEngine: Drift Classification and Auto-Remediation
 
