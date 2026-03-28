@@ -203,144 +203,41 @@ The core implements `event-driven architecture` using Dart’s Stream API, enabl
 ```dart
 // lib/agents/agent_core.dart
 
-/// Central orchestrator for the agentic testing system.
-///
-/// Manages component lifecycle, state transitions, and session state.
-/// Emits events for UI consumption via [stateStream].
+enum AgentState { idle, parsing, planning, executing, validating, healing, reporting, failed }
+
+/// Central orchestrator — coordinates all nodes and manages the agent lifecycle.
+/// Implements event-driven architecture using Dart's Stream API for reactive UI updates.
 class AgentCore {
-  /// Creates a new [AgentCore] with injected dependencies.
   AgentCore({
     required SpecParser specParser,
     required TestStrategyPlanner strategyPlanner,
     required WorkflowExecutor workflowExecutor,
     required SelfHealingEngine healingEngine,
     required ReportGenerator reportGenerator,
-    required Logger logger,
-  })  : _specParser = specParser,
-        _strategyPlanner = strategyPlanner,
-        _workflowExecutor = workflowExecutor,
-        _healingEngine = healingEngine,
-        _reportGenerator = reportGenerator,
-        _logger = logger,
-        _stateController = BehaviorSubject.seeded(AgentState.idle);
+  }) : _stateController = BehaviorSubject.seeded(AgentState.idle);
 
-  final SpecParser _specParser;
-  final TestStrategyPlanner _strategyPlanner;
-  final WorkflowExecutor _workflowExecutor;
-  final SelfHealingEngine _healingEngine;
-  final ReportGenerator _reportGenerator;
-  final Logger _logger;
   final BehaviorSubject<AgentState> _stateController;
-
-  // Error aggregation — collects failures across all nodes for unified reporting
   final List<String> _errors = [];
 
-  /// Stream of state changes for reactive UI updates.
   Stream<AgentState> get stateStream => _stateController.stream;
-
-  /// Current agent state.
   AgentState get currentState => _stateController.value;
 
-  /// Initiates test generation from a specification source.
-  ///
-  /// [source] contains the raw spec content and format hint.
-  /// [intent] provides optional natural language guidance.
-  ///
-  /// Returns a [TestSuite] that can be executed or refined.
-  Future<TestSuite> generateTests({
-    required SpecSource source,
-    UserIntent? intent,
-  }) async {
-    try {
-      _transitionTo(AgentState.parsing);
-      final taskGraph = await _specParser.parse(source);
-
-      _transitionTo(AgentState.planning);
-      final strategies = await _strategyPlanner.generateStrategies(
-        taskGraph: taskGraph,
-        intent: intent,
-      );
-
-      return TestSuite(
-        source: source,
-        strategies: strategies,
-        generatedAt: DateTime.now(),
-      );
-    } catch (e) {
-      _errors.add('generateTests failed: $e');
-      _logger.error(e.toString());
-      _transitionTo(AgentState.idle);
-      rethrow;
-    }
+  /// Step 1 — parse spec + generate test suite (sits behind test-review MCP App)
+  Future<TestSuite> generateTests({required SpecSource source, UserIntent? intent}) async {
+    // parsing → planning
   }
 
-  /// Executes a generated test suite with optional healing.
-  Future<TestReport> executeSuite(
-    TestSuite suite, {
-    bool enableHealing = true,
-    void Function(ExecutionProgress)? onProgress,
-  }) async {
-    // Typed explicitly — prevents silent type errors downstream
-    final List<TestResult> results = [];
-
-    try {
-      _transitionTo(AgentState.executing);
-
-      // Single context instance persisted across all batches —
-      // ensures {{step1.response.body.id}} variables carry forward correctly
-      final context = ExecutionContext.initial();
-
-      for (final batch in suite.batchedStrategies) {
-        final batchResults = await _workflowExecutor.executeBatch(
-          batch,
-          context: context,
-          onProgress: onProgress,
-        );
-        results.addAll(batchResults);
-
-        if (enableHealing) {
-          final healable = batchResults.where((r) => r.canHeal).toList();
-          if (healable.isNotEmpty) {
-            _transitionTo(AgentState.healing);
-            final patches = await _healingEngine.generatePatches(
-              healable,
-              context: context,
-            );
-            await _workflowExecutor.applyPatches(patches);
-            _transitionTo(AgentState.executing);
-          }
-        }
-      }
-
-      _transitionTo(AgentState.validating);
-      // TODO: validate results against spec contracts
-
-      _transitionTo(AgentState.reporting);
-      final report = await _reportGenerator.generate(results);
-      _transitionTo(AgentState.idle);
-      return report;
-    } catch (e) {
-      // Partial failure resilience — emit whatever results we collected so far
-      _errors.add('executeSuite failed: $e');
-      _logger.error(e.toString());
-      _transitionTo(AgentState.idle);
-      return _reportGenerator.generatePartial(results, errors: _errors);
-    }
+  /// Step 2 — execute approved suite with optional self-healing
+  Future<TestReport> executeSuite(TestSuite suite, {bool enableHealing = true}) async {
+    // executing → healing? → validating → reporting
   }
 
-  /// Enforces valid state transitions and broadcasts to UI via Stream.
-  /// Throws in debug mode if an invalid transition is attempted.
+  /// Permits only valid transitions — throws in debug mode on illegal jump
   void _transitionTo(AgentState newState) {
-    assert(
-      _validTransitions[currentState]?.contains(newState) ?? false,
-      'Invalid state transition: $currentState → $newState',
-    );
-    _logger.debug('State transition: $currentState → $newState');
+    assert(_validTransitions[currentState]?.contains(newState) ?? false);
     _stateController.add(newState);
   }
 
-  /// Defines the only permitted state transitions — any other
-  /// transition will throw an assertion error in debug mode.
   static const _validTransitions = <AgentState, Set<AgentState>>{
     AgentState.idle:       {AgentState.parsing, AgentState.executing},
     AgentState.parsing:    {AgentState.planning, AgentState.idle},
@@ -375,161 +272,71 @@ Parsing proceeds in three stages:
 ```dart
 // lib/agents/nodes/spec_parser.dart
 
-/// Abstract interface for API specification parsers.
-/// Each format (OpenAPI, Postman, GraphQL) implements this contract.
+/// Abstract interface — each format implements parse() and canParse().
+/// canParse() returns a 0.0–1.0 confidence score used for auto-detection.
 abstract class SpecParser {
-  /// Attempts to parse [source] into a normalized [AgentTaskGraph].
-  ///
-  /// Throws [ParseException] if the source is malformed or unsupported.
   Future<AgentTaskGraph> parse(SpecSource source);
-
-  /// Returns a confidence score (0.0–1.0) that this parser can handle [source].
-  ///
-  /// Used for format auto-detection when not explicitly specified.
   double canParse(SpecSource source);
 }
 
-/// Selects the correct parser via confidence scoring — no manual format hint needed.
-/// Falls back to rule-based heuristics if no parser scores above [_threshold].
+/// Auto-selects the highest-confidence parser above [threshold].
+/// No manual format hint needed — format is inferred from content heuristics.
 class SpecParserResolver {
-  SpecParserResolver({
-    List<SpecParser>? parsers,
-    this.threshold = 0.7,
-  }) : _parsers = parsers ?? [
-          OpenApiParser(validator: JsonSchemaValidator()),
-          PostmanParser(),
-          GraphQlParser(),
-        ];
+  SpecParserResolver({this.threshold = 0.7});
 
-  final List<SpecParser> _parsers;
   final double threshold;
+  final List<SpecParser> _parsers = [
+    OpenApiParser(validator: JsonSchemaValidator()),
+    PostmanParser(),
+    GraphQlParser(),
+  ];
 
   Future<AgentTaskGraph> resolve(SpecSource source) {
     final best = _parsers
         .map((p) => (parser: p, score: p.canParse(source)))
         .where((e) => e.score >= threshold)
         .reduce((a, b) => a.score >= b.score ? a : b);
-
     return best.parser.parse(source);
   }
 }
 
-// -----------------------------------------------------------------------------
-
-/// Parser for OpenAPI 3.x specifications (JSON / YAML).
+/// OpenAPI 3.x — validates via JsonSchemaValidator before extracting AgentTasks.
+/// Throws [UnsupportedVersionException] for non-3.x specs.
 class OpenApiParser implements SpecParser {
   const OpenApiParser({required this.validator});
-
   final JsonSchemaValidator validator;
 
   @override
-  double canParse(SpecSource source) {
-    // Heuristic: presence of 'openapi' key with version string
-    return source.content.contains('openapi:') ||
-            source.content.contains('"openapi"')
-        ? 0.95
-        : 0.0;
-  }
+  double canParse(SpecSource source) =>
+      source.content.contains('openapi:') ? 0.95 : 0.0;
 
   @override
   Future<AgentTaskGraph> parse(SpecSource source) async {
-    final doc = await _loadYaml(source.content);
-
-    // Version guard — only 3.x supported
-    final version = _extractVersion(doc);
-    if (!version.startsWith('3.')) {
-      throw UnsupportedVersionException('OpenAPI $version not supported');
-    }
-
-    // Validate against JSON Schema before extracting tasks
-    final errors = await validator.validate(doc);
-    if (errors.isNotEmpty) throw ParseException(errors.join(', '));
-
-    final paths = doc['paths'] as Map;
-    final components = doc['components'] as Map?;
-    final List<AgentTask> tasks = [];
-
-    for (final pathEntry in paths.entries) {
-      for (final methodEntry in (pathEntry.value as Map).entries) {
-        tasks.add(_parseOperation(
-          path: pathEntry.key,
-          method: HttpMethod.fromString(methodEntry.key),
-          spec: methodEntry.value as Map,
-          components: components,
-        ));
-      }
-    }
-
-    return AgentTaskGraph(
-      tasks: tasks,
-      securitySchemes: _parseSecuritySchemes(doc['security']),
-      servers: _parseServers(doc['servers']),
-    );
+    // validate → version guard → extract paths → resolve $ref → build AgentTaskGraph
   }
-
-  AgentTask _parseOperation({
-    required String path,
-    required HttpMethod method,
-    required Map spec,
-    Map? components,
-  }) {
-    // TODO: resolve $ref pointers from components before extracting params
-    return AgentTask(
-      id: '${method.name}:$path',
-      method: method,
-      path: path,
-      parameters: spec['parameters'] ?? [],
-      requestBody: spec['requestBody'],
-      responses: spec['responses'] ?? {},
-    );
-  }
-
-  Map<String, dynamic> _parseSecuritySchemes(dynamic security) => {};
-  List<String> _parseServers(dynamic servers) => [];
-  Future<Map> _loadYaml(String content) async => {};
-  String _extractVersion(Map doc) => doc['openapi']?.toString() ?? '';
 }
 
-// -----------------------------------------------------------------------------
-
-/// Parser for Postman Collection v2.1.
-/// Handles collection variables, auth schemes, folder nesting, and pre-request scripts.
+/// Postman Collection v2.1 — handles auth schemes, {{variables}}, folder nesting.
 class PostmanParser implements SpecParser {
   @override
-  double canParse(SpecSource source) {
-    return source.content.contains('collection') &&
-            source.content.contains('info') &&
-            source.content.contains('schema')
-        ? 0.90
-        : 0.0;
-  }
+  double canParse(SpecSource source) =>
+      source.content.contains('collection') ? 0.90 : 0.0;
 
   @override
   Future<AgentTaskGraph> parse(SpecSource source) async {
-    // TODO: extract items (folders + requests), resolve {{variables}},
-    // map auth schemes to AgentTask.securityRequirements
-    throw UnimplementedError();
+    // extract items → resolve {{variables}} → map auth to securityRequirements
   }
 }
 
-// -----------------------------------------------------------------------------
-
-/// Parser for GraphQL introspection schemas.
-/// Extracts queries, mutations, subscriptions, and type system for test generation.
+/// GraphQL introspection — extracts queries, mutations, subscriptions, type system.
 class GraphQlParser implements SpecParser {
   @override
-  double canParse(SpecSource source) {
-    return source.content.contains('__schema') ||
-            source.content.contains('type Query')
-        ? 0.90
-        : 0.0;
-  }
+  double canParse(SpecSource source) =>
+      source.content.contains('__schema') ? 0.90 : 0.0;
 
   @override
   Future<AgentTaskGraph> parse(SpecSource source) async {
-    // TODO: parse type system, extract operation definitions,
-    // infer field-level dependencies for multi-step test generation
-    throw UnimplementedError();
+    // parse type system → extract operations → infer field-level dependencies
   }
 }
 ```
@@ -915,29 +722,3 @@ API Dash's existing **DashBot** AI assistant is the natural host for the `AgentC
 
 ---
 
-### Hour Breakdown by Component
-
-| Component | Estimated Hours |
-|---|---|
-| `SpecParser` (all formats + tests) | 28 hrs |
-| `AgentCore` + state machine | 14 hrs |
-| `TestStrategyPlanner` + LLM layer | 28 hrs |
-| `WorkflowExecutor` + context | 28 hrs |
-| `SelfHealingEngine` + drift detection | 28 hrs |
-| `ReportGenerator` (all formats) | 14 hrs |
-| MCP Apps (`test-review` + `healing-diff`) | 28 hrs |
-| Flutter UI + DashBot integration | 14 hrs |
-| Integration testing + documentation | 9 hrs (buffer) |
-| **Total** | **175 hrs** |
-
----
-
-### Key Dependencies & Risks
-
-| Risk | Affected Weeks | Mitigation |
-|---|---|---|
-| `$ref` resolution complexity in OpenAPI parser | Week 1–2 | Scoped to community bonding research; stub with TODO if it overruns |
-| LLM provider instability | Week 4–5 | Local Ollama fallback in place before LLM-dependent weeks begin |
-| `healing-diff` MCP App depends on stable `SelfHealingEngine` | Week 12 | Engine completed by end of Week 9 — 2 week buffer before MCP App work |
-| Flutter UI left too late | Week 13 | Basic Agent panel scaffold built in Week 6 alongside `WorkflowExecutor` |
-| No buffer in original plan | Week 14 | Explicit buffer week added — integration testing and docs separated from feature work |
