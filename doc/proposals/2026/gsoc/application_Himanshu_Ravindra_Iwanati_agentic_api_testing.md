@@ -501,24 +501,24 @@ API Dash is a Flutter application. The MCP Apps specification defines the **host
 
 ---
 
-#### 3.9 DashBot Integration
+### 7.3 MCP Apps Protocol Integration in Flutter (API Dash as MCP Host)
+
+API Dash is a Flutter application. The MCP Apps specification defines the **host-side responsibilities**: rendering the sandboxed iframe, mediating the JSON-RPC bridge, and injecting `hostContext` CSS variables. To implement this in Flutter:
+
+#### 7.3.1 Flutter WebView as MCP App Host
+
+API Dash will embed `webview_flutter` to render MCP App HTML resources. The WebView acts as the sandboxed iframe equivalent, with all external network access controlled via the `_meta.ui.csp` declaration on each registered resource.
+
+### 7.4 DashBot Integration
+
+API Dash's existing **DashBot** AI assistant is the natural host for the `AgentCore` natural language interface described in Section 3.4.2. The MCP Apps layer enhances DashBot's existing capabilities by adding structured visual output at key decision points, without replacing its conversational interface.
 
 | DashBot Existing Capability | Agentic Testing Extension | MCP App Enhancement |
 |---|---|---|
 | Natural language API queries | Natural language test generation requests | `test-review` MCP App for approval |
 | Response explanation | Test failure explanation | `healing-diff` MCP App for patch review |
 | Collection browsing | Spec ingestion from collections | `execution-monitor` MCP App for live progress |
-| Environment variable hints | Dynamic variable substitution in `WorkflowExecutor` | Handled internally |
-
----
-
-#### 3.10 Risks & Mitigation
-
-| Risk | Mitigation |
-|---|---|
-| LLM hallucination in test generation | JSON Schema validation of output; cross-reference with parsed spec; multi-shot retry with error feedback; confidence thresholding for human review |
-| API specification ambiguity | Conservative defaults (skip unspecified behaviours); explicit uncertainty flags in generated tests; interactive clarification prompts for high-impact ambiguity |
-| LLM provider instability | Unified `LlmClient` abstraction; provider health monitoring; fallback chain (Primary → Secondary → Local Ollama); SHA-indexed generation cache |
+| Environment variable hints | Dynamic variable substitution in `WorkflowExecutor` | None (handled internally) |
 
 ---
 
