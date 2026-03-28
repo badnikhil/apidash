@@ -36,11 +36,11 @@ Short answers to the following questions (Add relevant links wherever you can):
 
     The one project I'm most proud of building is undoubtedly ***Persona***, a local AI interview coach with video analysis that I developed entirely on my own in about a month for the OpenAI x NVIDIA Hackathon.
 
-    What makes it meaningful to me is that I built it on top of `Flet`, a Flutter-based framework that is still relatively young with limited documentation. That meant I had to figure out many design and implementation details myself while building the system.
+    What makes it meaningful to me is that I built it on top of `Flet`, a Flutter-based python framework that is still relatively young with limited documentation. That meant I had to figure out many design and implementation details myself while building the system.
 
     The application is heavily asynchronous and multithreaded, since it needs to coordinate several components simultaneously like live video analysis (OpenCV), speech-to-text (Whisper), text-to-speech (Piper-TTS), a local LLM (GPT-OSS:20b), and other processing pipelines. I designed custom pipelines to run these in parallel while keeping the UI responsive. A big challenge was making everything run smoothly on a consumer PC with only 6 GB VRAM and 24 GB RAM, which required a lot of optimization and careful resource management.
 
-    I’m proud that I was able to design the concept, architect the system, implement every component myself, and still deliver a fully working unique, one-of-a-kind product with a smooth flow, including a compiled Windows executable within the hackathon timeframe.
+    I’m proud that I was able to design the concept, architect the system, implement every component myself, and still deliver a fully working, one-of-a-kind product with a smooth flow, including a compiled Windows executable within the hackathon timeframe.
 
     [Github Repo](https://github.com/TheAnshulPrakash/Persona)
 
@@ -48,8 +48,8 @@ Short answers to the following questions (Add relevant links wherever you can):
 
 3. What kind of problems or challenges motivate you the most to solve them?
 
-    I’m most motivated by problems where I have to build things end-to-end and actually make them work. 
-    Especially when multiple technologies are involved in a single application.
+    I’m most motivated by problems where I have to build things end-to-end and actually make them work,
+    especially when multiple technologies are involved in a single application.
 
     I enjoy figuring things out and bringing my ideas to life, whether that’s integrating hardware with software, running and optimizing AI models, or designing systems and workflows as a whole.
 
@@ -122,9 +122,9 @@ Agentic API Testing & Stress Testing APIs for API Dash
 
 API Dash is great for manually interacting with APIs, but there's no way to automatically test an entire API surface without writing every request yourself.
 
-This project builds an agentic testing engine that does that. But there's a problem I ran into while building the prototype that most approaches ignore, real `OpenAPI` specs are huge. Passing the full spec into a single LLM and handling conversations can easily cost thousands of tokens per session and starts producing hallucinated endpoints pretty quickly.
+This project builds an agentic testing engine that does that. However, there is a problem I encountered while building the prototype that most approaches ignore: real `OpenAPI` specifications are huge. Passing the full spec into a single LLM and handling conversations can easily cost thousands of tokens per session and starts producing hallucinated endpoints pretty quickly.
 
-To fix this I built a `deterministic batching` algorithm that splits the spec by resource domain and only passes the relevant section to the model. Same spec, same splits every time.I measured this on a real custom spec during prototype development which brought token usage down by 81.7% on a real spec. The full breakdown is in the implementation section.
+To fix this I built a `deterministic batching` algorithm that splits the spec by resource domain and only passes the relevant section to the model. Same spec, same splits every time. I measured this on a real custom spec during prototype development which brought token usage down by 81.7% on a real spec. The full breakdown is in the implementation section.
 
 The rule the whole system follows: 
 > the AI plans the tests, Dart runs them. 
@@ -149,14 +149,14 @@ Prototype Working repository:
 
 https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting
 
-There are two short video demos included in the [README.md](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/README.md) of the repository demonstrating how the engine works in my prototype.
+There are two short video demos included in the [README.md](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/README.md) and [here](#video-walkthroughs-of-my-current-implementation) of the repository demonstrating how the engine works in my prototype.
 
-The demos show:
+The demos demonstrate the following workflow:
 - User uploading an openapi.json
 - the agent generating tests analyzing that spec
 - the execution engine running those tests against a local FastAPI server (A Library Management)
 - the conversational Agentic mode analyzing the openapi and generating tests and correcting a 422 validation error and retrying automatically(based on its knowledge)
-- Insertion of edge cases like NULL values and why they cant be implemented
+- insertion of edge cases such as NULL values and an explanation of why they cannot be executed
 
 The prototype currently uses a local Ollama model for agentic conversation because of API credit limits, but the design allows swapping this with API Dash’s genai infrastructure for the real implementation.
 
@@ -165,7 +165,7 @@ The prototype currently uses a local Ollama model for agentic conversation becau
 
     I wrote a native Dart script that parses raw OpenAPI JSON, splits the endpoints by root domain (e.g., /auth, /products, /cart), and recursively resolves $ref schema dependencies.
 
-    **Why it matters**: Instead of dumping a huge token file into an LLM, my algorithm initially creates schema batches. This is a deterministic Dart logic that guarantees a significant reduction in LLM context size and reduces API hallucination.
+    **Why it matters**: Instead of dumping a huge token file into an LLM, my algorithm initially creates schema batches. This deterministic Dart implementation guarantees a significant reduction in LLM context size and reduces API hallucination.
 
     -> [Prototype Code](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/openapi_Context_Parsing.dart)
 
@@ -181,7 +181,7 @@ The prototype currently uses a local Ollama model for agentic conversation becau
 
     I implemented a ChangeNotifier state manager (OpenApiAgent) that handles the conversational loop. If an executed HTTP request fails (non-2xx status), the Dart engine intercepts the error, injects the exact status code and response body back into the LLM's prompt, and asks it to fix the parameters automatically.
 
-    **Why it matters**: This proves I understand the danger of AI-driven infinite loops. I hard-coded a maxRetries = 3 limit which can be adjusted based on the project or openapi type.
+    **Why it matters**: This proves I understand the danger of AI-driven infinite loops. I hard-coded a `maxRetries = 3` limit which can be adjusted based on the project or openapi type.
 
     -> [Code can be found here](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/af3dc5847f915c6cf31bebbc8d3c946606ee0d39/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/agentic_api_testing.dart#L77)
 
@@ -190,6 +190,14 @@ The prototype currently uses a local Ollama model for agentic conversation becau
     A native Flutter UI inside APIDash UI itself that observes the agent's state, auto-scrolls to new messages, and renders pass/fail status blocks natively based on the HTTP response outcomes.
 
     -> [Prototype overlay code](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/af3dc5847f915c6cf31bebbc8d3c946606ee0d39/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/agentic_api_testing.dart#L223)
+
+5. MCP Server Prototype (External Tooling Interface)
+
+  I implemented a basic MCP server in Dart that exposes the API Dash execution engine as callable tools for external AI clients. The prototype includes a minimal `mcp_server.dart` along with a **headless** `ApiTestRunner` that can execute test plans independently of the Flutter UI, demonstrated through interactions with *Claude Desktop*.
+
+  Why it matters: This demonstrates how API Dash can integrate with the growing MCP ecosystem used by tools like Cursor or Claude Desktop. Instead of interacting only through the UI, external assistants can invoke API Dash capabilities programmatically (e.g., running test suites or fetching collections), turning the testing engine into a reusable backend service.
+
+  -> [Prototype Code](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/mcp_server.dart)
 
 #### Suggested UI:
 
@@ -525,7 +533,7 @@ For example, a stress test run might produce aggregated metrics like:
 }
 ```
 
-It’s also important to note that the results depend a lot on the machine running the test. At higher concurrency, the system itself can become the bottleneck like CPU maxing out, network limits, or even running out of ports/file descriptors. The plan is to tune and allocate resources beforehand, but even then, these numbers should be treated relative to the test environment, not as absolute benchmarks.
+It’s also important to note that the results depend a lot on the machine running the test. At higher concurrency, the system itself can become the bottleneck like CPU maxing out, network limits, or even running out of ports/file descriptors. The plan is to tune concurrency levels and system resources beforehand, but even then, these numbers should be treated relative to the test environment, not as absolute benchmarks.
 
 Once the run finishes, the AI can optionally be used only for analysis.
 
@@ -583,13 +591,31 @@ This makes it possible to automatically run API Dash test workflows as part of b
 
 #### MCP Integration
 
-The GSoC brief mentions MCP, and the way I designed the testing engine, makes this fairly easy to integrate.
+The GSoC brief mentions MCP, and the way the testing engine is designed makes this fairly straightforward to integrate.
 
-The main reason is that the execution layer is already separate from the UI as stated earlier. The `ApiTestRunner` I wrote takes a **test plan** and a **base URL**, runs the requests, and returns real results. It doesn’t depend on Flutter at all, so it can run anywhere.
+Following the mentors’ feedback to demonstrate how my MCP server would work in practice, I implemented a small working prototype that shows how API Dash can expose its testing engine through MCP tools.
 
-Because of that, adding MCP is mostly about exposing this runner as callable tools.
+The prototype currently includes
+- [mcp_server.dart](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/mcp_server.dart) 
+- [api_testRunner_headless.dart](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/api_testRunner_headless.dart)
 
-The idea is to run a small MCP server independently of API Dash that exposes things like:
+The `api_testRunner_headless.dart` file contains a headless version of the test runner without the `better_networking` package dependency so it can run independently of the main UI environment.
+
+UI screenshots of my interaction between Claude Desktop and the API Dash MCP server:
+
+![mcp_image_1](images/anshul_mcp_claude_workflow1.png)
+
+![mcp_image_2](images/anshul_mcp_claude_workflow2.png)
+
+Video demonstrating the workflow can be found [here](https://github.com/user-attachments/assets/87421b40-46b1-488d-8ed9-f64604640612)
+
+The main reason this integration is straightforward is because the execution layer is already separated from the UI, as described earlier in the proposal.
+
+The `ApiTestRunner` takes a test plan and a base URL, executes the requests, and returns real API results. It has no dependency on Flutter UI components, which means it can run in any environment.
+
+Because of this separation, integrating MCP mostly involves exposing the runner as callable MCP tools.
+
+For the final project, the plan is to run a more organized and **dedicated** MCP server alongside API Dash that exposes tools such as:
 
 - run_test_suite
 - generate_test_plan
@@ -601,17 +627,16 @@ Each of these tools would simply call logic that already exists.
 For example:
 
 ```
-run_test_suite - loads a saved workflow and passes the test plan to ApiTestRunner
+run_test_suite - loads a saved workflow or takes from the user and passes the test plan to ApiTestRunner
 
-generate_test_plan -  asks the agent to produce tests from an OpenAPI spec
+generate_test_plan - asks the agent to produce tests from an OpenAPI spec
 
 explain_failure - sends a failed test result to the agent for diagnosis
 
 get_collection - lists saved test workflows
 ```
 
-
-This means external MCP clients like **Cursor** or **Claude** Desktop could run API Dash test workflows directly.
+This would allow external MCP clients such as Cursor or Claude Desktop to run API Dash test workflows directly.
 
 For example a developer could ask their IDE assistant:
 
@@ -731,7 +756,9 @@ This is the same approach I plan to follow during GSoC, building directly within
 
 During GSoC, I’ll stay consistent with contributions, communicate actively, and iterate based on feedback. The goal is to deliver something solid that’s actually useful for the developer community and continues to be used even after the program ends.
 
-### Video walkthroughs of the current plan
+### Video walkthroughs of my current implementation
+
+https://github.com/user-attachments/assets/87421b40-46b1-488d-8ed9-f64604640612
 
 https://github.com/user-attachments/assets/2d8aee02-3c45-481f-8654-0c06023a5793
 
