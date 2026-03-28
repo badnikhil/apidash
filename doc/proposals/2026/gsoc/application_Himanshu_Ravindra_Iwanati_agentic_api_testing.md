@@ -280,6 +280,12 @@ Parsing proceeds in three stages:
 
 #### 3.3.3 TestStrategyPlanner: LLM-Powered Test Strategy Generation
 
+The `TestStrategyPlanner` transforms a parsed spec into a test suite through three steps:
+
+1. **Coverage analysis** — identifies untested paths, parameter combinations, and undocumented response codes
+2. **Risk prioritisation** — weights tests by business criticality, security sensitivity, and historical failure rate
+3. **Strategy selection** — picks the appropriate test type per endpoint (happy path, boundary value, security probe, etc.)
+
 | Test Type | Trigger | LLM Prompt Focus |
 |---|---|---|
 | Happy path | All endpoints | Verify nominal behavior with valid inputs |
@@ -288,6 +294,9 @@ Parsing proceeds in three stages:
 | Security probe | Auth-required endpoints | Test authentication bypass, injection, traversal |
 | Rate limit | Documented limits | Verify throttling behavior and headers |
 | Schema validation | All responses | Validate against specification with strictness tiers |
+
+Planner output is generated via **structured tool-calling APIs**, producing type-safe, parseable
+`APITestCase` definitions — no fragile regex extraction.
 
 #### 3.3.4 WorkflowExecutor: Multi-Step API Call Chain Execution
 
