@@ -41,7 +41,7 @@ This is why I co-founded [Seu AgenteIA](https://github.com/vinimlo) — to bring
 
 **4. Will you be working on GSoC full-time?**
 
-Part-time (~20h/week). I'll be working at my company [Rumo Tecnologias](https://rumotech.com.br) alongside GSoC. The 175-hour project scope requires ~14.6h/week over 12 weeks, which is comfortably within my availability. My professional work with AI systems and API integrations is complementary to this project — it keeps me close to the real-world pain points that MCP Testing addresses.
+Part-time (~20h/week). I'll be working at my company [Rumo Tecnologias](https://rumotech.com.br) alongside GSoC. The 175-hour project scope requires ~14.6h/week over 12 weeks, which is comfortably within my availability. My work with AI systems and API integrations at Rumo keeps me close to the problems MCP Testing addresses.
 
 **5. Do you mind regularly syncing up with the project mentors?**
 
@@ -312,7 +312,7 @@ The engine is the core deliverable. By midterm (Week 4), `npx mcp-conformance ru
 The YAML-based configuration and replay mode are intentionally simple. Failure injection (Week 7) is the riskiest feature — if it slips, the mock server still works for basic deterministic testing.
 
 **"What about part-time availability?"**
-The 175-hour scope at ~14.6h/week over 12 weeks is well within my ~20h/week availability. Critically, the protocol-first architecture was designed specifically to de-risk part-time delivery: by Week 4, `npx mcp-conformance run` works end-to-end — each weekly PR stands alone as a shippable increment, never accumulating into a big-bang delivery. My professional work with AI systems and API integrations at Rumo Tecnologias is directly complementary — it keeps me close to real-world MCP pain points that inform design decisions daily, and I've consistently delivered production software on this schedule.
+The 175-hour scope at ~14.6h/week over 12 weeks fits within my ~20h/week availability. Each weekly PR stands alone as a shippable increment — no big-bang delivery risk.
 
 ## Proof of Concept
 
@@ -358,14 +358,7 @@ Edge Cases
 
 ## Why Me
 
-I bring a combination of production experience, open source track record, and research discipline:
-
-- **AI agent systems in production:** As co-founder of Seu AgenteIA and CTO of Rumo Tecnologias, I've built and shipped AI-powered systems using the Anthropic API with tool calling, multi-agent architectures, and API integrations for enterprise clients. This isn't academic familiarity with MCP — I've debugged JSON-RPC transport failures, handled capability negotiation edge cases, and built the exact kind of testing infrastructure this project needs.
-- **Proven open source maintainer:** [galaxy-profile](https://github.com/vinimlo/galaxy-profile) (458+ stars, GPL-3.0) demonstrates I can build, maintain, and grow a project that others actually use. I also coordinated FLISOL Salvador 2018 (the largest free software event in Latin America), contributed to Wokwi and Noosfero, and maintain tabAla (Chrome extension, Apache 2.0).
-- **API integration at scale:** At Bloxs (fintech), I designed data infrastructure on AWS and built API integrations handling real-world concerns: auth flows, rate limiting, error handling, and schema validation.
-- **Testing framework architecture:** I've designed and built behavior testing frameworks for AI agents — protocol-based assertion systems, trace collection models, and multi-turn test state threading — which directly inform the conformance engine design.
-- **Published researcher:** My [paper at Computer on the Beach 2023](https://doi.org/10.14210/cotb.v14.p544-549) demonstrates the ability to systematically design, implement, and validate a technical solution through peer review — the same rigor applied to this proposal.
-- **Full-stack TypeScript/Python:** The exact stack required for this project matches my daily working stack.
+At Rumo Tecnologias and Seu AgenteIA, I build AI agent systems that rely on MCP — I've debugged JSON-RPC transport failures and capability negotiation edge cases in production. I've also designed behavior testing frameworks for AI agents (protocol-based assertions, trace collection, multi-turn state threading), which directly shaped the conformance engine architecture. The PoC's 19 passing tests against the official MCP SDK demonstrate this hands-on expertise. TypeScript, Node.js, React — the exact stack this project needs — is what I use daily.
 
 ## MCP Apps Testing
 
@@ -381,25 +374,29 @@ This ensures developers can validate their MCP Apps are correctly built before d
 
 ## Future Extensions (post-GSoC)
 
-- **Security profiling:** Extend schema validator to flag destructive operations, detect tool poisoning patterns, and check for injection vulnerabilities — building on the validation infrastructure already in place.
-- **Extended MCP Apps testing:** Deeper iframe sandbox compliance, multi-host theme validation, and interactive app preview rendering.
-- **Additional transports:** SSE legacy support for older MCP servers.
+Security profiling (tool poisoning detection, injection vulnerability checks), extended MCP Apps testing (iframe sandbox compliance, multi-host theme validation), and SSE legacy transport support.
 
 **4. Weekly Timeline**
 
-| Week | Phase | Deliverable | PR |
-|------|-------|-------------|-----|
-| CB | Community Bonding | Dev setup, MCP spec deep dive, API Dash codebase study, architecture discussion with mentors | — |
-| 1 | Engine Core | Transport adapters (stdio + Streamable HTTP) + JSON-RPC client. Connect to any MCP server, send `initialize`, discover tools. | #1 |
-| 2 | Engine Core | Schema validator + composable assertion framework. Validate tool definitions against spec, run assertions on responses. | #2 |
-| 3 | Engine Core | Conformance test suite: 45+ pre-built tests covering all 6 MCP primitives (Tools, Resources, Prompts, Sampling, Roots, Notifications), edge cases, and protocol compliance. | #3 |
-| 4 | Engine Core | CLI interface + output formats (JUnit XML, TAP, JSON, rich terminal). `npx mcp-conformance run` works end-to-end. | #4 |
-| — | **Midterm** | **Engine runs headless against any MCP server, outputs conformance report. CI-ready.** | — |
-| 5 | Mock + Recording | Mock MCP server core: configurable tools with deterministic responses. `npx mcp-mock --config mock.yaml` serves responses. | #5 |
-| 6 | Mock + Recording | Network recording in conformance engine + replay mode in mock. Record real traffic → replay as fixtures. | #6 |
-| 7 | Mock + Recording | Failure injection: latency, error responses, partial results, connection drops. Chaos testing for resilience. | #7 |
-| 8 | Web UI | UI scaffold + server connection panel + tool explorer. Connect to server, browse tools/schemas, execute calls. | #8 |
-| 9 | Web UI | Test runner panel + conformance scorecard. Run suite from UI, view pass/fail results by category. | #9 |
-| 10 | Web UI | Recording viewer + replay controls. Inspect captured traffic, step through sessions, compare recordings. | #10 |
-| 11 | Web UI + MCP Apps | MCP Apps conformance tests (`ui://` validation, handshake, `hostContext`), UI polish, responsive design, user guide. | #11 |
-| 12 | Final | Integration tests against 3+ real MCP servers, GitHub Actions CI workflow example, documentation, GSoC final report. | #12 |
+| Week | Phase | Deliverable | Done when | PR |
+|------|-------|-------------|-----------|-----|
+| CB | Community Bonding | Dev setup, MCP spec deep dive, API Dash codebase study, architecture discussion with mentors. | Repo scaffolded with CI. Mentor-approved architecture doc. | — |
+| 1 | Engine Core | Transport adapters (stdio + Streamable HTTP) + JSON-RPC client. Connect to any MCP server, send `initialize`, discover tools. | Both transports connect successfully. `initialize` handshake completes. Tool list returned. 5+ transport tests. | #1 |
+| 2 | Engine Core | Schema validator + composable assertion framework. Validate tool definitions against spec, run assertions on responses. | Invalid schemas produce structured error messages. Assertions composable and independently testable. 10+ validation tests. | #2 |
+| 3 | Engine Core | Conformance test suite: 45+ tests covering all 6 MCP primitives (Tools, Resources, Prompts, Sampling, Roots, Notifications), edge cases, and protocol compliance. | Suite runs against official MCP SDK reference server. All 6 primitives covered. 45+ tests pass. | #3 |
+| 4 | Engine Core | CLI interface + output formats (JUnit XML, TAP, JSON, rich terminal). `npx mcp-conformance run` works end-to-end. | `npx mcp-conformance run --server "..." --format junit` produces valid JUnit XML. Exit code 0/1 for CI. GitHub Actions example workflow runs green. | #4 |
+| — | **Midterm** | **Engine runs headless against any MCP server, outputs conformance report. CI-ready. 45+ tests.** | | — |
+| 5 | Mock + Recording | Mock MCP server core: configurable tools with deterministic responses. `npx mcp-mock --config mock.yaml` serves responses. | Mock server starts from YAML config. Client receives configured responses. 8+ mock tests. | #5 |
+| 6 | Mock + Recording | Network recording in conformance engine + replay mode in mock. Record real traffic → replay as fixtures. | `mcp-conformance record` captures session to `.jsonl`. `mcp-mock --replay` serves recorded responses. Round-trip test passes. 6+ recording tests. | #6 |
+| 7 | Mock + Recording | Failure injection: latency, error responses, partial results, connection drops. Chaos testing for resilience. | Configurable chaos via YAML. Client receives injected failures. 6+ chaos tests. | #7 |
+| 8 | Web UI | UI scaffold + server connection panel + tool explorer. Connect to server, browse tools/schemas, execute calls. | React app builds. Server connection works via browser. Tool schemas render. Tool calls execute and display responses. | #8 |
+| 9 | Web UI | Test runner panel + conformance scorecard. Run suite from UI, view pass/fail results by category. | Tests run from UI with live streaming. Scorecard shows pass/fail by category. Export to JUnit XML works from UI. | #9 |
+| 10 | Web UI | Recording viewer + replay controls. Inspect captured traffic, step through sessions, compare recordings. | Timeline view renders request/response pairs. Step-through works. Side-by-side diff displays between two recordings. | #10 |
+| 11 | Web UI + MCP Apps | MCP Apps conformance tests (`ui://` validation, handshake, `hostContext`), UI polish, responsive design, user guide. | MCP Apps test category passes against sample app. UI responsive on mobile. User guide covers install → first test. | #11 |
+| 12 | Final | Integration tests against 3+ real MCP servers, GitHub Actions CI workflow example, documentation, GSoC final report. | Integration tests pass against 3+ servers. CI workflow example works. Final report submitted. PR ready for review. | #12 |
+
+**Scope Management**
+
+- **Core (must deliver):** `mcp-conformance` engine + CLI + 45+ tests + CI output formats + `mcp-mock` with YAML config and replay.
+- **Stretch (if ahead of schedule):** MCP Apps testing (W11), recording diff view (W10), failure injection (W7).
+- **If behind schedule:** Web UI deferred to post-GSoC (engine + mock deliver full value headless). Failure injection simplified to latency-only. MCP Apps tests move to post-GSoC.
