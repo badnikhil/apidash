@@ -397,14 +397,23 @@ routing low-confidence cases to human review regardless of severity.
 
 #### 3.7 Error Handling and Graceful Degradation
 
-When LLM output is invalid or the provider is unavailable, the system degrades gracefully
-to **rule-based test generation** — covering required field presence, type-based boundary
-values, status code enumeration, and security scheme validation — ensuring baseline test
-coverage is always produced regardless of LLM availability.
+When LLM output is invalid or the provider is unavailable, the system does not fail
+entirely — instead it applies a **confidence-gated hybrid fallback** strategy:
+
+- **Partial output salvage** — valid test cases from a partial LLM response are preserved;
+  rule-based generation fills only the missing or unparseable cases, avoiding a full
+  regeneration cycle.
+- **Rule-based baseline** — covers required field presence, type-based boundary values,
+  status code enumeration, and security scheme validation, ensuring minimum test coverage
+  is always produced regardless of LLM availability.
 
 LLM failures follow a provider fallback chain — **Primary → Secondary → Local Ollama** —
-with exponential backoff between retries and a SHA-indexed cache that reuses previously
-generated output for unchanged specs, avoiding redundant API calls.
+with a configurable retry threshold (default: 3 attempts) and exponential backoff between
+retries. Ollama ensures the pipeline remains functional even in fully offline environments.
+
+Caching is applied at the **per-endpoint level** using a SHA index over individual
+operation signatures — so a single endpoint change invalidates only that endpoint's
+cached output rather than the entire spec, keeping redundant API calls minimal.
 
 ---
 
