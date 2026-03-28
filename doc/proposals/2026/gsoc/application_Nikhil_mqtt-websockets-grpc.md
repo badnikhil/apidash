@@ -50,7 +50,7 @@
 ### Project Proposal Information
 
 ## Project Details
-
+ 
 - **Project Title:**  WebSocket, MQTT & gRPC Support
 
 
@@ -134,6 +134,11 @@ WebSockets require a stateful interaction model where the "Response" is not a si
 - **Heartbeat Mechanism**: Implementation of automated PING/PONG frames to keep connections alive through aggressive load balancers or firewalls.
 
 **2. The Live Console UI**
+
+![WebSocket Live Console UI](images/websocket_ui.png)
+
+*Figure 1: Initial WebSocket interface concept*
+
 - **Stream Visualization**: A high-performance scrolling list using `ListView.builder` to handle thousands of messages without frame drops.
 - **Directional UI**:
     - **Outgoing Messages**: Right-aligned, blue-tinted bubbles with "Sent" status and precision timestamps.
@@ -159,6 +164,11 @@ MQTT (Message Queuing Telemetry Transport) follows a Publish/Subscribe pattern, 
 - **Last Will and Testament (LWT)**: UI to configure the LWT message, topic, and QoS.
 
 **2. Topic & Subscription Management**
+
+![MQTT Interface](images/mqtt_ui.png)
+
+*Figure 2: Initial MQTT interface concept*
+
 - **Subscription Dashboard**: A side-panel within the MQTT tab where users can manage multiple active subscriptions.
 - **Wildcard Support**: Full support for `+` (single-level) and `#` (multi-level) wildcards.
 - **Color Coding**: Each subscribed topic will be assigned a unique color, and incoming messages in the feed will be highlighted with that color for instant visual grouping.
