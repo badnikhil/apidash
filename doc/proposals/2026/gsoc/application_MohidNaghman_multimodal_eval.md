@@ -1143,8 +1143,8 @@ By the midterm evaluation (Week 8 - End of Phase 2), the following will be **com
 | --------------- | ------------- | ----------------- |
 | Quick question  | <1 hour       | Slack             |
 | Design decision | 24 hours      | GitHub Discussion |
-| Blocker         | Same day      | 15-min Zoom       |
-| Critical bug    | Immediate     | Slack + call      |
+| Blocker         | Same day      | Discord           |
+| Critical bug    | Immediate     | Slack + Discord   |
 
 ---
 
