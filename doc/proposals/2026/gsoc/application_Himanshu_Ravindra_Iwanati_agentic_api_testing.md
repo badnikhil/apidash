@@ -721,6 +721,38 @@ API Dash's existing **DashBot** AI assistant is the natural host for the `AgentC
 
 ---
 
+### Proof of Concept — [`hihry/MCP_APP_testing`](https://github.com/hihry/MCP_APP_testing)
+
+To validate the core technical claims of this proposal before GSoC begins, I built a
+working TypeScript/Node.js MCP server — `apidash-agent-mcp` — that demonstrates the
+full five-stage agentic pipeline end-to-end against the JSONPlaceholder API.
+
+**[▶ Video Demo](https://www.youtube.com/watch?v=yynRa-KTfcY)**
+
+The POC covers spec ingestion, LLM-powered test generation via structured tool-calling
+(Claude Haiku), real HTTP execution with assertion evaluation, deterministic schema drift
+detection (simulating `id: 1` → `id: "usr_1"`), and both MCP Apps — `test-review` and
+`healing-diff` — with the full MCP Apps protocol implemented: `ui/initialize` handshake,
+`hostContext` theme injection, `ui/update-model-context` for approval payloads, and
+`ui/message` for approve/reject decisions.
+
+Three design decisions from the proposal were directly validated through building this:
+prompt caching structure (spec as system prompt, per-endpoint task as user message),
+deterministic LLM output normalisation before execution, and the two-step
+`generateTests` → `executeSuite` separation that lets the `test-review` MCP App sit
+naturally between planning and execution.
+
+---
+
+#### POC vs Full System
+
+| | This POC | Full System (GSoC) |
+|---|---|---|
+| Spec ingestion | Hardcoded JSONPlaceholder spec | Real OpenAPI / Postman / GraphQL files |
+| Execution | Sequential `async/await` | Parallel Dart isolates |
+| MCP Apps | `test-review` + `healing-diff` | + `execution-monitor`, `report-viewer` |
+| MCP Host | VS Code Insiders | Flutter `webview_flutter` in API Dash |
+
 ## Weekly Timeline
 
 > **Total commitment:** 175 hours | **Rate:** ~14 hrs/week across 12 coding weeks  
