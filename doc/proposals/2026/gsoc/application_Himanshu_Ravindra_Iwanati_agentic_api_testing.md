@@ -300,6 +300,7 @@ Planner output is generated via **structured tool-calling APIs**, producing type
 
 ```dart
 
+
 enum TestType { happyPath, boundaryValue, errorInjection, securityProbe, rateLimit, schemaValidation }
 
 class APITestCase {
@@ -370,12 +371,22 @@ The `WorkflowExecutorhandles` the runtime complexity of API testing:
 
 #### 3.3.5 SelfHealingEngine: Schema Drift Detection and Auto-Remediation
 
+The `SelfHealingEngine` implements continuous specification alignment through three detection mechanisms:
+
+- **Structural diff** — compares actual response schemas against expected schemas from the spec or historical snapshots
+- **Semantic drift** — identifies changes in field meanings (e.g. `status: "active"` → `status: 1`) through value distribution analysis
+- **Behavioral change** — detects modified error codes, header additions, or performance degradation
+
+
 | Drift Severity | Automated Action | Human Notification |
 |---|---|---|
 | Cosmetic (whitespace, ordering) | Silent acceptance | None |
 | Compatible (new optional fields) | Test update | Summary digest |
 | Breaking (required changes) | Proposed patch | Immediate alert with diff |
 | Architectural (endpoint removal) | Suite restructuring | Blocking review required |
+
+Healing generates **confidence scores** based on change type, test coverage, and historical accuracy,
+routing low-confidence cases to human review regardless of severity.
 
 #### 3.3.6 ReportGenerator: Multi-Format Output
 
