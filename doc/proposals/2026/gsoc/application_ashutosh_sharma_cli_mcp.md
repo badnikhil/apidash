@@ -126,15 +126,38 @@ apidash env active              # Show active environment
 apidash serve --mcp             # Start MCP server headlessly
 ```
 
-**Headless Storage Access:**
+**Storage Approach:**
 
-A key insight from studying `lib/services/hive_services.dart` is that `initHiveBoxes` already supports a non-Flutter path via `Hive.init(workspaceFolderPath)` when `initializeUsingPath: true`. The CLI will use this to safely read the same Hive storage as the GUI without starting Flutter.
-```dart
-// CLI storage initialization - no Flutter required
-await initHiveBoxes(true, workspaceFolderPath);
-final handler = HiveHandler();
-final ids = handler.getIds();
+Based on mentor guidance in the weekly connect, the CLI will use **file-based storage** instead of direct Hive access. The mentor confirmed that Hive has concurrent access issues when both GUI and CLI try to open the same box simultaneously.
+
+The CLI will use a `.apidash/` folder in the project's working directory:
 ```
+.apidash/
+├── collections/
+│   └── my-api-tests.json     # Saved request collections
+├── requests/
+│   └── get-users.json        # Individual saved requests
+└── config.json               # CLI configuration
+```
+
+**Storage strategy:**
+- Local workspace (`.apidash/` in current directory) takes priority
+- Falls back to global workspace (`~/.apidash/`) if no local workspace found
+- Collections stored as JSON files, compatible with API Dash export format
+- Ad-hoc requests execute and return without persistence by default
+- Use `--save` flag to persist an ad-hoc request
+```dart
+// CLI workspace detection
+String? findWorkspace() {
+  final local = Directory('.apidash');
+  if (local.existsSync()) return local.path;
+  final global = Directory('${Platform.environment['HOME']}/.apidash');
+  if (global.existsSync()) return global.path;
+  return null;
+}
+```
+
+This approach is consistent with how tools like `.git`, `.env` work — project-specific API collections live with the project.
 
 **Packages:**
 - `package:args` — command and flag parsing
