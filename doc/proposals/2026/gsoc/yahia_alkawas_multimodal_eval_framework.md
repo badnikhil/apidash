@@ -26,7 +26,7 @@ To demonstrate the feasibility of the real-time streaming architecture, I have d
 
 **[▶️ Watch the PoC Demo Video on Google Drive](https://drive.google.com/file/d/1yU1CVqcSTt9s4fWjEeRO6JzHmB7sXRpY/view?usp=drive_link)**
 
-[![PoC Demo Preview](https://drive.google.com/file/d/1Ygjdeb6YkK-GulFc2oDwwzHGc0-cwHt9/view?usp=drive_link)]([YOUR_VIDEO_LINK_HERE](https://drive.google.com/file/d/1yU1CVqcSTt9s4fWjEeRO6JzHmB7sXRpY/view?usp=drive_link))
+[![PoC Demo Preview]([YOUR_IMAGE_LINK_HERE](https://drive.google.com/file/d/1Ygjdeb6YkK-GulFc2oDwwzHGc0-cwHt9/view?usp=drive_link))]([YOUR_VIDEO_LINK_HERE](https://drive.google.com/file/d/1yU1CVqcSTt9s4fWjEeRO6JzHmB7sXRpY/view?usp=drive_link))
 *Click the image above to watch the full technical demonstration.*
 
 ### **Technical Highlights of the PoC:**
