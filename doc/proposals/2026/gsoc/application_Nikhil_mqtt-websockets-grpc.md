@@ -217,7 +217,7 @@ I will extend the existing `codegen` module to generate production-ready snippet
 - **MQTT**: Python (paho-mqtt), Go (paho.mqtt.golang), Dart (mqtt_client).
 - **gRPC**: Generated clients for Go, Dart, and Python including the necessary `protoc` command-line instructions.
 
-**C. Global Interceptors & Scripting**
+**B. Global Interceptors & Scripting**
 I will ensure that the existing Pre-request and Post-response scripting engine (JavaScript-based) works across all protocols:
 - **WS Interceptors**: Modify outgoing frames programmatically.
 - **MQTT Hooks**: Auto-respond to certain topics using scripts.
@@ -436,11 +436,16 @@ I will implement a "Connection Pulse" system.
 - No-code form generation for complex RPC calls.
 - Support for Unary and all three streaming patterns (Server, Client, Bi-Di).
 - Comprehensive documentation and final project report.
+
+**Milestone 5: ApiDash CLI Implementation (Week 14)**
+- Comprehensive CLI tool for headless operations.
+- Support for REST, WebSocket, MQTT, and gRPC via command line.
+- CLI-GUI data synchronization and automation features.
 ---
 
 ### 4. Detailed Weekly Timeline
 
-This timeline covers 12 weeks of coding plus the community bonding period.
+This timeline covers 14 weeks of coding plus community bonding period.
 
 #### Phase 0: Community Bonding (May 4 - June 1)
 - **Week 1-2**: Deep dive into `apidash_core` internals. Discuss the `RequestModel` refactor with mentors to ensure backward compatibility with existing REST collections.
@@ -464,8 +469,81 @@ This timeline covers 12 weeks of coding plus the community bonding period.
 - **Week 11**: **gRPC Streaming**. Implement Server-side and Bi-directional streaming logic. Build the stream visualization pane.
 - **Week 12**: **Metadata & Reflection**. Add gRPC Metadata (headers) support. Implement gRPC Reflection for auto-discovery. **Milestone: Full gRPC Support.**
 
-#### Phase 4: Finalization (August 25 - Sept 1)
-- **Final Week**: Extensive bug hunting. Writing integration tests for all 3 protocols. Finalizing the "Integration Code" generator for all protocols. Documentation and Final Report.
+#### Phase 4: CLI Implementation (September 8 - September 21)
+- **Week 13**: **CLI Core Development**
+  - Set up CLI package structure using Dart's `args` package
+  - Implement basic commands: `run`, `list`, `create`, `delete`
+  - Add protocol-specific commands for WebSocket, MQTT, gRPC
+  - Create configuration management system
+
+- **Week 14**: **CLI Polish & Integration**
+  - Add advanced features: batch operations, export/import
+  - Implement CLI-GUI data synchronization
+  - Create comprehensive CLI documentation
+  - Integration testing and bug fixes
+  - Final project report and documentation
+
+---
+
+#### 4.1. CLI Technical Architecture
+
+**A. Package Structure**
+```
+packages/apidash_cli/
+├── bin/apidash.dart
+├── lib/
+│   ├── commands/
+│   │   ├── run_command.dart
+│   │   ├── create_command.dart
+│   │   ├── ws_command.dart
+│   │   ├── mqtt_command.dart
+│   │   └── grpc_command.dart
+│   ├── models/
+│   │   └── cli_models.dart
+│   ├── utils/
+│   │   └── cli_utils.dart
+│   └── core/
+│       ├── cli_config.dart
+│       └── output_formatter.dart
+```
+
+**B. Core Components**
+- **Command Router**: Handles command parsing and routing using Dart's `args` package
+- **Configuration Manager**: Manages CLI settings, profiles, and connection to ApiDash data
+- **Output Formatter**: Supports JSON, YAML, table, and colored terminal outputs
+- **Progress Indicators**: Real-time feedback for long-running operations
+
+**C. CLI Command Examples**
+```bash
+# Basic operations
+apidash run <request-id> --format json
+apidash list --type websocket --output table
+apidash create --type mqtt --name "IoT Test" --url "mqtt://localhost:1883"
+apidash delete <request-id>
+
+# Protocol-specific commands
+apidash ws connect --url "ws://echo.websocket.org" --send "Hello World"
+apidash mqtt subscribe --topic "sensors/+/temperature" --broker "mqtt://localhost:1883"
+apidash grpc call --service "UserService" --method "GetUser" --proto "user.proto" --data '{"id": 123}'
+
+# Advanced operations
+apidash export --format har --output collection.har
+apidash import --file postman_collection.json
+apidash test-suite --file test_config.yaml
+```
+
+**D. CLI-GUI Integration**
+- Shared Hive database for request storage
+- Real-time configuration synchronization
+- Consistent request models across interfaces
+- Cross-platform compatibility (Windows, macOS, Linux)
+
+**E. Technical Implementation Details**
+- Use Dart's `io` package for cross-platform compatibility
+- Implement shell completion scripts (bash, zsh, fish)
+- Add color-coded output using `ansi` package
+- Support for environment variables and configuration files
+- Error handling with helpful messages and suggestions
 
 ---
 
@@ -496,4 +574,5 @@ This timeline covers 12 weeks of coding plus the community bonding period.
 - Functional WebSocket, MQTT, and gRPC clients integrated into ApiDash.
 - Real-time message visualization UI for streaming protocols.
 - Automated code generation for the new protocols.
+- Comprehensive CLI tool for headless ApiDash operations
 - Comprehensive unit and integration tests.
