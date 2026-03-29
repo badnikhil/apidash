@@ -19,3 +19,16 @@ This project aims to develop an end-to-end evaluation framework within API Dash 
 
 ## Experience
 As a CS student at Cairo University and a security researcher at HackerOne, I have extensive experience building scalable, secure Full-Stack applications using Node.js, React, and Python.
+
+## 🚀 Proof of Concept (PoC)
+
+To demonstrate the feasibility of the real-time streaming architecture, I have developed a functional Proof of Concept. This PoC integrates the FastAPI backend with the React frontend to handle live execution logs.
+
+**[▶️ Watch the PoC Demo Video on Google Drive](https://drive.google.com/file/d/1yU1CVqcSTt9s4fWjEeRO6JzHmB7sXRpY/view?usp=drive_link)**
+
+### **Technical Highlights of the PoC:**
+* **Real-Time Streaming:** Implemented **Server-Sent Events (SSE)** using FastAPI’s `StreamingResponse` to pipe live output from a Python subprocess directly to the UI.
+* **Terminal UI Component:** Developed a custom React/TypeScript terminal component that handles high-frequency data updates with 0% to 100% progress tracking.
+* **Architecture:** Proves the "dependency-lite" approach by avoiding heavy message brokers like Redis, ensuring the framework remains lightweight and portable.
+
+> **Note:** While the audio volume is slightly low in this recording, the core architecture and real-time data flow are fully demonstrated.
