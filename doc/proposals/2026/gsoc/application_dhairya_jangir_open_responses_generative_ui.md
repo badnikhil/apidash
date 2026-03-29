@@ -1,5 +1,5 @@
 
-# GSoC 2026 Proposal — Multimodal AI and Agent API Eval Framework
+# GSoC 2026 Proposal — Open Responses and Generative UI Dashboard for API Dash
 
 **Organization:** API Dash (foss42/apidash)     
 **Contributor:** Dhairya Jangir         
