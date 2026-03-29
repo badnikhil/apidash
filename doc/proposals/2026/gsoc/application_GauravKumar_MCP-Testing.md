@@ -3,11 +3,11 @@
 1. Full Name - Gaurav Kumar
 2. Contact info (public email) - gauravk16in@gmail.com
 3. Discord handle in our server (mandatory) - @tendsgaurav
-4. Home page (if any) - https://gauravk.space
+4. Home page (if any) - [https://gauravk.space](https://gauravk.space)
 5. Blog (if any) - NA
-6. GitHub profile link - https://github.com/gauravk16in
-7. Twitter, LinkedIn, other socials - https://linkedin.com/in/tendsxgaurav
-8. Time zone - GMT +5:30 , Asia/Kolkata
+6. GitHub profile link - [https://github.com/gauravk16in](https://github.com/gauravk16in)
+7. Twitter, LinkedIn, other socials - [https://linkedin.com/in/tendsxgaurav](https://linkedin.com/in/tendsxgaurav)
+8. Time zone - GMT +5:30, Asia/Kolkata
 9. Link to a resume (PDF, publicly accessible via link and not behind any login-wall) - https://drive.google.com/file/d/1qe3h9zHNJquehfqGAZXAFbnvIgcZl0mq/view?usp=sharing
 
 ### University Info
@@ -23,150 +23,252 @@ Short answers to the following questions (Add relevant links wherever you can):
 
 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
 
-Yes, earlier I have worked on API DASH which is a FOSS project here is my links of contributions to API DASH -
+Yes, I’ve contributed to API DASH, which is a FOSS project, and my contributions gave me familiarity with the project’s codebase.
 
-https://github.com/foss42/apidash/issues/1021#issuecomment-3757801171
-https://github.com/foss42/apidash/pull/1380
-https://github.com/foss42/apidash/pull/1413
+![#Issue #1021](https://github.com/foss42/apidash/issues/1021#issuecomment-3757801171)
+![#Issue #1363](https://github.com/foss42/apidash/pull/1380)
+![#Issue #1382](https://github.com/foss42/apidash/pull/1413)
 
+2. What is your one project/achievement that you are most proud of? Why?
 
-3. What is your one project/achievement that you are most proud of? Why?
-If I have to decide one project that I'm most proud of then it will be GlimpseIO. When I first came to college I mostly use to go to library and badmintion court initially becuase I like coding and plaing badmintion that time but going to library  with my Nitro 5 and coming back to my room just after realizing the library was closed feels me very tired and wasting of time specially when it's afternoon and same for the badmintion going to the court and waiting for my turn feels me like hope so I came at this time so I have to wait less and enjoy more the gameplay.
-Then, I made GlimpseIO (Glimpse means at the moment and IO means In and Out) and the aim was straight forward know about any place before you go there. How it's was working- I stick a QR code on the library gate so when the gatekeeper comes and open the library he scan the qr code and the update changes to Library Open with timestamp and when it's closes they scan again and it automatically detect the timestamp and mark as Library Closed. Same happend for Badmintion when somebody was playing they scan the QR and it automatically detect the badmintion QR and mark as Already occupied and so on.
-Later I did same thing for Cafeteria where each worker has assigned to their QR code and they update about the meal stocks, capacity of the Cafeteria, and everything that was possible to do and felt important at that moment.
-Now almost everyone from my class started using GlimpseIO and others loved it too and then I added support to get notified via Whatsapp and started adding more busy places where the integration was essential.
-And, a day my professor saw the QR code as I had sticked on the gate of Cafeteria and he contacted me & said how you got this idea? This is an amazing work you have done Gaurav! since I was in first year that time he appreciated me to solve a real problem almost everyone was facing. They also offered me to upgrade it and automate with integrating IOT, and AI.and Yes! this Glimpse moment I will never forget.
+In my first year, I observed that when I have to go to the library, I have to ask some of my friends if it is open. Shall I come? Is any space left, or is it fully occupied? And then I go to the library and complete my work, but it wasn’t a permanent solution, and I don’t want to disturb her as she may be studying,g and many of my friends were facing this problem. Some of them come from their room to study and find the library is closed, and returning leads to wasting their time.  
+Then, I made https://glimpseio.tech Glimpse - At the moment, IO - In/Out), where I can check if any particular place is open, closed, or at capacity before I actually visit.
 
-4. What kind of problems or challenges motivate you the most to solve them?
-Mostly, I like to solve those problems which I start to face repeatively again and again. I try to fix it by iterating suitable approaches and researching on exisitin solution if any exit on the internet.
-For eg. currently, I'm working with a automatic smart BIN system that catches any garbage by sensing your hand gesture.
-I'm working with a team and we're trying to make it helpful for lazy peoples, and also adding humour to the BIN to make it playful.
-So, I like to solve these types of problems which can help others and make their day better.
+Initially, I had a very simple approach-
 
-5. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
-Yes! I will be working on GSoC full-time however I maybe limited to work for a week of two due to my university semester exams.
+- Design a QR code for each place.
+- Stick on the gate of the particular place.
+- When staff opens the door, the check-in by just scanning it and scanning again will be marked as closed.
+- Update the capacity (limited to Cafeteria and Library), it counts the number of people present there, subtracts from total_capacity, and shows the live update with Firebase real-time database implementation.
+- Later, I added a subscription for the most visited place. It analyzes the student’s check-in and check-out time for a particular place and notifies them when it opens or closes.
+- And after a month, people started using GlimpseIO, and my Professor also appreciate me to solve a real problem that was being faced by many and offered me to integrate IOT and AI for better usability.  
+   And this was my GlimpseIO story I am most proud of.
 
-6. Do you mind regularly syncing up with the project mentors?
-Not at all, I will love to connect with them and ask for any feedbacks and helps I needed during those time.
+3. What kind of problems or challenges motivate you the most to solve them?
 
-7. What interests you the most about API Dash?
-For me API Dash is not just like another API testing platform as I learned alot during my contributions and exploration of this project and It made understand alot things I never aware of like playing a video in the API DASH and get to know why the app crashed last time and why not this time in flutter, get to know MIME pkg, Possibilities of ASCII values in indentifying the binary file types and list goes on. My first issue I raised was #1021 in API DASH.
+Mostly, I like to solve those problems that I start to face repetitively again and again. I try to fix it by iterating suitable approaches and researching on existent solution if any exist on the internet, and ask my friends if they faces too and if they have any solutions or suggestions.  
+Right now, I'm working with an automatic smart BIN system that catches any garbage by sensing your hand gesture.  
+I'm working on this project with my teammates, and we're trying to discover how we can make it helpful for lazy people, and also add humor (personality) to the BIN to make it playful.
 
-8. Can you mention some areas where the project can be improved?
-I think following areas can improve API DASH and make it more interesting.
--Adding a how to use Guide for begineers.
--Adding a feature to compare multiple previous API calls.
--Adding a Response Previewer for Binary or Unknown file type.
--Adding a console to fetch and shows logs in the UI.
+4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
 
-9. Have you interacted with and helped API Dash community? (GitHub/Discord links)
-https://github.com/foss42/apidash/issues/1021#issuecomment-3757801171
-https://github.com/foss42/apidash/issues/1363#issuecomment-4093068441
-https://github.com/foss42/apidash/issues/1382#issuecomment-4108232229
+Yes, I’ll be working full-time on GSoC so that I can align my project in the best possible way. However, my university semester exams are scheduled from June 29 to July 2025. During this period,d I will be limited to working for roughly 2-3 hours per day. I will discuss this as exam dates are subject to change.
 
+5. Do you mind regularly syncing up with the project mentors?  
+   Not at all, I will be active and happy to connect with my mentors to ask for any feedback or help I need throughout the project.
+6. What interests you the most about API Dash?  
+   What interests me most is their tendency to stay updated with the latest tech and approach new and most appropriate methods while solving a problem or introducing a new feature. API DASH combines API testing with modern protocol exploration. It helped me find those technical details I was previously unaware of, such as using MIME packages and possibilities of ASCII values in identifying an unknown/ binary file types, as well as debugging platform-specific issues.  
+   It all started with my first issue #1021, it shaped my understanding of maintainers' standards, especially @animator.
+7. Can you mention some areas where the project can be improved?  
+   I think the following areas can improve API DASH and make it even more useful for developers.
+
+- Adding a how-to-use guide, tips, or a sample collection would help beginners get comfortable with API DASH faster.
+- Making the request history stronger and being able to compare previous API calls, responses, with timestamps side by side would actually make debugging much easier
+- A more flexible previewer for unknown file types would make inspection better.
+- Adding a console panel can be ga reat idea for live logging and debugging support.
+
+8. Have you interacted with and helped the API Dash community? (GitHub/Discord links)
+   ![# Improve onboarding by guiding users when required are missing](https://github.com/foss42/apidash/issues/1021#issuecomment-3757801171)
+   ![# Add confirmation dialog before deleting requests or collections](https://github.com/foss42/apidash/issues/1363#issuecomment-4093068441)
+   ![# Previewer fallback based on magic bytes](https://github.com/foss42/apidash/issues/1382#issuecomment-4108232229)
 
 ### Project Proposal Information
 
 1. Proposal Title - MCP Dash: Building a Testing and Debugging Suite for Model Context Protocol
 
 2. Abstract: A brief summary about the problem that you will be tackling & how.
-MCP servers are getting more popular and even becoming the API layer of AI agents. While identifying the bugs, and getting to know why Claude is hallucinating on calling a tool is very difficult and developers often faces this problem. 
--Model Context Protocols's offical inspector tool is stateless and loses every connections and it's log on each restart or refresh. (Using IndexedDB to store the prev session data and reuse it into the next session)
--The History Panel is not promising the developer what they want, for eg. one cannot go back to previous tool call untill and unless he or she enter the required argument. (Adding a replay button can reduce the workload)
--Getting the raw and unexpected JSON-RPC message creates confusion amoung the developer and consume their time to find the actual probelm. (beautifying the JSON and rendering a more readible output)
--Errors are undifferentiated, they need to be classified. (Setting a colorful tag with error type can help determine the actual error type.)
+
+MCP servers are getting more popular and even becoming the API layer of AI agents. Model Context Protocol is getting popular and being adopted by many companies in a very limited time, and it is becoming the API layer of AI agents. Currently, identifying bugs or testing tools sounds very difficult for a normal user and even a bit confusing for a developer. However, tools like MCP JAM are capable of providing a better user experience, but it focuses more on ChatGPT SDK and UI but still lack basic capabilities.  
+While the official inspector tool is stateless and loses every connection and logs on each restart or refresh.  
+Using IndexedDB to store the previous session data and reuse it in the next session
+
+The History Panel needs to be redesigned and requires a lot of improvements. As of now, logs are not organized like how it should be; a developer can face this, especially when he or she is dealing with multiple-
+
+- Requests and responses
+- Notifications and Errors together.
+- Making the panel more structured, configurable, and well-categorized can help understand the root cause and errors faster.
+- Designing a replay button that can help them test previous tool calls without manually providing the argument will be going to save a lot of time in case of repetitive test cases.
+
+Getting the raw and unexpected JSON-RPC message creates confusion among developers, and it consumes their time to find the actual problem.  
+Beautifying the JSON and rendering a more readable output can fix this problem.  
+eg. `"Too small: expected string to have >=1 characters" can be turned into something like this - "title" cannot be empty  `
+`“regex mismatch at index 4” can be “email format is invalid”`
+
+Errors are undifferentiated; they need to be classified.  
+Setting a colorful tag with the error type can help determine the error faster.  
+eg. [TRANSPORT], [PROTOCOL], [TOOL-EXEC]
 
 3. Detailed Description
 
-1.**Restore previous session on disconnection**
-localStorage keeps data only in useState which get clears on every refresh, and developer need to repeat the tool calling by giving the arguments required and this leads to frustration.
-While using IndexedDB can fix this problem by acting as a persistent, client-side database that can survive browser refresh.
-also IndexedDB is async, it supports structured queries, and doesn't block rendering like localStorage and avoids unexpected freezes.
+1. Restore the previous session on disconnection  
+   localStorage keeps data only in useState, which gets cleared on every refresh, and developers need to repeat the tool call by giving the required arguments, and this leads to frustration.  
+   Using IndexedDB can fix this problem by acting as a persistent, client-side database that can survive browser refresh.  
+   Also, IndexedDB is asynchronous, it supports structured queries, and doesn't block rendering; localStorage prevents unexpected freezes.
 
-![restore-session](images/restore-mcpdash.png)
+- For each call, IndexedDB will store the full JSON RPC (req/response/notification) objects by a session ID and chronological call ID.
+- The tool should automatically repopulate the UI forms using the latest arg on re-connection and also be able to restore the connection metadata (server address, status of connection ...) from the most recent session.
+- eg, sessions store session metadata, calls store req/response pairs.
 
-2.**Extended Traffic Controller**
--Traffic Panel (Logs) helps in determining the exact timestamps, latency of a tool call.
--The purpose is to capture the logs with progress token (When a `tools/call` has a `progressToken`, show a live progress bar
-in the Tools panel that updates as notifications arrive) and handle way better than existing history or traffic handler by parsing the MCP communication between client and server. It can be able to fetch the history of requests and responses between client and server in better and structured form. It helps developer understand better what exactly went wrong, which field failed and why.
--It follows FIFO rule (first in first out) if counts exceeds the MAX_ENTRIES. so that it keeps the storage bounded
-and avoids prewrites overhead on every insert.
--Adding a replay↵ button can helps in repeating the previous actions performed.
-One can replay any `tools/call` by clicking on the replay↵ button from the log history.
+  ![restore-session](images/restore-mcpdash.png) 
+  
+2. Improved Traffic/History Panel
 
-![traffic](images/traffic-mcpdash.png)
+- It captures all MCP message types -tools/call, resources/read, prompts/get.
+- The purpose is to capture the logs with progress token (when tools/call has a progressToken, show a live progress bar in the tool panel that updates immediately as notifications arrive) and handle the situation better by parsing the MCP communication between client and server.
+- It can be able to fetch the history of requests and responses between client and server in a better and structured form. It helps developers understand better what exactly went wrong, which field failed, and why.
+- With an auto-incrementing cursor history, entries are stored in IndexedDB. On scrolling the entries, it fetches the entries in batches using cursor-based pagination and allows clearing the history manually.
+- Adding a replay button can help in repeating the previous actions performed. One can replay any previous tools/calls by clicking on the replay button from the log history. No need to give the arguments again manually.
 
-3.**Scenario Workflow**
-Design a scenario workflow to streamline the execution and validation of testing scenarios. It enables developers to trigger specific test suites using tool name selectors, or any other to monitor real-time execution results, and systematically diagnose failures. It can work by integrating validation checks and environment variable verification. 
+  ![traffic](images/traffic-mcpdash.png) 3. Scenario Workflow  
+   Design a scenario workflow to streamline the execution and validation of testing scenarios. It enables developers to trigger specific test suites using tool name selectors, or any other method, to monitor real-time execution results and systematically diagnose failures. It can work by integrating validation checks and environment variable verification.
 
-![scenario](images/scenario-mcpdash.png)
+- The UI should allow users to save scenarios, let them run step by step, watch the execution, and allow them to inspect failures with the exact log and clear message.
 
-4.**Identify and Categorizes Every Error**
-Add a simple classification layer that categorizes each error to exactly one of three layer based on the JSON RPC error code & method context.
-The classification can be displayed with a colored tag next to each error entry in the traffic panel.
-eg. `[TRANSPORT]`, `[PROTOCOL]`, `[TOOL-EXEC]`
+  ![scenario](images/scenario-mcpdash.png)
+
+```typescript
+type ScenarioResultExpectation = "success" | "error";
+
+interface TestScenario {
+  id: string;
+  title: string;
+  description: string;
+  steps: TestStep[];
+}
+
+interface TestStep {
+  label: string;
+  tool: string;
+  input: Record<string,unknown>;
+  expect: ScenarioResultExpectation;
+  notes?: string;
+}
+
+const scenario:TestScenario = {
+  id: "check-filesys",
+  title: "File Sys Check",
+  description:
+    "Runs a small sequence of tool calls to check whether listing and reading files are working as expected",
+  steps: [
+    {
+      label: "List Available Files",
+      tool: "lst_files",
+      input: { path: "./" },
+      expect: "success",
+    },
+
+    {
+      label: "Read package.json",
+      tool: "read_file",
+      input: { path: "./package.json" },
+      expect: "success",
+    },
+  ],
+};
+```
+
+4. Identify and Categorize Every Error
+
+Add a simple classification layer that categorizes each error to exactly one of three layers based on the JSON RPC error code & method context.  
+The classification can be displayed with a colored tag next to each error entry in the traffic panel.  
+eg.  
+[TRANSPORT - connection timeout, WebSocket/SSE error before JSON-RPC parse],
+[PROTOCOL - JSON-RPC error codes −32700 to −32600 parse/invalid request/method not found],  
+[TOOL-EXEC- JSON-RPC error code −32000 / custom codes ]
 
 ![errors](images/errors-mcpdash.png)
 
-5.**Preflight validation**
-Submitting a tool call with a missing required field. It can be a string value below `minLength`, or a number above `MAX`
-gives an inline error under each field before any network requests is made.
-The validator runs against the tool's `inputSchema` before `makeRequest` is called.
+5. Preflight validation
+
+Submitting a tool call with a missing required field. It can be a string value below minLength, or a number above MAX  
+gives an inline error under each field before any network requests are made.  
+Before makeRequest is dispatched, the validator tries to run the user's input against the tool's inputSchema:
+
+```typescript
+function validateArgs(
+  args: Record<string, unknown>,
+
+  schema: JSONSchema,
+): ValidationError[] {
+  // e.g. { field: "title", message: '"title" cannot be empty', constraint: "minLength" } will be returned
+}
+```
 
 4. Weekly Timeline: A week-wise timeline of activities that you would undertake.
-Starting with setting up the development environment, study the latest MCP Inspector architecture, and discuss the final words and scope with my mentor.
+
+- Starting with setting up the development environment and completing all the necessary toolchain configuration.
+- Study the current MCP Inspector architecture and source to map extension points.
+- Align the final feature scope with my mentor.
+- Finalize about stretch deliverables (will update soon)
 
 Week 1
 
-Understand and document the current request lifecycle, tool invocation flow, and history logging behavior in the inspector.
-Identify extension points for persistence, replay, and error tagging.
+- Understand and document the current request lifecycle, tool invocation flow, and history logging behavior in the inspector in detail.
+- Identify exactly where I need to insert IndexedDB hooks.
+- Share all details with my mentor before writing any new code.
 
 Week 2
 
-Design and build the session persistence layer using IndexedDB to store connections, tool calls, responses, and notifications. 
-Define storage limits and a strategy for removing old data with bounded FIFO history.
+- Design and implement an IndexedDB persistence layer.
+- Define its sessions and call schemas, and write the asynchronous helper function for reading and writing data.
+- Adding bounded storage limits and introducing FIFO-based eviction for older entries.
 
 Week 3
 
-Restore previous sessions when reloading or disconnecting. This includes saved requests, responses, and connection metadata. 
-Add migration and fallback logic as needed to ensure the persisted state is loaded safely.
+Implement session restore:
+
+- Load the last used session on startup
+- Repopulate tool forms with the last used arguments and restore the connection metadata.
+- Then, adding a logic for schema changes in case of fallback or migration.
 
 Week 4
 
-Create an improved traffic and history panel that structures and displays requests and responses. Include formatted JSON, readable grouping, timestamps, and latency information for MCP communication.
+- Review the codebase, responses, and finding and fixing bugs, updating documentation.
+- Write test cases for already implemented features.
+- Improving overall UX to date (if required).
 
 Week 5
 
-Add replay support for previous tool calls so developers can rerun requests directly from history. Ensure previous arguments and integrates well with existing tool forms.
+- Get in touch with the mentor and note down the feedback on current implementations.
+- Fix any reviewed comments on the previous PR.
+- Running and analyzing test cases.
+- Working on the feedback received from my mentor.
+- Check for platform-specific issues.
 
 Week 6
 
-Implement live progress handling for tool calls that use progressToken. Show progress updates in the Tools and Traffic panels. Enhance history entries to make request status transitions clear.
+Build the Traffic Panel includes-
+
+- Group messages into a structured form
+- Rendering formatted JSON
+- timestamps, latency display, and
+- Cursor-based pagination
 
 Week 7
 
-Add error classification and visual tags for [TRANSPORT], [PROTOCOL], and [TOOL-EXEC] using JSON-RPC error codes and request context. Improve error display so failures are easier to scan and debug.
-and 
+Add the Replay button for tools/call history entries. Wire stored arguments back to tool forms.  
+Capable of handling any type of edge cases, like (tool no longer available, schema changed since the call was made, etc.).
 
 Week 8
 
-Implement preflight validation for each tool’s inputSchema before sending a request. Show inline validation errors for missing required fields, invalid lengths, and out-of-range values.
+Implement live progress token handling. Parse progressToken from tools/call requests, listen for notifications/progress, and render a live progress bar in both the Tools and Traffic panels.
 
 Week 9
 
-Design and create the Scenario Workflow feature to define repeatable tool-driven testing sequences. Include validation and environment checks within scenarios so developers can run structured debugging flows.
+Implement error classification. Write the classification function mapping JSON-RPC error codes and method context to [TRANSPORT], [PROTOCOL], [TOOL-EXEC]. Render as colored badges in the traffic panel.
 
 Week 10
 
-Refine the scenario execution view with better result reporting, failure summaries, and step-by-step diagnostics. Improve usability, loading indicators, and how empty or error states are displayed across the new UI.
+Design and implement the Scenario Workflow. Define Scenario and ScenarioStep interfaces, build the save/load UI, and implement step-by-step execution with RT status updates.
 
 Week 11
 
-Write unit and integration tests for persistence, replay, validation, and error classification. Address bugs based on mentor feedback and test results.
+Refine the scenario execution view with better result reporting, failure summaries, and step-by-step diagnostics. Improve usability, loading indicators, and how empty or error states are displayed across the UI.  
+Write unit and integration tests for all required deliverables: persistence, restore, replay, validation, and error classification. Fix all bugs identified in mentor reviews.
 
 Week 12
 
-Complete documentation, demo video, and final UI adjustments. Prepare the final pull requests, usage guide, and handoff notes for maintainers.
+Final PR, usage documentation, demo video, and handoff notes for maintainer.
 
 **Initial UI Mockup**
 
@@ -176,5 +278,4 @@ Complete documentation, demo video, and final UI adjustments. Prepare the final 
 
 ![Console](images/console-mcpdash.png)
 
-Demo Video on YouTube- https://youtu.be/HfXrkBhgQmc
-
+Demo Video of MCP DASH (Initial Version Prototype)- https://youtu.be/HfXrkBhgQmc
