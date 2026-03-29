@@ -136,7 +136,7 @@ This is especially painful for **frequent incremental changes**: every edit requ
 
 The sync system is designed around three independent but complementary modules, each implemented as a Dart service within the Flutter app.
 
-![Overall Architecture Diagram](../images/atharva_bedekar_architecture_overview.png)
+![Overall Architecture Diagram](./images/atharva_bedekar_architecture_overview.png)
 
 A **Sync Coordinator** sits above the data store and acts as the single source of truth. All three transport mechanisms feed into it, and it applies a **last-write-wins with timestamp** conflict resolution strategy for v1, with hooks for CRDT-based merging as a future improvement.
 
