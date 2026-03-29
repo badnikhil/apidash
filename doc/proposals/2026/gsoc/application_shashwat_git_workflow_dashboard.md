@@ -485,11 +485,17 @@ My goals for bonding are to learn more about the project and to gel with the tea
 
 ---
 
-### Why I should be selected for this project
+### Why this project
 
-My first experience with open source was through API Dash. Seeing what it accomplishes with Flutter really resonates with me as a Flutter enthusiast. It was a great learning experience on the importance of design and performance, especially when it comes to developer tools. 
+Today API Dash is strong for individual use, but it still misses what many end users need when they work as a team: a simple way to collaborate on collections, share progress, and stay focused on building APIs instead of juggling exports and copies. Users also lack a clear place to see how their APIs behave over time, success rates, failures, latency and to trace multi-step flows when something breaks.
+
+This project targets those gaps directly. That is why it fits API Dash’s path toward being more usable for real teams and day-to-day API work and why I chose this project.
+
+### Why my proposal must be selected
+
+My first experience with open source was through API Dash. Seeing what it accomplishes with Flutter really resonates with me as a Flutter enthusiast. It was a great learning experience on the importance of design and performance, especially when it comes to developer tools.
 
 If I get this opportunity, I’ll dedicate consistent time and effort to the project, even beyond the program. I approach development with a focus on quality, precision, and building solutions that genuinely make an impact.
 
-This is not just an internship to me, this is a chance to really make a meaningful contribution to a project that I’m really passionate about. I’m willing to put in the consistent work necessary to produce quality results and leave a quality impact in my overall developer journey. Thank You.
+This is not just an internship to me, this is a chance to really make a meaningful contribution to a project that I’m really passionate about. I’m willing to put in the consistent work necessary to produce quality results and leave a quality impact in my overall developer journey. Thank you.
 
