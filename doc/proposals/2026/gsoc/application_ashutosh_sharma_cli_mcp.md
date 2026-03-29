@@ -23,10 +23,26 @@
 
 **1. Have you worked on or contributed to a FOSS project before?**
 
-Yes. I have made the following contributions to API Dash as part of my GSoC 2026 preparation:
+Yes. I have made contributions to multiple FOSS projects:
 
-- **PR #1374** (Open): Removes all Flutter-specific dependencies from the `better_networking` package, making it usable in a pure Dart CLI context. This involved replacing `kIsWeb` with `dart:io` Platform checks, replacing `flutter_web_auth_2` with an `UnsupportedError` for CLI context, replacing `debugPrint` with `stderr.writeln`, and removing the Flutter SDK from `pubspec.yaml`. This directly unblocks the CLI work for Project #6.
-- **Issue #1360** (Open): Documented the Flutter dependency blocker in `better_networking` that prevents CLI usage.
+**API Dash contributions:**
+- **PR #1374** (Open): Removes all Flutter-specific dependencies from `better_networking` package, making it usable in pure Dart CLI context
+- **Issue #1360** (Open): Documented the Flutter dependency blocker in `better_networking`
+
+**MetaCall contributions (5 merged PRs):**
+- **PR #26** (Merged): Fixed 5 critical bugs in MetaCall VS Code extension — activation event, memory leak, helloWorld cleanup, delete task mismatch, template message
+- **PR #28** (Merged): Modernized all dependencies, fixed 145+ TypeScript compilation errors
+- **PR #31** (Merged): Added GitHub Actions CI lint + cross-platform testing (Ubuntu, macOS, Windows)
+- **PR #32** (Merged): Fixed package-lock.json sync to make CI pass
+- **PR #34** (Merged): Replaced @microsoft/vscode-azext-utils with native VS Code APIs, eliminated Microsoft telemetry (861 lines removed)
+
+**Working MCP POC:**
+I have built a working MCP server for MetaCall Deploy & FaaS: github.com/AshutoshSharma-pixel/metacall-mcp
+- 3 MCP tools working: `list_deployments`, `call_function`, `deploy_from_repo`
+- Tested in MCP Inspector — all tools visible, connected, functional
+- Configured in Claude Desktop — server connects and tools are callable
+
+This cross-project MCP experience (API Dash + MetaCall simultaneously) gives me unique expertise in building MCP servers in both Dart and TypeScript ecosystems.
 
 **2. What is your one project/achievement you are most proud of?**
 
