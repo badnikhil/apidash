@@ -196,8 +196,8 @@ http.Request prepareHttpRequest({
 
   if (body != null) {
     request.body = body;
-    headers[HttpHeaders.contentLengthHeader] =
-        request.bodyBytes.length.toString();
+    headers[HttpHeaders.contentLengthHeader] = request.bodyBytes.length
+        .toString();
   }
 
   // When overriding, set content-type after body to preserve
@@ -313,11 +313,11 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
       (bytes) async {
         if (controller.isClosed) return;
         final isStreaming = kStreamingResponseTypes.contains(contentType);
+        chunkList.add(bytes);
         if (isStreaming) {
-          final response = _createResponseFromBytes(bytes);
+          final allBytes = chunkList.expand((x) => x).toList();
+          final response = _createResponseFromBytes(allBytes);
           controller.add((true, response, stopwatch.elapsed, null));
-        } else {
-          chunkList.add(bytes);
         }
       },
       onDone: () async {
