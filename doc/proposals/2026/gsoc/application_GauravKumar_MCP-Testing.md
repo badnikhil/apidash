@@ -31,8 +31,8 @@ Yes, I’ve contributed to API DASH, which is a FOSS project, and my contributio
 
 2. What is your one project/achievement that you are most proud of? Why?
 
-In my first year, I observed that when I have to go to the library, I have to ask some of my friends if it is open. Shall I come? Is any space left, or is it fully occupied? And then I go to the library and complete my work, but it wasn’t a permanent solution, and I don’t want to disturb her as she may be studying,g and many of my friends were facing this problem. Some of them come from their room to study and find the library is closed, and returning leads to wasting their time.  
-Then, I made https://glimpseio.tech Glimpse - At the moment, IO - In/Out), where I can check if any particular place is open, closed, or at capacity before I actually visit.
+In my first year, I observed that when I have to go to the library, I have to ask some of my friends if it is open. Shall I come? Is any space left, or is it fully occupied? And then I go to the library and complete my work, but it isn’t a permanent solution, and I don’t want to disturb her while she may be working, and many of my friends have faced this problem. Some students come from their rooms to study and find the library closed, and the same applies to other places like the cafeteria. Returning without doing their work leads to wasted time.  
+Then, I made https://glimpseio.tech Glimpse (At the moment, IO - In/Out), where I can check whether a particular place is open, closed, or at capacity before I actually visit.
 
 Initially, I had a very simple approach-
 
@@ -41,8 +41,9 @@ Initially, I had a very simple approach-
 - When staff opens the door, the check-in by just scanning it and scanning again will be marked as closed.
 - Update the capacity (limited to Cafeteria and Library), it counts the number of people present there, subtracts from total_capacity, and shows the live update with Firebase real-time database implementation.
 - Later, I added a subscription for the most visited place. It analyzes the student’s check-in and check-out time for a particular place and notifies them when it opens or closes.
-- And after a month, people started using GlimpseIO, and my Professor also appreciate me to solve a real problem that was being faced by many and offered me to integrate IOT and AI for better usability.  
-   And this was my GlimpseIO story I am most proud of.
+- Added more places like the cafeteria, badminton court...etc
+- And after a month, people started using GlimpseIO, and my Professor also appreciated me to solve a real problem that was being faced by many and offered me to integrate IOT and AI for better usability.  
+And this was my GlimpseIO project that I am most proud of.
 
 3. What kind of problems or challenges motivate you the most to solve them?
 
@@ -60,8 +61,7 @@ Yes, I’ll be working full-time on GSoC so that I can align my project in the b
    What interests me most is their tendency to stay updated with the latest tech and approach new and most appropriate methods while solving a problem or introducing a new feature. API DASH combines API testing with modern protocol exploration. It helped me find those technical details I was previously unaware of, such as using MIME packages and possibilities of ASCII values in identifying an unknown/ binary file types, as well as debugging platform-specific issues.  
    It all started with my first issue #1021, it shaped my understanding of maintainers' standards, especially @animator.
 7. Can you mention some areas where the project can be improved?  
-   I think the following areas can improve API DASH and make it even more useful for developers.
-
+I think the following areas can improve API DASH and make it even more useful for developers.
 - Adding a how-to-use guide, tips, or a sample collection would help beginners get comfortable with API DASH faster.
 - Making the request history stronger and being able to compare previous API calls, responses, with timestamps side by side would actually make debugging much easier
 - A more flexible previewer for unknown file types would make inspection better.
@@ -78,16 +78,19 @@ Yes, I’ll be working full-time on GSoC so that I can align my project in the b
 
 2. Abstract: A brief summary about the problem that you will be tackling & how.
 
-MCP servers are getting more popular and even becoming the API layer of AI agents. Model Context Protocol is getting popular and being adopted by many companies in a very limited time, and it is becoming the API layer of AI agents. Currently, identifying bugs or testing tools sounds very difficult for a normal user and even a bit confusing for a developer. However, tools like MCP JAM are capable of providing a better user experience, but it focuses more on ChatGPT SDK and UI but still lack basic capabilities.  
-While the official inspector tool is stateless and loses every connection and logs on each restart or refresh.  
-Using IndexedDB to store the previous session data and reuse it in the next session
+Model Context Protocol is getting popular and being adopted by many companies in a very limited time, and it is becoming the API layer of AI agents. Currently, identifying bugs or testing tools sounds very difficult for a normal user and even a bit confusing for a developer. However, tools like MCP JAM are capable of providing a better user experience, but it focuses more on ChatGPT SDK and UI but still lack basic capabilities.  
 
+
+The official inspector tool is stateless and loses every connection and logs on each restart or refresh.  
+Using IndexedDB to store the previous session data and reuse it in the next session.
+Letting developers watch what Claude or any MCP Client sends to a live MCP Server, as the official inspector doesn't offer this feature.
 The History Panel needs to be redesigned and requires a lot of improvements. As of now, logs are not organized like how it should be; a developer can face this, especially when he or she is dealing with multiple-
 
 - Requests and responses
 - Notifications and Errors together.
 - Making the panel more structured, configurable, and well-categorized can help understand the root cause and errors faster.
 - Designing a replay button that can help them test previous tool calls without manually providing the argument will be going to save a lot of time in case of repetitive test cases.
+
 
 Getting the raw and unexpected JSON-RPC message creates confusion among developers, and it consumes their time to find the actual problem.  
 Beautifying the JSON and rendering a more readable output can fix this problem.  
@@ -97,6 +100,8 @@ eg. `"Too small: expected string to have >=1 characters" can be turned into some
 Errors are undifferentiated; they need to be classified.  
 Setting a colorful tag with the error type can help determine the error faster.  
 eg. [TRANSPORT], [PROTOCOL], [TOOL-EXEC]
+
+
 
 3. Detailed Description
 
@@ -119,7 +124,9 @@ eg. [TRANSPORT], [PROTOCOL], [TOOL-EXEC]
 - With an auto-incrementing cursor history, entries are stored in IndexedDB. On scrolling the entries, it fetches the entries in batches using cursor-based pagination and allows clearing the history manually.
 - Adding a replay button can help in repeating the previous actions performed. One can replay any previous tools/calls by clicking on the replay button from the log history. No need to give the arguments again manually.
 
-  ![traffic](images/traffic-mcpdash.png) 3. Scenario Workflow  
+  ![traffic](images/traffic-mcpdash.png) 
+  
+3. Scenario Workflow  
    Design a scenario workflow to streamline the execution and validation of testing scenarios. It enables developers to trigger specific test suites using tool name selectors, or any other method, to monitor real-time execution results and systematically diagnose failures. It can work by integrating validation checks and environment variable verification.
 
 - The UI should allow users to save scenarios, let them run step by step, watch the execution, and allow them to inspect failures with the exact log and clear message.
@@ -178,21 +185,79 @@ eg.
 
 ![errors](images/errors-mcpdash.png)
 
-5. Preflight validation
+5. Proxy Recorder (Stdio)
 
-Submitting a tool call with a missing required field. It can be a string value below minLength, or a number above MAX  
-gives an inline error under each field before any network requests are made.  
-Before makeRequest is dispatched, the validator tries to run the user's input against the tool's inputSchema:
+A proxy recorder can help our inspector tool to catch traffic between the MCP Client (Claude) and any MCP server during an ongoing session, without changing the protocol or modifying the server.
+By just placing a proxy between Claude and the MCP server, forwarding all Stdio traffic while recording every JSON RPC message as it passes through.
+When an MCP Client like Claude Desktop connects to the proxy, the proxy forwards INPUT and OUTPUT to the MCP server and logs each request, response, notification, and error as timestamped NDJSON entries. 
+Then our inspector reads these logs into the Traffic Panel. This makes it easy to inspect a complete agent session and allows you to see exactly what operations were performed, what responses were returned, and how long each step took to complete.
+
+![Proxy Recorder Architecture](images/proxyrecorder-mcpdash.png)
+
+
+![Claude Config](images/claude-config-mcpdash.png)
+
+
+6. Schema Change Detector
+When we modify our MCP servers, like renaming the fields or removing the parameters, existing clients can break. The Schema Diff detector prevents this by versioning schema snapshots and informing the user of any structural differences as soon as a re-connection occurs.
+It acts as an early warning system for API compatibility. The aim is to reduce -
+- Prevents client failures.
+- Provide immediate feedback when tool definitions drift.
+- Reduce the debugging time.
+
+
+![Schema Detector Architecture](images/schema-architecture-mcpdash.png)
+
+`Generated Code-`
+
+# First connection - takes snapshot
 
 ```typescript
-function validateArgs(
-  args: Record<string, unknown>,
-
-  schema: JSONSchema,
-): ValidationError[] {
-  // e.g. { field: "title", message: '"title" cannot be empty', constraint: "minLength" } will be returned
+// stored in our IndexedDB
+{
+  "serverUrl": "ws://localhost:3000",
+  "snapshots": [
+    {
+      "ver": 1,
+      "timestamp": "2026-03-30T10:00:00Z",
+      "tools": [ { "name": "send_email", "inputSchema": { ... } } ],
+      "prompts": [ ... ],
+      "resources": [ ... ]
+    }
+  ]
 }
 ```
+# Second connection - comparison logic
+
+```typescript
+function diffSchemas(v1: Tool[], v2: Tool[]) {
+  const changes = [];
+  
+  // New tools
+  
+  v2.filter(t => !v1.find(x => x.name === t.name))
+    .forEach(t => changes.push({ type: 'NEW_TOOL', tool: t.name }));
+  
+  // Removed tools  
+  
+  v1.filter(t => !v2.find(x => x.name === t.name))
+    .forEach(t => changes.push({ type: 'REMOVED_TOOL', tool: t.name, severity: 'BREAKING' }));
+  
+  // Changed tools 
+  
+  v1.forEach(oldTool => {
+    const newTool = v2.find(x => x.name === oldTool.name);
+    if (!newTool) return;
+    diffFields(oldTool.inputSchema, newTool.inputSchema, changes);
+  });
+  
+  return changes;
+}
+```
+
+# Shows the result in UI.
+
+
 
 4. Weekly Timeline: A week-wise timeline of activities that you would undertake.
 
@@ -225,46 +290,56 @@ Week 4
 
 - Review the codebase, responses, and finding and fixing bugs, updating documentation.
 - Write test cases for already implemented features.
+- Run and analyze all test cases
 - Improving overall UX to date (if required).
 
 Week 5
 
 - Get in touch with the mentor and note down the feedback on current implementations.
-- Fix any reviewed comments on the previous PR.
-- Running and analyzing test cases.
-- Working on the feedback received from my mentor.
-- Check for platform-specific issues.
 
-Week 6
-
-Build the Traffic Panel includes-
+Ready the Traffic Panel by-
 
 - Group messages into a structured form
 - Rendering formatted JSON
 - timestamps, latency display, and
 - Cursor-based pagination
 
+
+Week 6
+
+- Add the Replay button for tools/call history entries. Wire stored arguments back to tool forms.  
+- Capable of handling any type of edge cases, like (tool no longer available, schema changed since the call was made, etc.)
+
+
 Week 7
 
-Add the Replay button for tools/call history entries. Wire stored arguments back to tool forms.  
-Capable of handling any type of edge cases, like (tool no longer available, schema changed since the call was made, etc.).
+- Implement live progress token handling. Parse progressToken from tools/call requests, listen for notifications/progress, and render a live progress bar in both the Tools and Traffic panels.
+- Implement error classification. Write the classification function mapping JSON-RPC error codes and method context to [TRANSPORT], [PROTOCOL], [TOOL-EXEC]. Render as colored badges in the traffic panel.
 
 Week 8
 
-Implement live progress token handling. Parse progressToken from tools/call requests, listen for notifications/progress, and render a live progress bar in both the Tools and Traffic panels.
+- Design and implement the Scenario Workflow. Define Scenario and ScenarioStep interfaces, build the save/load UI, and implement step-by-step execution with RT status updates.
 
 Week 9
 
-Implement error classification. Write the classification function mapping JSON-RPC error codes and method context to [TRANSPORT], [PROTOCOL], [TOOL-EXEC]. Render as colored badges in the traffic panel.
+Design and implement Schema Detector by ensuring-
+- Serialize full tool definitions to IndexedDB as a versioned snapshot on successful connection.
+- Detect added/removed/modified fields, renamed params, and typechanges on every re-connection.
+- Surface structural with showing a warning before or after display for each changed tool or field.
+- Maintain an audit trail of all historical schema versions in IndexedDB.
+
 
 Week 10
 
-Design and implement the Scenario Workflow. Define Scenario and ScenarioStep interfaces, build the save/load UI, and implement step-by-step execution with RT status updates.
+- Design and implement Proxy Recorder (Stdio).
+- Log every message as a timestamped NDJSON entry.
+- Write an NDJSON log reader into the Traffic Panel.
+
 
 Week 11
 
-Refine the scenario execution view with better result reporting, failure summaries, and step-by-step diagnostics. Improve usability, loading indicators, and how empty or error states are displayed across the UI.  
-Write unit and integration tests for all required deliverables: persistence, restore, replay, validation, and error classification. Fix all bugs identified in mentor reviews.
+- Refine the scenario execution view with better result reporting, failure summaries, and step-by-step diagnostics. Improve usability, loading indicators, and how empty or error states are displayed across the UI.  
+- Write unit and integration tests for all required deliverables: persistence, restore, replay, validation, and error classification. Fix all bugs identified in mentor reviews.
 
 Week 12
 
