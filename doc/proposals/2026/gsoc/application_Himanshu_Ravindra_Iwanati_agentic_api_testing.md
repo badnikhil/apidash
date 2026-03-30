@@ -126,13 +126,13 @@ This proposal introduces **Agentic API Testing**, a comprehensive AI-powered tes
 
 #### 3.1.1 Schema Drift in Production APIs
 
-**Scenario**: E-commerce platform "ShopFlow" releases API v2.3, changing `order.total` from `number` to `object` with `currency` and `amount` fields. Existing integration tests assert `typeof response.total === 'number'`, causing **100% test suite failure** despite API correctness. Developers spend **8 hours** diagnosing the intentional change. Meanwhile, production monitoring lacks coverage for the new structure, causing **$47K in incorrect international charges** before detection.
+**Scenario**: E-commerce platform "ShopFlow" releases API v2.3, changing `order.total` from `number` to `object` with `currency` and `amount` fields. Existing integration tests assert `typeof response.total === 'number'`, causing **100% test suite failure** despite API correctness. Developers spend **8 hours** diagnosing the intentional change. Meanwhile, production monitoring lacks coverage for the new structure, causing **incorrect international charges** before detection.
 
 **Agentic Prevention**: The self-healing engine detects the type migration during canary deployment, generates updated assertions for the new structure, flags the semantic change in `currency` default for human review, and maintains **continuous coverage** without CI breakage.
 
 #### 3.1.2 Broken Authentication Flows in Multi-Step Workflows
 
-**Scenario**: Fintech "PaySecure" implements OAuth 2.0 with PKCE for mobile clients. A **manual test suite** validates each step independently but never exercises the **full chain**: refresh → immediate API call with new token → verify no 401. When the token endpoint begins returning `expires_in` as string `"3600"` rather than number `3600`, the mobile client's parsing fails. **Production users experience random logouts**; **2-star app rating crash** costs an estimated **$200K in acquisition spend waste**.
+**Scenario**: Fintech "PaySecure" implements OAuth 2.0 with PKCE for mobile clients. A **manual test suite** validates each step independently but never exercises the **full chain**: refresh → immediate API call with new token → verify no 401. When the token endpoint begins returning `expires_in` as string `"3600"` rather than number `3600`, the mobile client's parsing fails. **Production users experience random logouts**; **2-star app rating crash**.
 
 **Agentic Prevention**: The workflow executor maintains **execution context** across steps, validating that `access_token` successfully authenticates subsequent requests. Schema validation on the token response catches the type discrepancy.
 
@@ -895,8 +895,8 @@ API Dash's existing **DashBot** AI assistant is the natural host for the `AgentC
 
 To validate the core technical claims of this proposal before GSoC begins, I built a
 working TypeScript/Node.js MCP server — `apidash-agent-mcp` — that demonstrates the
-full five-stage agentic pipeline end-to-end against the JSONPlaceholder API. I will soon also 
-implement a prototype version of this in Dart/Flutter for the POC.
+full five-stage agentic pipeline end-to-end against the JSONPlaceholder API. For now due to time constraints
+I have implemented it in TypeScript/Node.js.
 
 **[▶ Video Demo](https://www.youtube.com/watch?v=yynRa-KTfcY)**
 
@@ -931,25 +931,73 @@ naturally between planning and execution.
 
 ---
 
-| Week | Dates | Hours | Deliverables |
-|---|---|---|---|
-| **Week 1** | May 29 – Jun 4 | 14 hrs | `SpecParser` foundation: YAML/JSON loading, syntactic validation via `JsonSchemaValidator`, `ParseException` hierarchy |
-| **Week 2** | Jun 5 – Jun 11 | 14 hrs | `SpecParser` semantic layer: normalise validated doc → `AgentTaskGraph`; `$ref` resolution; Postman v2.1 and GraphQL parser stubs; unit tests for all three parsers |
-| **Week 3** | Jun 12 – Jun 18 | 14 hrs | `AgentCore` state machine with `_validTransitions` guard; basic `WorkflowExecutor` stub (enough to drive EXECUTING state and test all transitions end-to-end) |
-| **Week 4** | Jun 19 – Jun 25 | 14 hrs | `TestStrategyPlanner`: `LlmClient` abstraction, `PromptTemplateLibrary`, structured tool-calling output schema, happy path + boundary value strategy generation |
-| **Week 5** | Jun 26 – Jul 2 | 14 hrs | Extend `TestStrategyPlanner`: security probe + rate-limit strategies; `OutputValidator` with JSON Schema checks; retry logic + rule-based fallback on LLM failure; per-endpoint SHA cache |
-| **Week 6** | Jul 3 – Jul 9 | 14 hrs | `WorkflowExecutor` full implementation: sequential execution, `ExecutionContext` persistence across batches, `{{variable}}` template resolution; basic Flutter Agent panel scaffold (needed to test MCP rendering in Weeks 11–12) |
-| **Week 7** | Jul 10 – Jul 16 | 14 hrs | Extend `WorkflowExecutor`: parallel execution via Dart isolates; resilience patterns (exponential backoff, circuit breaking, configurable timeouts) |
-| **Midterm Evaluation** | Jul 14 – Jul 18 | — | ✅ Demo: spec import → strategy generation → multi-step execution with context propagation |
-| **Week 8** | Jul 17 – Jul 23 | 14 hrs | `SelfHealingEngine`: structural diff, semantic drift detection, cosmetic/compatible auto-patching; `ConfidenceScorer` with auto-apply vs review thresholds |
-| **Week 9** | Jul 24 – Jul 30 | 14 hrs | Extend `SelfHealingEngine`: breaking/architectural severity classification, patch generation, `HEALING → FAILED` escalation; `ReportGenerator` — JSON + Markdown output formats |
-| **Week 10** | Jul 31 – Aug 6 | 14 hrs | `ReportGenerator` HTML output with coverage heatmap; `generatePartial()` for mid-run failures; CI/CD integration documentation; end-to-end pipeline integration test across all nodes |
-| **Week 11** | Aug 7 – Aug 13 | 14 hrs | `test-review` MCP App: Flutter `webview_flutter` host, sandboxed HTML table UI, `ui/update-model-context` JSON bridge back to `AgentCore` |
-| **Week 12** | Aug 14 – Aug 20 | 14 hrs | `healing-diff` MCP App: side-by-side diff viewer, severity badge, confidence score display, approve/reject/edit decision bridge via `ui/message` |
-| **Week 13** | Aug 21 – Aug 27 | 14 hrs | Flutter UI completion: natural language chat interface in Agent panel, real-time execution progress display via `stateStream`; DashBot integration |
-| **Week 14 (Buffer)** | Aug 28 – Sep 1 | 9 hrs | Integration testing across full pipeline; edge case fixes; performance profiling; final documentation and contributor guide |
-| **Final Evaluation** | Sep 1 – Sep 8 | — | Submit final work product; mentor review; public demo |
+### Weekly Timeline
 
+**Community Bonding (May 1 – May 28)**
+* **Hours:** ~10 hrs (unbilled)
+* **Deliverables:** Deep-dive into `foss42/apidash` codebase (focus on `DashBot`, collection importer, and HTTP client layers). Align architecture decisions with mentors and finalise node interfaces/data models. Set up development environment, CI, and test harness. Document API contracts between all six nodes before writing any implementation code.
+
+**Week 1 (May 29 – Jun 4)**
+* **Hours:** 14 hrs
+* **Deliverables:** `SpecParser` foundation: YAML/JSON loading, syntactic validation via `JsonSchemaValidator`, `ParseException` hierarchy.
+
+**Week 2 (Jun 5 – Jun 11)**
+* **Hours:** 14 hrs
+* **Deliverables:** `SpecParser` semantic layer: normalise validated doc → `AgentTaskGraph`; `$ref` resolution; Postman v2.1 and GraphQL parser stubs; unit tests for all three parsers.
+
+**Week 3 (Jun 12 – Jun 18)**
+* **Hours:** 14 hrs
+* **Deliverables:** `AgentCore` state machine with `_validTransitions` guard; basic `WorkflowExecutor` stub (enough to drive EXECUTING state and test all transitions end-to-end).
+
+**Week 4 (Jun 19 – Jun 25)**
+* **Hours:** 14 hrs
+* **Deliverables:** `TestStrategyPlanner`: `LlmClient` abstraction, `PromptTemplateLibrary`, structured tool-calling output schema, happy path + boundary value strategy generation.
+
+**Week 5 (Jun 26 – Jul 2)**
+* **Hours:** 14 hrs
+* **Deliverables:** Extend `TestStrategyPlanner`: security probe + rate-limit strategies; `OutputValidator` with JSON Schema checks; retry logic + rule-based fallback on LLM failure; per-endpoint SHA cache.
+
+**Week 6 (Jul 3 – Jul 9)**
+* **Hours:** 14 hrs
+* **Deliverables:** `WorkflowExecutor` full implementation: sequential execution, `ExecutionContext` persistence across batches, `{{variable}}` template resolution; basic Flutter Agent panel scaffold (needed to test MCP rendering in Weeks 11–12).
+
+**Week 7 (Jul 10 – Jul 16)**
+* **Hours:** 14 hrs
+* **Deliverables:** Extend `WorkflowExecutor`: parallel execution via Dart isolates; resilience patterns (exponential backoff, circuit breaking, configurable timeouts).
+
+**Midterm Evaluation (Jul 14 – Jul 18)**
+* **Deliverables:** ✅ Demo: spec import → strategy generation → multi-step execution with context propagation.
+
+**Week 8 (Jul 17 – Jul 23)**
+* **Hours:** 14 hrs
+* **Deliverables:** `SelfHealingEngine`: structural diff, semantic drift detection, cosmetic/compatible auto-patching; `ConfidenceScorer` with auto-apply vs review thresholds.
+
+**Week 9 (Jul 24 – Jul 30)**
+* **Hours:** 14 hrs
+* **Deliverables:** Extend `SelfHealingEngine`: breaking/architectural severity classification, patch generation, `HEALING → FAILED` escalation; `ReportGenerator` — JSON + Markdown output formats.
+
+**Week 10 (Jul 31 – Aug 6)**
+* **Hours:** 14 hrs
+* **Deliverables:** `ReportGenerator` HTML output with coverage heatmap; `generatePartial()` for mid-run failures; CI/CD integration documentation; end-to-end pipeline integration test across all nodes.
+
+**Week 11 (Aug 7 – Aug 13)**
+* **Hours:** 14 hrs
+* **Deliverables:** `test-review` MCP App: Flutter `webview_flutter` host, sandboxed HTML table UI, `ui/update-model-context` JSON bridge back to `AgentCore`.
+
+**Week 12 (Aug 14 – Aug 20)**
+* **Hours:** 14 hrs
+* **Deliverables:** `healing-diff` MCP App: side-by-side diff viewer, severity badge, confidence score display, approve/reject/edit decision bridge via `ui/message`.
+
+**Week 13 (Aug 21 – Aug 27)**
+* **Hours:** 14 hrs
+* **Deliverables:** Flutter UI completion: natural language chat interface in Agent panel, real-time execution progress display via `stateStream`; DashBot integration.
+
+**Week 14 - Buffer (Aug 28 – Sep 1)**
+* **Hours:** 9 hrs
+* **Deliverables:** Integration testing across full pipeline; edge case fixes; performance profiling; final documentation and contributor guide.
+
+**Final Evaluation (Sep 1 – Sep 8)**
+* **Deliverables:** Submit final work product; mentor review; public demo.
 ---
 
 ### About the Contributor
