@@ -169,7 +169,7 @@ The **TestStrategyPlanner** then operates on this graph(AgentTask) as a planning
 
 Each strategy is instantiated into **concrete test cases** with generated test data, expected response assertions, and dependency specifications. The result is a **comprehensive, prioritized test suite** that maximizes coverage within execution time constraints.
 
-##### 3.2.2 Data Flow Directionality
+##### 3.2.3 Data Flow Directionality
 
 Data flows **unidirectionally** from specification to report, with **feedbackloops** for healing and user interaction:
 
@@ -888,15 +888,15 @@ API Dash is a Flutter application. The MCP Apps specification defines the **host
 
 ---
 
-### 7.3 MCP Apps Protocol Integration in Flutter (API Dash as MCP Host)
+### 6 MCP Apps Protocol Integration in Flutter (API Dash as MCP Host)
 
 API Dash is a Flutter application. The MCP Apps specification defines the **host-side responsibilities**: rendering the sandboxed iframe, mediating the JSON-RPC bridge, and injecting `hostContext` CSS variables. To implement this in Flutter:
 
-#### 7.3.1 Flutter WebView as MCP App Host
+#### 6.1 Flutter WebView as MCP App Host
 
 API Dash will embed `webview_flutter` to render MCP App HTML resources. The WebView acts as the sandboxed iframe equivalent, with all external network access controlled via the `_meta.ui.csp` declaration on each registered resource.
 
-### 7.4 DashBot Integration
+#### 6.2 DashBot Integration
 
 API Dash's existing **DashBot** AI assistant is the natural host for the `AgentCore` natural language interface described in Section 3.4.2. The MCP Apps layer enhances DashBot's existing capabilities by adding structured visual output at key decision points, without replacing its conversational interface.
 
