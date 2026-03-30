@@ -860,7 +860,17 @@ When `patchRequiresReview` is triggered, the `SelfHealingEngine` invokes the `re
 
 ---
 
-##### 5.2.5 Flutter WebView as MCP App Host
+##### 5.2.5 Visual Look
+
+Just to get a visual understanding of how it would look like after when spec file would be parsed and send to generate tests, execution of generated tests and then healing of tests if some endpoints fails due to evolution of schema. This is just the template UI not the actual UI 
+to get a better understanding of what is happening.
+
+![ Tests generated ](images/tests.png)
+![ results of generated tests ](images/results.png)
+![ healing of broken tests ](images/healing.png)
+
+
+##### 5.2.6 Flutter WebView as MCP App Host
 
 API Dash is a Flutter application. The MCP Apps specification defines the **host-side responsibilities**: rendering the sandboxed iframe, mediating the JSON-RPC bridge, and injecting `hostContext` CSS variables. To implement this in Flutter:
 
@@ -934,12 +944,6 @@ naturally between planning and execution.
 ### Weekly Timeline
 
 ### Weekly Timeline: Agentic API Testing Framework
-
-**Community Bonding (May 1 – May 28)**
-* **Hours:** ~10 hrs (unbilled)
-* Deep-dive into the `foss42/apidash` codebase, specifically the `DashBot`, collection importer, and HTTP client layers.
-* Finalise the architecture decisions and data models with mentors, specifically for the six core nodes (`AgentCore`, `SpecParser`, etc.).
-* Define and document the API contracts and JSON-RPC bridge interfaces (`ui/update-model-context`, `ui/message`) for the MCP Apps before implementation.
 
 **Week 1: SpecParser Foundation (May 29 – Jun 4)**
 * **Hours:** 14 hrs
