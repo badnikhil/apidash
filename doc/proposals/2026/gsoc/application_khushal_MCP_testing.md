@@ -30,7 +30,7 @@
 - I love building things that have real impact and are used by real users. We are in an era where DX is improving day by day with great libraries and tools. I am really passionate about working in this space. Creating tools which will be used by developers is my biggest motivation.
 
 ##### 4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
-- Yes, I will be working on GSoC full-time. Currently, I have a full-time job which will end on 20 April. After that, I will be fully dedicated to GSoC.
+- Yes, I will be working on GSoC full-time. Currently, I have a full-time job which will end on 30 April. After that, I will be fully dedicated to GSoC.
 
 ##### 5. Do you mind regularly syncing up with the project mentors?
 - I am available anytime after 8 PM IST. In fact, it would be great to regularly discuss problems, solutions, and approaches on calls.
@@ -61,7 +61,6 @@
 - https://zeo.org/resources/blog/mcp-server-observability-monitoring-testing-performance-metrics
 - https://medium.com/%40yash.p_60148/top-tools-for-real-time-mcp-server-monitoring-and-analytics-dbae42da5aab
 - https://dev.to/ashita/a-practical-guide-to-building-mcp-apps-1bfm
-- https://github.com/IBM/mcp-context-forge/issues/301
 - **[Developer Feedback Survey](https://tally.so/r/gDAN6J). Collected responses from developers working with MCP tools.**
 
 
@@ -128,80 +127,224 @@ The primary motivation is to improve DX (Developer Experience) and UX (User Expe
 
 ## 3. Project Implementation
 
-MCP Dash will be a local web app + local Bun backend Browser UI at localhost:8080, with Bun server running locally to handle subprocess spawning and MCP communication. Chosen because STDIO transport requires spawning subprocesses because a browser alone cannot do this.
+MCP Dash is a local web app + local Bun backend. Browser UI at `localhost:8080`, with a Bun server running locally to handle subprocess spawning and MCP communication. STDIO transport requires spawning subprocesses, as browser alone cannot do this.
 
-#### 3.1 Core Features 
+#### 3.1 Core Features
 
 
 **1. Transport Layer**
 
-- Support STDIO Transport and HTTP/SSE Transport.
-- Single MCP server session at a time. One active connection per running instance.
+- STDIO Transport and HTTP/SSE Transport.
+- Single MCP server session per running instance. Keeps state management simple.
 
 **Task:**
-- `ConnectionPanel` - transport selector + connection config
-- `EnvironmentManager` - multi-env (Local/Staging/Prod) with {{VAR}} support and highlighting
+- `ConnectionPanel` — transport selector + connection config
+- `EnvironmentManager` — multi-env (Local/Staging/Prod) with `{{VAR}}` support and highlighting
 
-1. Backend Server (Bun + TypeScript)
-- Bun runs TypeScript natively with no build step, has built-in WebSocket server and subprocess API (Bun.spawn), and shares the same language as the frontend enabling shared types.
-2. STDIO Transport (form + config file)
-- A structured form with fields for command, args, working directory, and env vars is the primary input.
-- Additionally, users can import from `claude_desktop_config.json` (the format used by Claude Desktop and Cursor), enabling zero-manual-entry setup for existing MCP server configs.
-3. HTTP Transport (Authentication)
-- Custom headers + {{VAR}} interpolation. 
-- Users can define request headers (e.g. Authorization: Bearer {{API_KEY}}). Values reference environment variables using {{VAR_NAME}} syntax, keeping secrets in the env manager rather than hardcoded in connection configs.
+1. **Backend Server (Bun + TypeScript)**
+Bun runs TypeScript natively with no build step, has built-in WebSocket server and subprocess API (`Bun.spawn`), and shares the same language as the frontend, enabling shared types across the monorepo with no code generation.
+
+2. **STDIO Transport**
+A structured form with fields for `command`, `args`, working directory, and env vars is the primary input. Additionally, users can import from `claude_desktop_config.json` (the format used by Claude Desktop and Cursor), enabling zero-manual-entry setup for existing MCP configs.
+
+   A toggle controls whether the subprocess inherits the backend's `process.env` (PATH, HOME, etc.). User-defined vars are always merged on top that gives control without breaking servers that depend on system env vars.
+
+   ```json
+   // claude_desktop_config.json — importable directly into ConnectionPanel
+   {
+     "mcpServers": {
+       "weather": {
+         "command": "node",
+         "args": ["./dist/server.js"],
+         "env": { "WEATHER_API_KEY": "sk-..." }
+       }
+     }
+   }
+   ```
+
+3. **HTTP Transport (Authentication)**
+Custom headers + `{{VAR}}` interpolation. Users define request headers (e.g. `Authorization: Bearer {{API_KEY}}`). Values reference environment variables using `{{VAR_NAME}}` syntax. Secrets stay in the env manager, not hardcoded in connection configs.
+
+**STDIO Transport Lifecycle:**
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant B as Browser
+    participant S as Bun Server
+    participant P as MCP Process
+
+    User->>B: Fill config (command, args, env)
+    B->>S: {type:"connect", transport:"stdio", config}
+    S->>P: Bun.spawn(command, args, {env})
+    S->>P: initialize {protocolVersion, clientInfo}
+    P-->>S: initialized {serverInfo, capabilities}
+    S->>P: tools/list
+    P-->>S: [{name, description, inputSchema}]
+    S-->>B: {type:"connected", tools}
+    User->>B: Select tool, fill params
+    B->>S: {type:"invoke", tool:"weather", params:{city:"London"}}
+    S->>P: tools/call {name:"weather", arguments:{city:"London"}}
+    loop streaming
+        P-->>S: content chunk
+        S-->>B: {type:"chunk", data}
+    end
+    P-->>S: final result
+    S-->>B: {type:"result", data}
+```
+
+**HTTP/SSE Transport Lifecycle:**
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant B as Browser
+    participant S as Bun Server
+    participant M as MCP Server
+
+    User->>B: Enter URL + headers ({{API_KEY}})
+    B->>S: {type:"connect", transport:"sse", url, headers}
+    S->>S: Interpolate {{VAR}} from active env
+    S->>M: POST /sse (Authorization: Bearer sk-...)
+    M-->>S: SSE stream opened
+    S->>M: initialize {protocolVersion, clientInfo}
+    M-->>S: initialized {serverInfo, capabilities}
+    S->>M: tools/list
+    M-->>S: [{name, description, inputSchema}]
+    S-->>B: {type:"connected", tools}
+    User->>B: Invoke tool
+    B->>S: {type:"invoke", tool, params}
+    S->>M: tools/call (via SSE channel)
+    M-->>S: response events
+    S-->>B: {type:"result", data}
+```
 
 
-**2. Tool and Prompt support**
+**2. Tool and Prompt Support**
 
 - Automatically detect available tools exposed by MCP servers.
-- Display tool schema. Show parameters and expected structure.
-- Allow manual execution of MCP tools with structured input forms.
-- Support raw JSON editing mode.
+- Display tool schema, parameters and expected structure.
+- Manual execution of MCP tools with structured input forms.
+- Raw JSON editing mode as fallback.
 
 **Task:**
-- `ToolExplorer` - tool list + parameter form + form/JSON toggle
-- `PromptPanel` - prompt invocation UI
+- `ToolExplorer` — tool list + parameter form + form/JSON toggle
+- `PromptPanel` — prompt invocation UI
 
-1. Dynamic form builder 
-- Flat primitives + one-level nesting + raw JSON fallback Dynamically generates forms from MCP tool JSON Schemas.
-- Supports flat types (string, number, boolean, enum), arrays of primitives, and one level of nested objects this covers ~95% of real-world MCP tools.
+1. **Dynamic Form Builder**
+Dynamically generates forms from MCP tool JSON Schemas. Supports flat types (`string`, `number`, `boolean`, `enum`), arrays of primitives, and one level of nested objects that covers ~95% of real-world MCP tools.
+
 2. A raw JSON editor tab handles anything the form builder can't render.
 
 
 **3. Request / Response Inspector**
 
-- Provide structured visualization of request, response, metadata and timing.
+- Structured visualization of request, response, metadata and timing.
 - Response streaming with progressive rendering.
 
 **Task:**
-- `ResponseViewer` - pretty/raw/headers/timeline tabs
+- `ResponseViewer` — pretty/raw/headers/timeline tabs
 
-1. Browser - Backend Communication 
-- WebSockets full-duplex persistent connection per session. Naturally maps to MCP's message-passing model and allows the backend to push streamed responses, logs, and connection status updates to the browser in real time.
-2. Message Protocol
-- Typed JSON with discriminated unions. A single shared `packages/types` file defines `ClientMessage` and `ServerMessage` union types. Simple, fully type-safe, no extra dependencies. Both frontend and backend import from the same types package.
-3. Response Streaming
-- Stream chunks progressively over WebSocket. The backend forwards MCP response chunks to the browser as they arrive. The UI renders output progressively, giving real-time feedback for slow or long-running tools.
-4. Response diff viewer to compare results across executions.
-- Side-by-side JSON diff between any two entries in the history panel. Replaces automated assertions.
+1. **Browser–Backend Communication**
+WebSockets, full-duplex persistent connection per session. Maps naturally to MCP's message-passing model. Allows the backend to push streamed responses, logs, and connection status to the browser in real time.
 
-**4. Error Handling/Observability**
+2. **Message Protocol**
+Typed JSON with discriminated unions. A single shared `packages/types` file defines `ClientMessage` and `ServerMessage` union types — both frontend and backend import from the same package. Fully type-safe, no code generation, no extra dependencies.
 
-- Serialization issues, Schema mismatches, Runtime tool errors, Protocol failures.
-- Protocol-level log capture (MCP events/ stdout / stderr).
+   ```ts
+   // packages/types/src/index.ts
+
+   export type ClientMessage =
+     | { type: "connect"; transport: "stdio"; config: StdioConfig }
+     | { type: "connect"; transport: "sse"; url: string; headers: Record<string, string> }
+     | { type: "invoke"; tool: string; params: Record<string, unknown> }
+     | { type: "disconnect" };
+
+   export type ServerMessage =
+     | { type: "connected"; tools: MCPTool[] }
+     | { type: "chunk"; data: unknown }
+     | { type: "result"; data: unknown }
+     | { type: "error"; message: string; code?: string }
+     | { type: "log"; level: "info" | "warn" | "error"; text: string }
+     | { type: "disconnected" };
+
+   export interface StdioConfig {
+     command: string;
+     args: string[];
+     cwd?: string;
+     env: Record<string, string>;
+     inheritSystemEnv: boolean;
+   }
+
+   export interface MCPTool {
+     name: string;
+     description: string;
+     inputSchema: Record<string, unknown>; // JSON Schema
+   }
+   ```
+
+3. **Response Streaming**
+The backend forwards MCP response chunks to the browser as they arrive. The UI renders output progressively, real-time feedback for slow or long-running tools.
+
+4. **Response Diff Viewer**
+Side-by-side JSON diff between any two entries in the history panel. Directly enables regression detection and primary comparison tool, replaces automated assertions in core scope.
+
+**WebSocket Message Flow:**
+
+```mermaid
+sequenceDiagram
+    participant UI as React UI
+    participant WT as WebSocketTransport
+    participant WS as Bun WebSocket Server
+    participant SM as Session Manager
+    participant MC as mcp-client
+
+    Note over UI,MC: Connection Phase
+    UI->>WT: transport.connect(config)
+    WT->>WS: {type:"connect", transport:"stdio", config}
+    WS->>SM: session.connect(config)
+    SM->>MC: client.connect(config)
+    MC-->>SM: tools[]
+    SM-->>WS: {type:"connected", tools}
+    WS-->>WT: ws message
+    WT-->>UI: onMessage({type:"connected", tools})
+
+    Note over UI,MC: Invocation Phase
+    UI->>WT: transport.invoke(tool, params)
+    WT->>WS: {type:"invoke", tool, params}
+    WS->>SM: session.invoke(tool, params)
+    SM->>MC: client.callTool(tool, params)
+    loop chunks
+        MC-->>SM: chunk
+        SM-->>WS: {type:"chunk", data}
+        WS-->>WT: ws message
+        WT-->>UI: onMessage({type:"chunk", data})
+    end
+    SM-->>WS: {type:"result", data}
+    WS-->>WT: ws message
+    WT-->>UI: onMessage({type:"result", data})
+```
+
+
+**4. Error Handling / Observability**
+
+- Serialization issues, schema mismatches, runtime tool errors, protocol failures.
+- Protocol-level log capture (MCP events / stdout / stderr).
 
 **Task:**
-- `LogsPanel` - collapsible console with filtering
+- `LogsPanel` — collapsible console with filtering
 
-1. Log Capture
-- Protocol events + raw subprocess output. The `LogsPanel` receives two streams:
-  1. Structured MCP protocol events (tool call, response, error, initialize) 
-  2. Raw stdout/stderr from the subprocess.
-2. Error Handling
-- Toasts for connection-level errors: Connection failures (server crash, timeout, disconnect) as toast notifications. 
-- Inline for tool-level errors: Tool invocation errors show inline in the `ResponseViewer` with the full error payload.
-- All errors are also captured in the `LogsPanel` for deep debugging.
+1. **Log Capture**
+The `LogsPanel` receives two streams:
+   1. Structured MCP protocol events (`tool_call`, `response`, `error`, `initialize`)
+   2. Raw stdout/stderr from the subprocess
+
+   Separate filter toggles let developers switch between "what happened at the protocol level" and "what the server itself logged."
+
+2. **Error Handling**
+   - Toasts for connection-level errors — server crash, timeout, disconnect.
+   - Inline for tool-level errors — shown in `ResponseViewer` with the full error payload.
+   - All errors are also captured in `LogsPanel` for deep debugging.
 
 
 #### 3.2 Architecture
@@ -209,24 +352,77 @@ MCP Dash will be a local web app + local Bun backend Browser UI at localhost:808
 This project uses a monorepo (Turborepo) for clear separation of concerns and scalability.
 
 ```
-mcp-dash/             # Turborepo monorepo
+mcp-dash/               # Turborepo monorepo
 ├── apps/
-│   ├── web/          # React frontend
-│   └── server/       # Bun backend
+│   ├── web/            # React frontend
+│   └── server/         # Bun backend
 ├── packages/
-│   ├── types/        # Shared TS types (messages, schemas, config)
-│   └── mcp-client/   # MCP client wrapper (reusable, testable)
+│   ├── types/          # Shared TS types (ClientMessage, ServerMessage, MCPTool)
+│   └── mcp-client/     # MCP client wrapper (reusable, testable)
 └── turbo.json
+```
+
+**High-Level Architecture:**
+
+```mermaid
+graph TD
+    subgraph Browser["Browser · localhost:8080"]
+        UI[React UI]
+        ST["StudioTransport (interface)"]
+        WST[WebSocketTransport]
+    end
+
+    subgraph Server["Bun Server · localhost:3000"]
+        WSS[WebSocket Server]
+        SM[Session Manager]
+        ENV[Env Manager]
+        MCP[mcp-client wrapper]
+    end
+
+    subgraph Targets["MCP Servers"]
+        STDIO["stdio subprocess (Bun.spawn)"]
+        SSE["HTTP/SSE endpoint (EventSource)"]
+    end
+
+    subgraph FS["~/.mcp-studio/"]
+        COL[collections.json]
+        HIST[history.json]
+    end
+
+    UI --> ST
+    ST --> WST
+    WST <-->|"WebSocket · ws://localhost:3000"| WSS
+    WSS --> SM
+    SM --> ENV
+    SM --> MCP
+    MCP -->|Bun.spawn| STDIO
+    MCP -->|EventSource| SSE
+    SM --> COL
+    SM --> HIST
+```
+
+The frontend communicates through a `StudioTransport` interface never direct WebSocket calls. A future Electron app swaps `WebSocketTransport` for `ElectronIPCTransport` with no changes to UI components.
+
+```ts
+// packages/types/src/transport.ts
+
+export interface StudioTransport {
+  connect(config: ConnectionConfig): Promise<void>;
+  invoke(tool: string, params: Record<string, unknown>): Promise<void>;
+  disconnect(): Promise<void>;
+  onMessage(handler: (msg: ServerMessage) => void): void;
+}
 ```
 
 #### 3.3 Tech Stack
 
 **Frontend**: React + TypeScript + Tailwind + shadcn/ui
-**Backend**: Bun (TypeScript-native, built-in WebSocket + subprocess)
-**Communication**: WebSockets with typed JSON discriminated unions
-**Storage**: Local Persistence JSON files at `~/.mcp-studio/` (no database, no auth). All data stays on the developer's machine and is portable and git-friendly
 
-> The frontend communicates through a `StudioTransport` interface, never directly via WebSocket calls. This enables a future Electron migration (swap `WebSocketTransport` for `ElectronIPCTransport`).
+**Backend**: Bun (TypeScript-native, built-in WebSocket + subprocess)
+
+**Communication**: WebSockets with typed JSON discriminated unions
+
+**Storage**: Local JSON files at `~/.mcp-studio/` — no database, no auth. Data stays on the developer's machine, portable and git-friendly.
 
 #### 3.4 Design and Prototypes
 
@@ -239,31 +435,32 @@ mcp-dash/             # Turborepo monorepo
 
 ![img_2.png](images/studio_poc.png)
 
-## 4. Schedule of Deliveries (175 hours/12 Week)
+## 4. Schedule of Deliveries (175 hours / 12 Weeks)
 
-| Week | Deliverable                                                                     |
-| ---- | ------------------------------------------------------------------------------- |
-| 1    | Turborepo monorepo setup, shared types package, WebSocket message protocol      |
-| 2    | Bun server — WebSocket server, session manager, connection lifecycle            |
-| 3    | STDIO transport — subprocess spawning, env var injection, config file import    |
-| 4    | HTTP/SSE transport — connection, custom headers, {{VAR}} interpolation          |
-| 5    | Real tool discovery — fetch schemas from live MCP server                        |
-| 6    | Dynamic form builder — flat + one-level nesting + raw JSON fallback             |
-| 7    | Response streaming — chunk forwarding over WebSocket, progressive UI rendering  |
-| 8    | Log capture — protocol events + raw stdout/stderr, filter in UI                 |
-| 9    | Persistent history — rolling JSON file, history panel, replay from history      |
-| 10   | Response diff view (compare last history entries)                               |
-| 11   | Frontend improvement/accessibility and collections persistence                  |
-| 12   | Polish, error handling, docs, demo video, npx packaging                         |
+| Week | Deliverable |
+| ---- | ----------- |
+| 1 | Turborepo monorepo setup, `packages/types` with `ClientMessage`/`ServerMessage` discriminated unions, `StudioTransport` interface |
+| 2 | Bun WebSocket server, session manager, connection lifecycle (disconnected → connecting → connected → error) |
+| 3 | `mcp-client` wrapper — MCP SDK integration, initialize handshake, `tools/list`, schema parsing |
+| 4 | STDIO transport — `Bun.spawn`, env var injection (inherit toggle + user overrides), `claude_desktop_config.json` import |
+| 5 | HTTP/SSE transport — `EventSource` connection, custom headers, `{{VAR}}` interpolation via Env Manager |
+| 6 | Dynamic form builder — flat primitives + one-level nesting + raw JSON fallback |
+| 7 | Response streaming — chunk forwarding over WebSocket, progressive rendering in `ResponseViewer` |
+| 8 | Log capture — protocol events + raw stdout/stderr, `LogsPanel` filter UI wired up |
+| 9 | Persistent history — rolling `history.json`, `HistoryPanel`, replay from history |
+| 10 | Response diff view — side-by-side JSON diff between two history entries |
+| 11 | Improvement and testing — wire components, collections persistence (`collections.json`), `EnvironmentManager` |
+| 12 | Polish, error handling, docs, demo video, `npx` packaging |
 
 #### 4.1 Stretch Goals
 
-1. Automated value assertions + test runner
-- Value-based assertions (e.g. response.temperature is a number, response.unit equals "celsius") would turn MCP Dash into a proper test runner.
-- However, the UI alone requires a field picker, operator selector, test runner, and results view, estimated 3-4 weeks.
-2. Snapshot testing
-3. MCP Resources support
-- Tools are the primary use case. Prompts are low-effort additions (simpler schema, no dynamic invocation).
-- Resources require a fundamentally different UI paradigm (URI browser, binary content rendering, subscription model), estimated 2 weeks of additional work.
-4. Electron desktop application (`apps/electron/` added to monorepo)
-- Migration is designed to be easy, the frontend uses a `StudioTransport` interface and swapping `WebSocketTransport` for `ElectronIPCTransport` is a one-line change. Estimated migration effort would be 1-2 weeks of packaging/IPC.
+1. **Automated value assertions + test runner**
+   Value-based assertions (e.g. `response.temperature is a number`, `response.unit equals "celsius"`) would turn MCP Dash into a proper test runner. The UI alone requires a field picker, operator selector, test runner, and results view — estimated 3–4 weeks.
+
+2. **Snapshot testing**
+
+3. **MCP Resources support**
+   Tools are the primary use case. Prompts are low-effort additions (simpler schema, no dynamic invocation). Resources require a fundamentally different UI paradigm (URI browser, binary content rendering, subscription model) — estimated 2 weeks of additional work.
+
+4. **Electron desktop application** (`apps/electron/` added to monorepo)
+   Migration is designed to be easy, the frontend uses `StudioTransport` and swapping `WebSocketTransport` for `ElectronIPCTransport` is a one-line change. Estimated 1–2 weeks of packaging/IPC work.
