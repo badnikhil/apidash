@@ -813,7 +813,7 @@ MCP Apps extend the open-source Model Context Protocol with a standardised mecha
 
 ---
 
-##### 3.8.3 Node 1 — `TestStrategyPlanner`: Interactive Test Review & Approval (`test-review` MCP App)
+##### 5.2.3 Node 1 — `TestStrategyPlanner`: Interactive Test Review & Approval (`test-review` MCP App)
 
 **Problem without MCP Apps:**
 The `TestStrategyPlanner` outputs a list of `APITestCase` objects. Displaying these as raw text in the Agent Chat Interface gives the developer no ergonomic way to selectively approve tests without manually typing exclusions. Mistyped or ambiguous natural language exclusions risk silently including unwanted tests in execution.
@@ -835,7 +835,7 @@ When the `plan_tests` tool fires, the host renders the `test-review` MCP App —
 
 ---
 
-##### 3.8.4 Node 2 — `SelfHealingEngine`: Visual Diff Review & Patch Approval (`healing-diff` MCP App)
+##### 5.2.4 Node 2 — `SelfHealingEngine`: Visual Diff Review & Patch Approval (`healing-diff` MCP App)
 
 **Problem without MCP Apps:**
 When the `SelfHealingEngine` generates a patch for a drifted assertion, the state machine requires human review for `BREAKING` and `ARCHITECTURAL` severity drifts. Presenting the proposed patch as text forces the developer to mentally reconstruct the before/after relationship — a cognitively expensive task, especially for nested JSON schema changes.
@@ -860,7 +860,7 @@ When `patchRequiresReview` is triggered, the `SelfHealingEngine` invokes the `re
 
 ---
 
-##### 3.8.5 Flutter WebView as MCP App Host
+##### 5.2.5 Flutter WebView as MCP App Host
 
 API Dash is a Flutter application. The MCP Apps specification defines the **host-side responsibilities**: rendering the sandboxed iframe, mediating the JSON-RPC bridge, and injecting `hostContext` CSS variables. To implement this in Flutter:
 
@@ -895,7 +895,8 @@ API Dash's existing **DashBot** AI assistant is the natural host for the `AgentC
 
 To validate the core technical claims of this proposal before GSoC begins, I built a
 working TypeScript/Node.js MCP server — `apidash-agent-mcp` — that demonstrates the
-full five-stage agentic pipeline end-to-end against the JSONPlaceholder API.
+full five-stage agentic pipeline end-to-end against the JSONPlaceholder API. I will soon also 
+implement a prototype version of this in Dart/Flutter for the POC.
 
 **[▶ Video Demo](https://www.youtube.com/watch?v=yynRa-KTfcY)**
 
@@ -913,15 +914,6 @@ deterministic LLM output normalisation before execution, and the two-step
 naturally between planning and execution.
 
 ---
-
-#### POC vs Full System
-
-| | This POC | Full System (GSoC) |
-|---|---|---|
-| Spec ingestion | Hardcoded spec File | Real OpenAPI / Postman / GraphQL files |
-| Execution | Sequential `async/await` | Parallel Dart isolates |
-| MCP Apps | `test-review` + `healing-diff` | + `execution-monitor`, `report-viewer` |
-| MCP Host | VS Code Insiders | Flutter `webview_flutter` in API Dash |
 
 ## Weekly Timeline
 
