@@ -1,3 +1,5 @@
+# WebSocket, MQTT , gRPC and CLI
+
 ### About
 
 1. **Full Name:** Nikhil Ludder
@@ -18,7 +20,7 @@
 ### Motivation & Past Experience
 
 1. **Have you worked on or contributed to a FOSS project before?**  
-   - Yes, I have actively contributed to ApiDash, an open-source API development tool. I had started working on MQTT support earlier and opened a PR for it. While the PR was eventually closed , the process gave me a strong understanding of protocol integration challenges and influenced the architectural decisions in this proposal.
+   - Yes, I have actively contributed to API Dash, an open-source API development tool. I had started working on MQTT support earlier and opened a PR for it. While the PR was eventually closed , the process gave me a strong understanding of protocol integration challenges and influenced the architectural decisions in this proposal.
 
       My contributions include:
 
@@ -29,7 +31,7 @@
       - Improved project documentation (README updates)  
       - Proposed and worked on new features like MQTT support  
 2. **What is your one project/achievement that you are most proud of? Why?**
-   - My most proud achievement is building an inventory management app from scratch during my internship. I developed it individually, which meant taking ownership of both the product experience and the implementation. What makes me most proud of it is that I did not approach it as just a coding task — I focused on creating a clear and practical user experience while also keeping the code modular and organized. Working on it taught me how good software depends not only on functionality, but also on thoughtful UX and maintainable structure. This experience strongly shaped the way I now think about building applications and contributing to projects like ApiDash.
+   - My most proud achievement is building an inventory management app from scratch during my internship. I developed it individually, which meant taking ownership of both the product experience and the implementation. What makes me most proud of it is that I did not approach it as just a coding task — I focused on creating a clear and practical user experience while also keeping the code modular and organized. Working on it taught me how good software depends not only on functionality, but also on thoughtful UX and maintainable structure. This experience strongly shaped the way I now think about building applications and contributing to projects like API Dash.
 
 3. **What kind of problems or challenges motivate you the most?**
    - I am most motivated by challenges where I have to balance usability and implementation. I enjoy solving problems that make a product easier to use for users while also keeping the code modular and clean for future development. I like working on things that improve workflow, reduce complexity, and make software feel more polished and practical. These are the kinds of problems that keep me engaged because they create real value both for users and for the project itself
@@ -41,27 +43,20 @@
    - Yes, I am comfortable with regularly syncing up with project mentors. Since I will be free throughout the day during the program, I can stay available for discussions, progress updates, and feedback whenever needed. I believe regular communication is important for keeping the work aligned with project expectations.
 
 6. **What interests you the most about API Dash?**
-   - What interests me most about ApiDash is both the personal connection and the nature of the project itself. ApiDash was my first open-source organization, and contributing to it was an important step in my growth as a developer. It gave me my first real experience with open-source collaboration and became the first project I could proudly mention on my resume for open-source contributions. That is one reason I feel genuinely connected to it. At the same time, I am drawn to ApiDash because it is a practical developer tool where user experience, modularity, and maintainability truly matter, and those are exactly the aspects of software development that interest me the most.
+   - What interests me most about API Dash is both the personal connection and the nature of the project itself. API Dash was my first open-source organization, and contributing to it was an important step in my growth as a developer. It gave me my first real experience with open-source collaboration and became the first project I could proudly mention on my resume for open-source contributions. That is one reason I feel genuinely connected to it. At the same time, I am drawn to API Dash because it is a practical developer tool where user experience, modularity, and maintainability truly matter, and those are exactly the aspects of software development that interest me the most.
 
 7. **Can you mention some areas where the project can be improved?**
-   - I think ApiDash can be improved further by consistently making the overall experience more simplified for users. As an API client, it naturally includes many features, but the real challenge is presenting those features in a way that feels clear, smooth, and easy to understand. I believe there is strong scope for improving the UX by reducing friction in common workflows, organizing functionality more intuitively, and making powerful features feel more accessible rather than overwhelming. For me, that balance between capability and simplicity is one of the most important areas where ApiDash can continue to improve.
+   - I think API Dash can be improved further by consistently making the overall experience more simplified for users. As an API client, it naturally includes many features, but the real challenge is presenting those features in a way that feels clear, smooth, and easy to understand. I believe there is strong scope for improving the UX by reducing friction in common workflows, organizing functionality more intuitively, and making powerful features feel more accessible rather than overwhelming. For me, that balance between capability and simplicity is one of the most important areas where API Dash can continue to improve.
 
 ---
-### Project Proposal Information
-
-## Project Details
- 
-- **Project Title:**  WebSocket, MQTT & gRPC Support
-
-
-## Abstract
-The goal of this project is to enhance ApiDash by introducing support for WebSocket, MQTT, and gRPC, enabling developers to work with a broader range of modern communication protocols within a single API client. While ApiDash already provides strong support for API testing and development workflows, many contemporary applications also depend on real-time, lightweight, and high-performance communication mechanisms that are not fully covered by traditional HTTP-focused tools.
+## 1. Abstract
+The goal of this project is to enhance API Dash by introducing support for WebSocket, MQTT, and gRPC, enabling developers to work with a broader range of modern communication protocols within a single API client. While API Dash already provides strong support for API testing and development workflows, many contemporary applications also depend on real-time, lightweight, and high-performance communication mechanisms that are not fully covered by traditional HTTP-focused tools.
 
 This project will address that gap by designing and implementing protocol support in a way that is both technically robust and user-friendly. A major focus will be on keeping the interface simplified despite the added capabilities, so that users can interact with these protocols without unnecessary complexity. The implementation will also prioritize modularity and maintainability, ensuring that the new functionality integrates cleanly into the existing architecture and can support future enhancements more effectively.
 
-By expanding protocol coverage while maintaining a strong emphasis on usability and code structure, this project aims to make ApiDash a more complete and practical tool for developers working across diverse API ecosystems.
+By expanding protocol coverage while maintaining a strong emphasis on usability and code structure, this project aims to make API Dash a more complete and practical tool for developers working across diverse API ecosystems.
 
-### 3. Detailed Description
+## 2. Detailed Description
 
 The implementation of WebSocket, MQTT, and gRPC support in API Dash represents a significant leap from a traditional HTTP client to a comprehensive, multi-protocol communication suite. This section provides an exhaustive breakdown of the architectural shifts, protocol-specific engines, and user interface enhancements required to maintain API Dash's reputation for simplicity and power.
 
@@ -133,7 +128,7 @@ WebSockets require a stateful interaction model where the "Response" is not a si
 - **Handshake Customization**: Support for custom headers and sub-protocols during the initial HTTP upgrade request.
 - **Heartbeat Mechanism**: Implementation of automated PING/PONG frames to keep connections alive through aggressive load balancers or firewalls.
 
-**2. The Live Console UI**
+**2. API Dash UI for WebSocket**
 
 ![WebSocket Desktop UI](images/nikhil_ws_1.png)
 
@@ -167,7 +162,7 @@ MQTT (Message Queuing Telemetry Transport) follows a Publish/Subscribe pattern, 
     - **Certificate Management**: UI for uploading `.crt` and `.key` files for Mutual TLS (mTLS) authentication, common in industrial IoT environments.
 - **Last Will and Testament (LWT)**: UI to configure the LWT message, topic, and QoS.
 
-**2. Topic & Subscription Management**
+**2. API Dash UI for MQTT**
 
 ![MQTT Desktop UI](images/nikhil_mqtt_1.png)
 
@@ -200,7 +195,7 @@ gRPC requires a unique workflow involving Interface Definition Languages (IDL) a
 - **Service Discovery**: API Dash will parse the descriptors to list all available `Services` and their corresponding `Methods`.
 - **Reflection Support**: For servers that support the gRPC Reflection Protocol, I will add a "Refresh" button that fetches service definitions directly over the wire, removing the need for local `.proto` files.
 
-**2. Dynamic Form Generation (The "No-Code" Experience)**
+**2. API Dash UI for gRPC**
 
 Instead of forcing users to write raw JSON for gRPC, I will build a dynamic form generator:
 
@@ -432,6 +427,69 @@ I will implement a "Connection Pulse" system.
 
 ---
 
+### 3. CLI Technical Architecture
+
+**A. Package Structure**
+```
+packages/apidash_cli/
+├── bin/apidash.dart
+├── lib/
+│   ├── commands/
+│   │   ├── run_command.dart
+│   │   ├── create_command.dart
+│   │   ├── ws_command.dart
+│   │   ├── mqtt_command.dart
+│   │   └── grpc_command.dart
+│   ├── models/
+│   │   └── cli_models.dart
+│   ├── utils/
+│   │   └── cli_utils.dart
+│   └── core/
+│       ├── cli_config.dart
+│       └── output_formatter.dart
+```
+
+**B. Core Components**
+- **Command Router**: Handles command parsing and routing using Dart's `args` package
+- **Configuration Manager**: Manages CLI settings, profiles, and connection to API Dash data
+- **Output Formatter**: Supports JSON, YAML, table, and colored terminal outputs
+- **Progress Indicators**: Real-time feedback for long-running operations
+
+**C. CLI Command Examples**
+```bash
+# Basic operations
+apidash run <request-id> --format json
+apidash list --type websocket --output table
+apidash create --type mqtt --name "IoT Test" --url "mqtt://localhost:1883"
+apidash delete <request-id>
+
+# Protocol-specific commands
+apidash ws connect --url "ws://echo.websocket.org" --send "Hello World"
+apidash mqtt subscribe --topic "sensors/+/temperature" --broker "mqtt://localhost:1883"
+apidash grpc call --service "UserService" --method "GetUser" --proto "user.proto" --data '{"id": 123}'
+
+# Advanced operations
+apidash export --format har --output collection.har
+apidash import --file postman_collection.json
+apidash test-suite --file test_config.yaml
+```
+
+**D. CLI-GUI Integration**
+- Shared Hive database for request storage
+- Real-time configuration synchronization
+- Consistent request models across interfaces
+- Cross-platform compatibility (Windows, macOS, Linux)
+
+**E. Technical Implementation Details**
+- Use Dart's `io` package for cross-platform compatibility
+- Implement shell completion scripts (bash, zsh, fish)
+- Add color-coded output using `ansi` package
+- Support for environment variables and configuration files
+- Error handling with helpful messages and suggestions
+
+---
+
+
 #### 3.15. Final Technical Deliverables & Milestones
 
 **Milestone 1: The Multi-Protocol Core (Week 2)**
@@ -455,7 +513,7 @@ I will implement a "Connection Pulse" system.
 - Support for Unary and all three streaming patterns (Server, Client, Bi-Di).
 - Comprehensive documentation and final project report.
 
-**Milestone 5: ApiDash CLI Implementation (Week 14)**
+**Milestone 5: API Dash CLI Implementation (Week 14)**
 - Comprehensive CLI tool for headless operations.
 - Support for REST, WebSocket, MQTT, and gRPC via command line.
 - CLI-GUI data synchronization and automation features.
@@ -503,68 +561,6 @@ This timeline covers 14 weeks of coding plus community bonding period.
 
 ---
 
-#### 4.1. CLI Technical Architecture
-
-**A. Package Structure**
-```
-packages/apidash_cli/
-├── bin/apidash.dart
-├── lib/
-│   ├── commands/
-│   │   ├── run_command.dart
-│   │   ├── create_command.dart
-│   │   ├── ws_command.dart
-│   │   ├── mqtt_command.dart
-│   │   └── grpc_command.dart
-│   ├── models/
-│   │   └── cli_models.dart
-│   ├── utils/
-│   │   └── cli_utils.dart
-│   └── core/
-│       ├── cli_config.dart
-│       └── output_formatter.dart
-```
-
-**B. Core Components**
-- **Command Router**: Handles command parsing and routing using Dart's `args` package
-- **Configuration Manager**: Manages CLI settings, profiles, and connection to ApiDash data
-- **Output Formatter**: Supports JSON, YAML, table, and colored terminal outputs
-- **Progress Indicators**: Real-time feedback for long-running operations
-
-**C. CLI Command Examples**
-```bash
-# Basic operations
-apidash run <request-id> --format json
-apidash list --type websocket --output table
-apidash create --type mqtt --name "IoT Test" --url "mqtt://localhost:1883"
-apidash delete <request-id>
-
-# Protocol-specific commands
-apidash ws connect --url "ws://echo.websocket.org" --send "Hello World"
-apidash mqtt subscribe --topic "sensors/+/temperature" --broker "mqtt://localhost:1883"
-apidash grpc call --service "UserService" --method "GetUser" --proto "user.proto" --data '{"id": 123}'
-
-# Advanced operations
-apidash export --format har --output collection.har
-apidash import --file postman_collection.json
-apidash test-suite --file test_config.yaml
-```
-
-**D. CLI-GUI Integration**
-- Shared Hive database for request storage
-- Real-time configuration synchronization
-- Consistent request models across interfaces
-- Cross-platform compatibility (Windows, macOS, Linux)
-
-**E. Technical Implementation Details**
-- Use Dart's `io` package for cross-platform compatibility
-- Implement shell completion scripts (bash, zsh, fish)
-- Add color-coded output using `ansi` package
-- Support for environment variables and configuration files
-- Error handling with helpful messages and suggestions
-
----
-
 ### 5. Technical Challenges & Solutions
 
 **Challenge 1: State Management of Persistent Connections**
@@ -588,9 +584,9 @@ apidash test-suite --file test_config.yaml
 - **UI Tests**: Ensuring the polymorphic UI correctly swaps components when the protocol is changed.
 ---
 
-### 5. Final Deliverables
-- Functional WebSocket, MQTT, and gRPC clients integrated into ApiDash.
+### 7. Final Deliverables
+- Functional WebSocket, MQTT, and gRPC clients integrated into API Dash.
 - Real-time message visualization UI for streaming protocols.
 - Automated code generation for the new protocols.
-- Comprehensive CLI tool for headless ApiDash operations
+- Comprehensive CLI tool for headless API Dash operations
 - Comprehensive unit and integration tests.
