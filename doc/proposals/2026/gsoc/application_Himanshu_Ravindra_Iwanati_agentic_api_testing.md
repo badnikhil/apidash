@@ -753,8 +753,6 @@ To ensure API Dash remains performant and cost-effective, the `SpecParser` and `
 | **Dependency-Graph Partitioning** | Advanced | Groups endpoints by **Resource Lifecycle** (Producer-Consumer flow). |
 | **Semantic Hashing** | Efficiency | Prevents re-generation unless the *functional* schema changes. |
 
----
-
 #### 4.3.3 Optimization 1: Dependency-Graph Partitioning
 Instead of simple URL-based grouping, the system treats the API as a **Directed Acyclic Graph (DAG)**. 
 
@@ -773,8 +771,6 @@ To maximize the efficiency of Anthropic/OpenAI prompt caching:
 2. **Deterministic Hashing:** A SHA-256 hash is generated for the *functional structure* of each domain batch.
 3. **Outcome:** If a developer fixes a typo in a description or reorders JSON fields, the hash remains identical. The `AgentCore` skips the LLM call entirely and retrieves the existing `TestSuite` from the local cache.
 
----
-
 ## 5. Flutter UI Integration
 
 ### 5.1 Agent Panel — Three-State Design
@@ -792,9 +788,9 @@ The `healing-diff` MCP App renders a side-by-side diff viewer. The left panel sh
 
 ![Agent Panel — Test Review, Results, and Healing tabs](images/hihry_ui.png)
 
-#### 3.8 MCP Apps Integration: Bidirectional UI Layer for Agentic Workflows
+### 5.2 MCP Apps Integration: Bidirectional UI Layer for Agentic Workflows
 
-##### 3.8.1 Why Plain Text Output Fails at Two Critical Pipeline Nodes
+##### 5.2.1 Why Plain Text Output Fails at Two Critical Pipeline Nodes
 
 The agentic pipeline described above produces two categories of output that are fundamentally ill-suited to plain text rendering inside a chat interface:
 
@@ -806,9 +802,7 @@ When `SelfHealingEngine` proposes a patch to a broken assertion, the developer m
 
 Both cases share the same root problem: **the information the agent produces is inherently visual and interactive, but the only available output channel is linear text.** The Model Context Protocol (MCP) Apps extension directly addresses this gap.
 
----
-
-##### 3.8.2 What MCP Apps Provide
+##### 5.2.2 What MCP Apps Provide
 
 MCP Apps extend the open-source Model Context Protocol with a standardised mechanism for MCP servers to deliver **rich, bidirectional UI components** — HTML rendered as sandboxed iframes natively inside AI hosts — without requiring external web apps, custom authentication, or broken conversational context. Concretely, this means:
 
