@@ -933,71 +933,103 @@ naturally between planning and execution.
 
 ### Weekly Timeline
 
+### Weekly Timeline: Agentic API Testing Framework
+
 **Community Bonding (May 1 – May 28)**
 * **Hours:** ~10 hrs (unbilled)
-* **Deliverables:** Deep-dive into `foss42/apidash` codebase (focus on `DashBot`, collection importer, and HTTP client layers). Align architecture decisions with mentors and finalise node interfaces/data models. Set up development environment, CI, and test harness. Document API contracts between all six nodes before writing any implementation code.
+* Deep-dive into the `foss42/apidash` codebase, specifically the `DashBot`, collection importer, and HTTP client layers.
+* Finalise the architecture decisions and data models with mentors, specifically for the six core nodes (`AgentCore`, `SpecParser`, etc.).
+* Define and document the API contracts and JSON-RPC bridge interfaces (`ui/update-model-context`, `ui/message`) for the MCP Apps before implementation.
 
-**Week 1 (May 29 – Jun 4)**
+**Week 1: SpecParser Foundation (May 29 – Jun 4)**
 * **Hours:** 14 hrs
-* **Deliverables:** `SpecParser` foundation: YAML/JSON loading, syntactic validation via `JsonSchemaValidator`, `ParseException` hierarchy.
+* Implement YAML and JSON loading mechanisms for API specifications.
+* Build syntactic validation using `JsonSchemaValidator` to ensure specification integrity.
+* Develop a robust `ParseException` hierarchy for precise error handling and user diagnostics.
 
-**Week 2 (Jun 5 – Jun 11)**
+**Week 2: Semantic Graph & Parsers (Jun 5 – Jun 11)**
 * **Hours:** 14 hrs
-* **Deliverables:** `SpecParser` semantic layer: normalise validated doc → `AgentTaskGraph`; `$ref` resolution; Postman v2.1 and GraphQL parser stubs; unit tests for all three parsers.
+* Develop the semantic layer to normalise validated specifications into a unified `AgentTaskGraph`.
+* Implement `$ref` resolution to handle nested dependencies within OpenAPI documents.
+* Create parser stubs for Postman v2.1 and GraphQL, and establish unit test coverage for the parsing subsystem.
 
-**Week 3 (Jun 12 – Jun 18)**
+**Week 3: AgentCore State Machine (Jun 12 – Jun 18)**
 * **Hours:** 14 hrs
-* **Deliverables:** `AgentCore` state machine with `_validTransitions` guard; basic `WorkflowExecutor` stub (enough to drive EXECUTING state and test all transitions end-to-end).
+* Build the `AgentCore` orchestration using Riverpod, defining the `AgentCoreState` and phase enums.
+* Implement strict state transition guards (`_validTransitions`) to enforce the pipeline flow (e.g., PARSING to PLANNING).
+* Develop a basic `WorkflowExecutor` stub to test end-to-end state transitions into the EXECUTING phase.
 
-**Week 4 (Jun 19 – Jun 25)**
+**Week 4: TestStrategyPlanner & Tool Calling (Jun 19 – Jun 25)**
 * **Hours:** 14 hrs
-* **Deliverables:** `TestStrategyPlanner`: `LlmClient` abstraction, `PromptTemplateLibrary`, structured tool-calling output schema, happy path + boundary value strategy generation.
+* Construct the `LlmClient` abstraction and the `PromptTemplateLibrary` for contextual prompt management.
+* Define the structured tool-calling JSON schemas to ensure type-safe LLM outputs and avoid regex parsing.
+* Implement generation logic for foundational test strategies: happy path and boundary value scenarios.
 
-**Week 5 (Jun 26 – Jul 2)**
+**Week 5: Advanced Strategies & Resilience (Jun 26 – Jul 2)**
 * **Hours:** 14 hrs
-* **Deliverables:** Extend `TestStrategyPlanner`: security probe + rate-limit strategies; `OutputValidator` with JSON Schema checks; retry logic + rule-based fallback on LLM failure; per-endpoint SHA cache.
+* Extend the planner to generate complex test strategies, including security probes and rate-limit testing.
+* Implement the `OutputValidator` to enforce JSON Schema checks on LLM responses, coupled with retry and rule-based fallback logic.
+* Integrate a per-endpoint SHA cache to optimize token usage and prevent redundant LLM generation.
 
-**Week 6 (Jul 3 – Jul 9)**
+**Week 6: Sequential Execution & Templating (Jul 3 – Jul 9)**
 * **Hours:** 14 hrs
-* **Deliverables:** `WorkflowExecutor` full implementation: sequential execution, `ExecutionContext` persistence across batches, `{{variable}}` template resolution; basic Flutter Agent panel scaffold (needed to test MCP rendering in Weeks 11–12).
+* Flesh out the `WorkflowExecutor` for sequential test execution and HTTP request dispatching.
+* Build the `ExecutionContext` to persist state and extracted variables (e.g., auth tokens) across multi-step API chains.
+* Implement dynamic `{{variable}}` template resolution for payload data injection.
+* Scaffold the base Flutter Agent panel UI to prepare for MCP rendering.
 
-**Week 7 (Jul 10 – Jul 16)**
+**Week 7: Parallel Execution & Fault Tolerance (Jul 10 – Jul 16)**
 * **Hours:** 14 hrs
-* **Deliverables:** Extend `WorkflowExecutor`: parallel execution via Dart isolates; resilience patterns (exponential backoff, circuit breaking, configurable timeouts).
+* Upgrade the `WorkflowExecutor` to support parallel execution batches utilizing Dart isolates to prevent UI blocking.
+* Implement network resilience patterns, including exponential backoff for retries and circuit breaking for dead endpoints.
 
 **Midterm Evaluation (Jul 14 – Jul 18)**
-* **Deliverables:** ✅ Demo: spec import → strategy generation → multi-step execution with context propagation.
+* **Deliverable:** A working demonstration of the pipeline from specification import, through strategy generation, to multi-step execution with context propagation.
 
-**Week 8 (Jul 17 – Jul 23)**
+**Week 8: SelfHealingEngine Foundation (Jul 17 – Jul 23)**
 * **Hours:** 14 hrs
-* **Deliverables:** `SelfHealingEngine`: structural diff, semantic drift detection, cosmetic/compatible auto-patching; `ConfidenceScorer` with auto-apply vs review thresholds.
+* Implement structural diffing and semantic drift detection to compare expected schemas against actual responses.
+* Build the automated patching logic for cosmetic and compatible (non-breaking) schema changes.
+* Develop the `ConfidenceScorer` to evaluate patches against auto-apply versus manual review thresholds.
 
-**Week 9 (Jul 24 – Jul 30)**
+**Week 9: Advanced Healing & Basic Reporting (Jul 24 – Jul 30)**
 * **Hours:** 14 hrs
-* **Deliverables:** Extend `SelfHealingEngine`: breaking/architectural severity classification, patch generation, `HEALING → FAILED` escalation; `ReportGenerator` — JSON + Markdown output formats.
+* Extend the healing engine to classify breaking and architectural severities, triggering human escalation.
+* Implement the `ReportGenerator` foundation, outputting execution traces in machine-readable JSON.
+* Add Markdown report generation for documentation and PR integration.
 
-**Week 10 (Jul 31 – Aug 6)**
+**Week 10: Rich Reporting & Pipeline Integration (Jul 31 – Aug 6)**
 * **Hours:** 14 hrs
-* **Deliverables:** `ReportGenerator` HTML output with coverage heatmap; `generatePartial()` for mid-run failures; CI/CD integration documentation; end-to-end pipeline integration test across all nodes.
+* Develop the HTML output format for the `ReportGenerator`, featuring visual coverage heatmaps.
+* Implement `generatePartial()` to preserve and output test results during mid-run failures.
+* Write comprehensive end-to-end integration tests across all pipeline nodes and document CI/CD usage.
 
-**Week 11 (Aug 7 – Aug 13)**
+**Week 11: MCP App - Test Review (Aug 7 – Aug 13)**
 * **Hours:** 14 hrs
-* **Deliverables:** `test-review` MCP App: Flutter `webview_flutter` host, sandboxed HTML table UI, `ui/update-model-context` JSON bridge back to `AgentCore`.
+* Integrate `webview_flutter` to act as the sandboxed host for the `test-review` MCP App.
+* Build the interactive HTML table UI for developers to select and prioritize generated test cases.
+* Establish the `ui/update-model-context` JSON bridge to send approved test lists back to the `AgentCore`.
 
-**Week 12 (Aug 14 – Aug 20)**
+**Week 12: MCP App - Healing Diff (Aug 14 – Aug 20)**
 * **Hours:** 14 hrs
-* **Deliverables:** `healing-diff` MCP App: side-by-side diff viewer, severity badge, confidence score display, approve/reject/edit decision bridge via `ui/message`.
+* Develop the `healing-diff` MCP App, featuring a side-by-side visual diff viewer with color-coded drift indicators.
+* Implement UI elements for severity badges and confidence score displays.
+* Create the `ui/message` bridge to relay developer approve/reject/edit decisions back to the state machine.
 
-**Week 13 (Aug 21 – Aug 27)**
+**Week 13: UI Polish & DashBot Integration (Aug 21 – Aug 27)**
 * **Hours:** 14 hrs
-* **Deliverables:** Flutter UI completion: natural language chat interface in Agent panel, real-time execution progress display via `stateStream`; DashBot integration.
+* Complete the native Flutter Agent panel, integrating the natural language chat interface.
+* Bind the `stateStream` to the UI for real-time test execution progress tracking.
+* Integrate the agentic workflow triggers into the existing DashBot assistant.
 
-**Week 14 - Buffer (Aug 28 – Sep 1)**
+**Week 14: Buffer & Final Polish (Aug 28 – Sep 1)**
 * **Hours:** 9 hrs
-* **Deliverables:** Integration testing across full pipeline; edge case fixes; performance profiling; final documentation and contributor guide.
+* Conduct final end-to-end integration testing and resolve edge cases.
+* Perform performance profiling, particularly around Dart isolate usage and memory management.
+* Finalise all project documentation, including the contributor guide.
 
 **Final Evaluation (Sep 1 – Sep 8)**
-* **Deliverables:** Submit final work product; mentor review; public demo.
+* **Deliverable:** Submit the final work product, complete mentor reviews, and conduct a public demonstration.
 ---
 
 ### About the Contributor
