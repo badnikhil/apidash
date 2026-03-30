@@ -59,7 +59,7 @@
 
 **6. What interests you the most about API Dash?**
 
-- API dash has clean UI, very modular repository structure and The codebase is remarkably easy to navigate. We as developers can actually trace a request from the UI layer to the network layer without getting lost in a forest of nested folders.
+- API dash has clean UI, very modular repository structure and the codebase is remarkably easy to navigate. We as developers can actually trace a request from the UI layer to the network layer without getting lost in a forest of nested folders.
 
 **7. Can you mention some areas where the project can be improved?**
 
@@ -114,7 +114,7 @@ Beyond code, I have actively proposed improvements that align with the project's
 
 ### 2. Abstract
 
-Modern API development faces a critical bottleneck: manual test creation consumes 30–50% of developer time while producing brittle, unmaintainable test suites that fracture under the slightest schema evolution. Traditional approaches require developers to manually translate API specifications into executable tests, maintain hardcoded assertions, and continuously repair broken tests when APIs change — a process that scales linearly with API complexity and becomes unsustainable for microservices architectures with hundreds of interdependent endpoints
+Modern API development faces a critical bottleneck: manual test creation consumes 30–50% of developer time while producing brittle, unmaintainable test suites that fracture under the slightest schema evolution. Traditional approaches require developers to manually translate API specifications into executable tests, maintain hardcoded assertions, and continuously repair broken tests when APIs change — a process that scales linearly with API complexity and becomes unsustainable for microservices architectures with hundreds of interdependent endpionts.
 
 This proposal introduces **Agentic API Testing**, a comprehensive AI-powered testing framework natively integrated into API Dash. The system leverages large language models (LLMs) with structured tool-calling capabilities to autonomously parse API specifications (OpenAPI 3.x, Postman Collections, GraphQL schemas), generate intelligent test strategies covering happy paths, edge cases, and security scenarios, execute multi-step workflows with dynamic context propagation, and **self-heal** when APIs evolve — automatically detecting schema drift and updating assertions without human intervention. The framework is further enhanced by **MCP Apps integration**, which provides rich bidirectional UI components (interactive test approval tables, visual diff reviewers) at critical human-in-the-loop decision points inside API Dash's existing DashBot interface.
 
@@ -163,9 +163,9 @@ The system is composed of six coordinated components:
 
 ![Workflow](images/hihry_workflow.png)
 
-The Agentic API Testing system transforms **static API specifications into dynamic, intelligent test suites** through a multi-stage pipeline. Upon specification ingestion, the **SpecParser** normalizes diverse formats into a unified **AgentTask graph**—a directed acyclic graph representing API operations, their dependencies, and data flows.
+The Agentic API Testing system transforms **static API specifications into dynamic, intelligent test suites** through a multi-stage pipeline. Upon specification ingestion, the **SpecParser** normalizes diverse formats into a unified **AgentTask graph**—a directed acyclic graph representing API operations, their dependencies, and data flows, **AgentTask** remember this term as this is an acyclic graph of dependecy endpoints for example lets say to access a website you need to provide auth which is a particular endpoint then and only you would be able to access your account details, a dependency is created between endpoints and in a large Yaml file it might consist of 100 such endpoints creating a acyclic graph.
 
-The **TestStrategyPlanner** then operates on this graph as a planning problem. Using an LLM with tool-calling capabilities, it generates **test strategies** for each operation considering: happy path validation, boundary value analysis, equivalence class partitioning, error injection, security testing, and performance baseline establishment.
+The **TestStrategyPlanner** then operates on this graph(AgentTask) as a planning problem. Using an LLM with tool-calling capabilities, it generates **test strategies** for each operation considering: happy path validation, boundary value analysis, equivalence class partitioning, error injection, security testing, and performance baseline establishment.
 
 Each strategy is instantiated into **concrete test cases** with generated test data, expected response assertions, and dependency specifications. The result is a **comprehensive, prioritized test suite** that maximizes coverage within execution time constraints.
 
@@ -201,54 +201,86 @@ The `AgentCore` serves as the **central nervous system**, coordinating all other
 The core implements `event-driven architecture` using Dart’s Stream API, enabling reactive UI updates and parallel processing without blocking.
 
 ```dart
-// lib/agents/agent_core.dart
+// lib/features/agentic/providers/agent_core_provider.dart
 
-enum AgentState { idle, parsing, planning, executing, validating, healing, reporting, failed }
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// Central orchestrator — coordinates all nodes and manages the agent lifecycle.
-/// Implements event-driven architecture using Dart's Stream API for reactive UI updates.
-class AgentCore {
-  AgentCore({
-    required SpecParser specParser,
-    required TestStrategyPlanner strategyPlanner,
-    required WorkflowExecutor workflowExecutor,
-    required SelfHealingEngine healingEngine,
-    required ReportGenerator reportGenerator,
-  }) : _stateController = BehaviorSubject.seeded(AgentState.idle);
+part 'agent_core_provider.g.dart';
 
-  final BehaviorSubject<AgentState> _stateController;
-  final List<String> _errors = [];
+enum AgentPhase { idle, parsing, planning, executing, healing, failed }
 
-  Stream<AgentState> get stateStream => _stateController.stream;
-  AgentState get currentState => _stateController.value;
+class AgentCoreState {
+  const AgentCoreState({
+    this.phase = AgentPhase.idle,
+    this.currentTask,
+    this.generatedTests = const [],
+    this.results = const [],
+    this.pendingDrift,
+    this.errorMessage,
+  });
 
-  /// Step 1 — parse spec + generate test suite (sits behind test-review MCP App)
-  Future<TestSuite> generateTests({required SpecSource source, UserIntent? intent}) async {
-    // parsing → planning
-  }
+  final AgentPhase phase;
+  final AgentTask? currentTask;
+  final List<APITestCase> generatedTests;
+  final List<TestResult> results;
+  final SchemaDrift? pendingDrift;
+  final String? errorMessage;
 
-  /// Step 2 — execute approved suite with optional self-healing
-  Future<TestReport> executeSuite(TestSuite suite, {bool enableHealing = true}) async {
-    // executing → healing? → validating → reporting
-  }
+  AgentCoreState copyWith({
+    AgentPhase? phase,
+    AgentTask? currentTask,
+    List<APITestCase>? generatedTests,
+    List<TestResult>? results,
+    SchemaDrift? pendingDrift,
+    String? errorMessage,
+  }) => AgentCoreState(
+    phase: phase ?? this.phase,
+    currentTask: currentTask ?? this.currentTask,
+    generatedTests: generatedTests ?? this.generatedTests,
+    results: results ?? this.results,
+    pendingDrift: pendingDrift ?? this.pendingDrift,
+    errorMessage: errorMessage ?? this.errorMessage,
+  );
+}
 
-  /// Permits only valid transitions — throws in debug mode on illegal jump
-  void _transitionTo(AgentState newState) {
-    assert(_validTransitions[currentState]?.contains(newState) ?? false);
-    _stateController.add(newState);
-  }
+@riverpod
+class AgentCore extends _$AgentCore {
+  // Uses API Dash's existing Riverpod architecture — consistent with
+  // lib/providers/collection_providers.dart pattern.
+  @override
+  AgentCoreState build() => const AgentCoreState();
 
-  static const _validTransitions = <AgentState, Set<AgentState>>{
-    AgentState.idle:       {AgentState.parsing, AgentState.executing},
-    AgentState.parsing:    {AgentState.planning, AgentState.idle},
-    AgentState.planning:   {AgentState.executing, AgentState.idle},
-    AgentState.executing:  {AgentState.validating, AgentState.healing, AgentState.idle},
-    AgentState.validating: {AgentState.reporting, AgentState.idle},
-    AgentState.healing:    {AgentState.executing, AgentState.idle},
-    AgentState.reporting:  {AgentState.idle},
+  static const _validTransitions = <AgentPhase, Set<AgentPhase>>{
+    AgentPhase.idle:      {AgentPhase.parsing},
+    AgentPhase.parsing:   {AgentPhase.planning, AgentPhase.failed},
+    AgentPhase.planning:  {AgentPhase.executing, AgentPhase.failed},
+    AgentPhase.executing: {AgentPhase.healing, AgentPhase.failed},
+    AgentPhase.healing:   {AgentPhase.executing, AgentPhase.failed},
+    AgentPhase.failed:    {AgentPhase.idle},
   };
 
-  void dispose() => _stateController.close();
+  void _transitionTo(AgentPhase next) {
+    assert(_validTransitions[state.phase]?.contains(next) ?? false,
+      'Invalid transition: ${state.phase} → $next');
+    state = state.copyWith(phase: next);
+  }
+
+  Future<void> submitSpec(String specPath) async {
+    _transitionTo(AgentPhase.parsing);
+    // SpecParser → AgentTaskGraph → TestStrategyPlanner
+  }
+
+  Future<void> runApprovedTests(List<APITestCase> approved) async {
+    _transitionTo(AgentPhase.executing);
+    state = state.copyWith(generatedTests: approved);
+    // WorkflowExecutor → SelfHealingEngine
+  }
+
+  void applyHealingPatch(SchemaDrift drift) {
+    // Called from healing-diff MCP App via ui/message approval
+    _transitionTo(AgentPhase.executing);
+    state = state.copyWith(pendingDrift: null);
+  }
 }
 ```
 
@@ -420,12 +452,24 @@ class TestStrategyPlanner {
   );
 
   List<TestStrategy> _prioritizeAndDeduplicate(List<TestStrategy> strategies) {
-    // TODO: weight by risk_assessment scores, remove duplicate coverage
-    return strategies;
+    // Sort by composite risk score: business_criticality * 0.5 + security_sensitivity * 0.3
+    // + failure_rate * 0.2. Remove strategies with identical (method, path, type) tuples,
+    // keeping the highest-scoring instance.
+    final seen = <String>{};
+    return strategies
+      ..sort((a, b) => b.riskScore.compareTo(a.riskScore))
+      ..where((s) => seen.add('${s.method}:${s.path}:${s.type}')).toList();
   }
 
   Map<String, dynamic>? _fallbackParse(String? text) {
-    // TODO: rule-based extraction as last resort before skipping task
+    // Last-resort extraction when tool-calling fails and raw text is returned.
+    // Attempts JSON extraction from markdown code fences; returns null if unparseable.
+    if (text == null) return null;
+    final match = RegExp(r'```(?:json)?\s*(\{[\s\S]*?\})\s*```').firstMatch(text);
+    if (match != null) {
+      try { return jsonDecode(match.group(1)!) as Map<String, dynamic>; }
+      catch (_) { return null; }
+    }
     return null;
   }
 }
@@ -439,6 +483,73 @@ The `WorkflowExecutorhandles` the runtime complexity of API testing:
 - **Dynamic substitution**: Supporting template expressions (`{{step1.response.body.id}}`, `{{env.BASE_URL}}`, `{{random.email}}`)
 - **Parallel execution**: Using Dart isolates for CPU-bound operations while maintaining async I/O for network requests
 - **Resilience patterns**: Exponential backoff, circuit breaking, and timeout handling with configurable policies
+
+```dart
+class WorkflowExecutor {
+  WorkflowExecutor({required this.httpUtils});
+  final HttpUtils httpUtils; // from packages/apidash_core/lib/utils/http_utils.dart
+
+  /// Executes [suite] with optional parallel batching.
+  /// Context (auth tokens, extracted IDs) is propagated across steps via [ExecutionContext].
+  Future<List<TestResult>> executeSuite(
+    List<APITestCase> suite, {
+    bool parallel = false,
+    int maxConcurrency = 5,
+  }) async {
+    final context = ExecutionContext();
+
+    if (parallel) {
+      // Partition into dependency-ordered batches; run each batch concurrently.
+      final batches = _dependencyBatches(suite);
+      final results = <TestResult>[];
+      for (final batch in batches) {
+        final batchResults = await Future.wait(
+          batch.map((tc) => _executeOne(tc, context)),
+        );
+        results.addAll(batchResults);
+        // Propagate extracted values before next batch
+        for (final r in batchResults) context.absorb(r.extractions);
+      }
+      return results;
+    }
+
+    // Sequential path — maintains strict ordering for dependent chains
+    final results = <TestResult>[];
+    for (final tc in suite) {
+      final result = await _executeOne(tc, context);
+      context.absorb(result.extractions);
+      results.add(result);
+    }
+    return results;
+  }
+
+  Future<TestResult> _executeOne(APITestCase tc, ExecutionContext ctx) async {
+    // Resolve {{variable}} templates before building the request
+    final resolved = tc.resolveTemplates(ctx);
+    final model = resolved.toHttpRequestModel(); // maps to existing RequestModel pattern
+
+    final (response, _, _) = await sendHttpRequest(model); // apidash_core utility
+    final passed = _evaluate(response, resolved.assertions);
+    final extractions = _extract(response, resolved.extractRules);
+
+    return TestResult(
+      testCase: tc,
+      response: response,
+      passed: passed,
+      extractions: extractions,
+      isSchemaMismatch: !passed && _looksLikeSchemaDrift(response, resolved),
+    );
+  }
+
+  bool _looksLikeSchemaDrift(HttpResponseModel response, APITestCase tc) {
+    // Schema drift = status code matches but body schema doesn't.
+    // Network errors and 5xx are not drift — they're infrastructure failures.
+    return response.statusCode == tc.expectedStatus &&
+        !_bodyMatchesSchema(response.body, tc.expectedSchema);
+  }
+}
+
+```
 
 #### 3.3.5 SelfHealingEngine: Schema Drift Detection and Auto-Remediation
 
@@ -610,11 +721,20 @@ cached output rather than the entire spec, keeping redundant API calls minimal.
 
 ## 5. Flutter UI Integration
 
-### 5.1 UI Architecture
+### 5.1 Agent Panel — Three-State Design
 
-![User Interface](images/hihry_ui.png)
+The Agent Panel integrates as a new sidebar destination inside API Dash, surfacing three tab views that correspond to the three active phases of the agentic pipeline.
 
-For Now I have just roughly draw it on Excalidraw
+**Tab 1 — Test Review** (rendered after `TestStrategyPlanner` completes)
+The `test-review` MCP App renders inside a sandboxed `WebViewController`. The interface is a toggleable table: each row shows the test name, endpoint (`GET /users/{id}`), type badge (happy path / boundary / security / rate-limit), and a priority indicator derived from the planner's risk score. A "Confirm selection" button sends the approved subset back to `AgentCoreNotifier` via `ui/update-model-context` as a typed JSON list — `AgentCore` transitions to `executing` only with these approved tests. Bulk "Select all" and "Select none" buttons are available.
+
+**Tab 2 — Results** (live-updated during `WorkflowExecutor` execution)
+A live-updating table shows each test's execution status. Each row displays: test name, method+path, expected status, actual status, and a pass/fail indicator. A thin progress bar at the toolbar level shows overall completion. When a schema drift is detected mid-run, the Healing tab gains a red badge counter.
+
+**Tab 3 — Healing** (shown when `SelfHealingEngine` escalates a BREAKING or ARCHITECTURAL drift)
+The `healing-diff` MCP App renders a side-by-side diff viewer. The left panel shows the original stored assertion (with removed fields highlighted in red). The right panel shows the proposed patch (additions in green). A severity badge, confidence score, and collapsible LLM explanation accompany the diff. The developer chooses from three actions: **Approve** (patch applied, `AgentCore` resumes execution), **Reject** (escalated to FAILED), or **Edit** (opens assertion in a manual editor).
+
+![Agent Panel — Test Review, Results, and Healing tabs](images/hihry_ui.png)
 
 #### 3.8 MCP Apps Integration: Bidirectional UI Layer for Agentic Workflows
 
@@ -773,7 +893,7 @@ naturally between planning and execution.
 |---|---|---|---|
 | **Week 1** | May 29 – Jun 4 | 14 hrs | `SpecParser` foundation: YAML/JSON loading, syntactic validation via `JsonSchemaValidator`, `ParseException` hierarchy |
 | **Week 2** | Jun 5 – Jun 11 | 14 hrs | `SpecParser` semantic layer: normalise validated doc → `AgentTaskGraph`; `$ref` resolution; Postman v2.1 and GraphQL parser stubs; unit tests for all three parsers |
-| **Week 3** | Jun 12 – Jun 18 | 14 hrs | `AgentCore` state machine with `_validTransitions` guard + `BehaviorSubject` stream; basic `WorkflowExecutor` stub (enough to drive EXECUTING state and test all transitions end-to-end) |
+| **Week 3** | Jun 12 – Jun 18 | 14 hrs | `AgentCore` state machine with `_validTransitions` guard; basic `WorkflowExecutor` stub (enough to drive EXECUTING state and test all transitions end-to-end) |
 | **Week 4** | Jun 19 – Jun 25 | 14 hrs | `TestStrategyPlanner`: `LlmClient` abstraction, `PromptTemplateLibrary`, structured tool-calling output schema, happy path + boundary value strategy generation |
 | **Week 5** | Jun 26 – Jul 2 | 14 hrs | Extend `TestStrategyPlanner`: security probe + rate-limit strategies; `OutputValidator` with JSON Schema checks; retry logic + rule-based fallback on LLM failure; per-endpoint SHA cache |
 | **Week 6** | Jul 3 – Jul 9 | 14 hrs | `WorkflowExecutor` full implementation: sequential execution, `ExecutionContext` persistence across batches, `{{variable}}` template resolution; basic Flutter Agent panel scaffold (needed to test MCP rendering in Weeks 11–12) |
