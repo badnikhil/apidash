@@ -60,7 +60,7 @@ By expanding protocol coverage while maintaining a strong emphasis on usability 
 
 The implementation of WebSocket, MQTT, and gRPC support in API Dash represents a significant leap from a traditional HTTP client to a comprehensive, multi-protocol communication suite. This section provides an exhaustive breakdown of the architectural shifts, protocol-specific engines, and user interface enhancements required to maintain API Dash's reputation for simplicity and power.
 
-#### 3.1. Core Architectural Evolution: The "Protocol Agnostic" Shift
+#### 2.1. Core Architectural Evolution: The "Protocol Agnostic" Shift
 
 Currently, API Dash is optimized for the Request-Response cycle of REST and GraphQL. To support persistent, streaming, and RPC-based protocols, I will introduce a modular abstraction layer that decouples the UI from the underlying transport protocol.
 
@@ -119,7 +119,7 @@ To handle long-lived connections, I will implement a `ConnectionManager` as a Si
 
 ---
 
-#### 3.2. WebSocket Implementation: Full-Duplex Real-Time Streaming
+#### 2.2. WebSocket Implementation: Full-Duplex Real-Time Streaming
 
 WebSockets require a stateful interaction model where the "Response" is not a single event but a continuous stream of frames.
 
@@ -151,7 +151,7 @@ For developers working on low-level protocols or IoT, I will implement a "Binary
 
 ---
 
-#### 3.3. MQTT Implementation: The IoT Standard
+#### 2.3. MQTT Implementation: The IoT Standard
 
 MQTT (Message Queuing Telemetry Transport) follows a Publish/Subscribe pattern, which is fundamentally different from the 1-to-1 nature of HTTP.
 
@@ -186,7 +186,7 @@ MQTT (Message Queuing Telemetry Transport) follows a Publish/Subscribe pattern, 
 
 ---
 
-#### 3.4. gRPC Implementation: High-Performance Typed RPCs
+#### 2.4. gRPC Implementation: High-Performance Typed RPCs
 
 gRPC requires a unique workflow involving Interface Definition Languages (IDL) and specialized serialization (Protobuf).
 
@@ -220,7 +220,7 @@ gRPC supports four distinct patterns, each requiring a tailored UI:
 
 ---
 
-#### 3.5. User Experience (UX) Philosophy & Polishing
+#### 2.5. User Experience (UX) Philosophy & Polishing
 
 Adding three powerful protocols could easily lead to "feature bloat." I will prevent this through a strict **Context-First UI** design.
 
@@ -238,7 +238,7 @@ I will ensure that the existing Pre-request and Post-response scripting engine (
 
 ---
 
-#### 3.6. Performance & Scalability Considerations
+#### 2.6. Performance & Scalability Considerations
 
 - **Memory Management**: Streaming protocols can generate large logs. I will implement a "Circular Buffer" for message history, allowing users to set a limit (e.g., 1000 messages) to prevent memory exhaustion during long soak tests. Circular Buffers are also used in Operating Systems at driver level for efficient data handling.
 - **Isolate-Based Transport**: To keep the UI smooth, I will explore moving the core socket logic (especially for high-throughput MQTT) into Flutter **Isolates** (background threads). This prevents heavy serialization/deserialization logic from janking the main UI thread.
@@ -246,7 +246,7 @@ I will ensure that the existing Pre-request and Post-response scripting engine (
 
 ---
 
-#### 3.9. Technical Specification & Implementation Details
+#### 2.7. Technical Specification & Implementation Details
 
 **A. WebSocket (WS/WSS) Protocol Suite**
 WebSockets in API Dash will be implemented using a robust, layered architecture.
@@ -301,7 +301,7 @@ gRPC implementation will focus on strict type safety and high-performance stream
 
 ---
 
-#### 3.10. User Experience (UX) & Design Rationale
+#### 2.8. User Experience (UX) & Design Rationale
 
 API Dash's core value is its clean UI and Lightweight UX. Adding three protocols requires a "Polymorphic Design Pattern".
 
@@ -329,7 +329,7 @@ I will implement a "Protocol-to-Code" engine that supports(This is just for cons
 
 ---
 
-#### 3.11. Engineering Challenges & Mitigation
+#### 2.9. Engineering Challenges & Mitigation
 
 **Challenge: Managing Flutter Web Limitations**
 *Problem*: Flutter Web has restricted access to raw TCP sockets, affecting MQTT and gRPC.
@@ -345,7 +345,7 @@ I will implement a "Protocol-to-Code" engine that supports(This is just for cons
 
 ---
 
-#### 3.12. In-Depth Modular Component Architecture
+#### 2.10. In-Depth Modular Component Architecture
 
 To ensure the highest level of maintainability, I will divide the implementation into four distinct horizontal layers. This modular approach allows for independent testing and easier integration of future protocols.
 
@@ -379,7 +379,7 @@ The UI will be built using a "Plug-and-Play" architecture. The `EditorPane` will
 
 ---
 
-#### 3.13. Comprehensive Engineering Challenges & Deep-Dive Solutions
+#### 2.11. Comprehensive Engineering Challenges & Deep-Dive Solutions
 
 **A. Challenge: Handling High-Throughput Streaming Data**
 *Scenario*: An MQTT broker sending 500+ small telemetry packets per second.
@@ -410,7 +410,7 @@ The UI will be built using a "Plug-and-Play" architecture. The `EditorPane` will
 
 ---
 
-#### 3.14. User Experience (UX) Rationales & Design Patterns
+#### 2.12. User Experience (UX) Rationales & Design Patterns
 
 **1. The "Terminal-Style" Console**
 For streaming protocols, the static "Response Body" view is insufficient. I will build a `StreamTerminal` widget that provides:
@@ -490,7 +490,7 @@ apidash test-suite --file test_config.yaml
 ---
 
 
-#### 3.15. Final Technical Deliverables & Milestones
+#### 2.13. Final Technical Deliverables & Milestones
 
 **Milestone 1: The Multi-Protocol Core (Week 2)**
 - Successful refactor of `RequestModel` into a polymorphic structure.
