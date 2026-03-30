@@ -1,6 +1,5 @@
 # GSoC 2026 — API Explorer | foss42/apidash
 
-
 ---
 
 ## About
@@ -9,10 +8,10 @@
 2. **Contact:** bhumikanilesh1810@gmail.com
 3. **Discord handle:** bhumikanilesh_47843
 4. **Home page:** https://api-explorer-web.vercel.app/
-6. **GitHub:** https://github.com/bhumikanilesh
-7. **LinkedIn / other socials:** https://www.linkedin.com/in/bhumika-nilesh-ujjainkar/
-8. **Time zone:** IST (UTC+5:30)
-9. **Resume:** https://docs.google.com/document/d/1hbHxG8hqyH2AbOaVa-qkd2Ra1ddbXyei/edit?usp=sharing&ouid=111447101156064526915&rtpof=true&sd=true
+5. **GitHub:** https://github.com/bhumikanilesh
+6. **LinkedIn / other socials:** https://www.linkedin.com/in/bhumika-nilesh-ujjainkar/
+7. **Time zone:** IST (UTC+5:30)
+8. **Resume:** https://docs.google.com/document/d/1hbHxG8hqyH2AbOaVa-qkd2Ra1ddbXyei/edit?usp=sharing&ouid=111447101156064526915&rtpof=true&sd=true
 
 ---
 
@@ -60,7 +59,7 @@ The decisions it's already made well. When I built a small API Explorer prototyp
 
 **8. Have you interacted with and helped the API Dash community?**
 
-I've been reading through the issues, particularly #619 which defines the `PREDEFINED_CATEGORIES` list I implemented in `enricher.py`. *(Add any Discord interactions or GitHub comments you've made here — even a "I'm working on this" comment on the issue counts.)*
+I've been reading through the issues, particularly #619 which defines the `PREDEFINED_CATEGORIES` list I implemented in `enricher.py`. _(Add any Discord interactions or GitHub comments you've made here — even a "I'm working on this" comment on the issue counts.)_
 
 ---
 
@@ -74,7 +73,7 @@ I've been reading through the issues, particularly #619 which defines the `PREDE
 
 ### 2. Abstract
 
-API Dash solves the testing problem well. What's missing is the moment *before* testing — when a developer decides to try a new API and spends the next 30 minutes reading docs, figuring out auth headers, and burning real API quota just to get a working first request.
+API Dash solves the testing problem well. What's missing is the moment _before_ testing — when a developer decides to try a new API and spends the next 30 minutes reading docs, figuring out auth headers, and burning real API quota just to get a working first request.
 
 **API Explorer** is the fix: a searchable library of pre-configured request templates that developers can browse and import directly into API Dash — placeholders, sample payloads, and endpoint notes already set up.
 
@@ -112,15 +111,15 @@ python run.py --from phase4   # resume from a specific phase
 python run.py --only phase5   # run one phase only
 ```
 
-| # | File | Responsibility |
-|---|------|---------------|
-| 1 | `fetcher.py` | Download specs from apis.guru + awesome-generative-ai-apis. MD5 snapshot dedup, exponential backoff, graceful degradation. |
-| 2 | `parser.py` | Parse OpenAPI 3.x / Swagger 2.x / HTML / Markdown → unified endpoint dict. `$ref` resolution with cycle detection, 50-endpoint cap. |
-| 3 | `enricher.py` | Three-layer categorization, `{{PLACEHOLDER}}` auth headers, content-type detection, endpoint notes. |
-| 4 | `publisher.py` | Generate split `marketplace/` structure: `index.json` + `apis/{id}.json` + `categories/{cat}.json`. |
-| 5 | `validator.py` | SecurityScanner, SchemaValidator, DuplicateDetector. Reject invalid templates with logged reasons. |
-| 6 | `deployer.py` | Pre-deployment verification, `.nojekyll`, CORS headers, `manifest.json`. |
-| 7 | `search_indexer.py` | Pre-built inverted index with quality scoring. O(1) keyword lookup — Flutter downloads once, searches locally. |
+| #   | File                | Responsibility                                                                                                                      |
+| --- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `fetcher.py`        | Download specs from apis.guru + awesome-generative-ai-apis. MD5 snapshot dedup, exponential backoff, graceful degradation.          |
+| 2   | `parser.py`         | Parse OpenAPI 3.x / Swagger 2.x / HTML / Markdown → unified endpoint dict. `$ref` resolution with cycle detection, 50-endpoint cap. |
+| 3   | `enricher.py`       | Three-layer categorization, `{{PLACEHOLDER}}` auth headers, content-type detection, endpoint notes.                                 |
+| 4   | `publisher.py`      | Generate split `marketplace/` structure: `index.json` + `apis/{id}.json` + `categories/{cat}.json`.                                 |
+| 5   | `validator.py`      | SecurityScanner, SchemaValidator, DuplicateDetector. Reject invalid templates with logged reasons.                                  |
+| 6   | `deployer.py`       | Pre-deployment verification, `.nojekyll`, CORS headers, `manifest.json`.                                                            |
+| 7   | `search_indexer.py` | Pre-built inverted index with quality scoring. O(1) keyword lookup — Flutter downloads once, searches locally.                      |
 
 ---
 
@@ -263,7 +262,11 @@ Pre-built inverted index enabling O(1) keyword lookup after a single download:
     "image": ["openai", "stability-ai"]
   },
   "apis": {
-    "elevenlabs": { "title": "ElevenLabs API", "score": 87, "tags": ["voice", "ai"] }
+    "elevenlabs": {
+      "title": "ElevenLabs API",
+      "score": 87,
+      "tags": ["voice", "ai"]
+    }
   }
 }
 ```
@@ -280,19 +283,19 @@ The validator correctly detects and rejects templates with schema issues, duplic
 
 **Duplicate detection:**
 
-![Duplicate APIs rejected](gsoc/images/rejected_api_duplicates.png)
+![Duplicate APIs rejected](images/rejected_api_duplicates.png)
 
 **Schema validation errors:**
 
-![Schema errors caught](gsoc/images/rejected_api_schema_issue.png)
+![Schema errors caught](images/rejected_api_schema_issue.png)
 
 **Security issue detection:**
 
-![Security issues flagged](gsoc/images/rejected_api_security_reason.png)
+![Security issues flagged](images/rejected_api_security_reason.png)
 
 **Full validation report with reasons:**
 
-![Validation report](gsoc/images/validation_report_with_reason.png)
+![Validation report](images/validation_report_with_reason.png)
 
 ---
 
@@ -337,38 +340,42 @@ def test_openai_key_detected(self):
 
 **Test suite running:**
 
-![Tests running](gsoc/images/tests.png)
+![Tests running](images/tests.png)
 
 ---
 
 ### Full Documentation & Live Demo
 
- https://api-explorer-web.vercel.app/
+https://api-explorer-web.vercel.app/
 
 ---
-### Link to Sample UI created in Figma 
-https://github.com/user-attachments/assets/7b166a97-c079-49ed-9944-4f3e9160aa2d
----
-##  Proof of Concept
+
+### Link to Sample UI created in Figma
+
+## https://github.com/user-attachments/assets/7b166a97-c079-49ed-9944-4f3e9160aa2d
+
+## Proof of Concept
 
 - GitHub Repository: https://github.com/bhumikanilesh/api-explorer-pipeline
 - CI (GitHub Actions): https://github.com/bhumikanilesh/api-explorer-pipeline/actions
+
 ---
+
 ### 4. Weekly Timeline
 
 12 weeks, 7–8 hours per week. Buffer built in — real pipelines at scale always find surprises.
 
-| Week | Focus | What I'm actually doing |
-|------|-------|------------------------|
-| **1** | Alignment | Read `explorer_model.dart`. Confirm Flutter output format with mentor. Run pipeline on 20–30 real apis.guru specs, document what breaks. |
-| **2** | fetcher.py hardening | Fix snapshot race condition (concurrent writes need locking). Run on 200+ real specs. Write tests for retry logic and graceful degradation. |
-| **3** | parser.py — real data | Run against real Stripe, Twilio, GitHub specs. Fix what breaks. Add external `$ref` support. Handle non-UTF-8 encoded specs. |
-| **4** | parser.py edge cases + enricher.py | Handle `allOf`/`oneOf`/`anyOf` from real specs. Fix category false positives. Start profiling memory. |
-| **5** | publisher.py | Build to the confirmed Flutter format. Verify `write_if_changed()` in CI. Test index merge with deletes. |
-| **6** | validator.py | Extend SecurityScanner to cover request bodies and URLs. Validate `_update_index()` fix on real data. Tune schema rules. |
-| **7** | search_indexer.py | Run on full 2500+ API set. Check actual index size. Tune quality scoring weights based on real results. |
-| **8** | deployer.py + GitHub Actions | Write `.github/workflows/` CI file. Test CORS with actual Flutter web fetch. End-to-end deploy test. |
-| **9** | Full pipeline run | All 7 phases on complete apis.guru dataset. Fix failures. Profile and fix memory issues. |
-| **10** | Buffer | Empty by design — for whatever Week 9 surfaces. Mentor review feedback. No new features. |
-| **11** | Docs | README, `sources.yaml` contributor guide, architecture diagram, inline docstrings, how-to-add-a-source walkthrough. |
-| **12** | Final polish + PR | End-to-end demo on real data. Review fixes. Open PR. GSoC final report. |
+| Week   | Focus                              | What I'm actually doing                                                                                                                     |
+| ------ | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**  | Alignment                          | Read `explorer_model.dart`. Confirm Flutter output format with mentor. Run pipeline on 20–30 real apis.guru specs, document what breaks.    |
+| **2**  | fetcher.py hardening               | Fix snapshot race condition (concurrent writes need locking). Run on 200+ real specs. Write tests for retry logic and graceful degradation. |
+| **3**  | parser.py — real data              | Run against real Stripe, Twilio, GitHub specs. Fix what breaks. Add external `$ref` support. Handle non-UTF-8 encoded specs.                |
+| **4**  | parser.py edge cases + enricher.py | Handle `allOf`/`oneOf`/`anyOf` from real specs. Fix category false positives. Start profiling memory.                                       |
+| **5**  | publisher.py                       | Build to the confirmed Flutter format. Verify `write_if_changed()` in CI. Test index merge with deletes.                                    |
+| **6**  | validator.py                       | Extend SecurityScanner to cover request bodies and URLs. Validate `_update_index()` fix on real data. Tune schema rules.                    |
+| **7**  | search_indexer.py                  | Run on full 2500+ API set. Check actual index size. Tune quality scoring weights based on real results.                                     |
+| **8**  | deployer.py + GitHub Actions       | Write `.github/workflows/` CI file. Test CORS with actual Flutter web fetch. End-to-end deploy test.                                        |
+| **9**  | Full pipeline run                  | All 7 phases on complete apis.guru dataset. Fix failures. Profile and fix memory issues.                                                    |
+| **10** | Buffer                             | Empty by design — for whatever Week 9 surfaces. Mentor review feedback. No new features.                                                    |
+| **11** | Docs                               | README, `sources.yaml` contributor guide, architecture diagram, inline docstrings, how-to-add-a-source walkthrough.                         |
+| **12** | Final polish + PR                  | End-to-end demo on real data. Review fixes. Open PR. GSoC final report.                                                                     |
