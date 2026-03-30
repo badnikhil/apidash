@@ -149,7 +149,8 @@ Prototype Working repository:
 
 https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting
 
-There are two short video demos included in the [README.md](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/README.md) and [here](#video-walkthroughs-of-my-current-implementation) of the repository demonstrating how the engine works in my prototype.
+Video Walkthrough of my current implementation : [Youtube](https://www.youtube.com/watch?v=jUz__YChXYQ)
+
 
 The demos demonstrate the following workflow:
 - User uploading an openapi.json
@@ -183,7 +184,9 @@ The prototype currently uses a local Ollama model for agentic conversation becau
 
     **Why it matters**: This proves I understand the danger of AI-driven infinite loops. I hard-coded a `maxRetries = 3` limit which can be adjusted based on the project or openapi type.
 
-    -> [Code can be found here](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/af3dc5847f915c6cf31bebbc8d3c946606ee0d39/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/agentic_api_testing.dart#L77)
+    -> [ Full Code can be found here](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/af3dc5847f915c6cf31bebbc8d3c946606ee0d39/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/agentic_api_testing.dart#L77)
+
+
 
 4. Reactive Flutter Chat Interface
 
@@ -193,11 +196,11 @@ The prototype currently uses a local Ollama model for agentic conversation becau
 
 5. MCP Server Prototype (External Tooling Interface)
 
-  I implemented a basic MCP server in Dart that exposes the API Dash execution engine as callable tools for external AI clients. The prototype includes a minimal `mcp_server.dart` along with a **headless** `ApiTestRunner` that can execute test plans independently of the Flutter UI, demonstrated through interactions with *Claude Desktop*.
+    I implemented a basic MCP server in Dart that exposes the API Dash execution engine as callable tools for external AI clients. The prototype includes a minimal `mcp_server.dart` along with a **headless** `ApiTestRunner` that can execute test plans independently of the Flutter UI, demonstrated through interactions with *Claude Desktop*.
 
-  Why it matters: This demonstrates how API Dash can integrate with the growing MCP ecosystem used by tools like Cursor or Claude Desktop. Instead of interacting only through the UI, external assistants can invoke API Dash capabilities programmatically (e.g., running test suites or fetching collections), turning the testing engine into a reusable backend service.
+    **Why it matters**: This demonstrates how API Dash can integrate with the growing MCP ecosystem used by tools like Cursor or Claude Desktop. Instead of interacting only through the UI, external assistants can invoke API Dash capabilities programmatically (e.g., running test suites or fetching collections), turning the testing engine into a reusable backend service.
 
-  -> [Prototype Code](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/mcp_server.dart)
+    -> [Prototype Code](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/mcp_server.dart)
 
 #### Suggested UI:
 
@@ -261,6 +264,23 @@ Each entry contains the complete schema for a specific endpoint. When the agent 
 I designed a deterministic batching algorithm for this process so that the same OpenAPI specification always produces the same endpoint partitions. The implementation of this algorithm can be found in my prototype testing repository.
 
 This keeps the model working with focused context instead of the full API surface, which improves reliability and reduces token usage.
+```dart
+// My recursive resolver **ensures deep nested schemas** are included in the batch
+  // without sending the entire bloated/unnecessary components/schemas object.
+  void _recursiveFindRefs(dynamic node, Set<String> refs) {
+    if (node is Map) {
+      if (node.containsKey('\$ref')) {
+        refs.add(node['\$ref'] as String);
+      }
+      node.forEach((_, value) => _recursiveFindRefs(value, refs));
+    } else if (node is List) {
+      for (var element in node) {
+        _recursiveFindRefs(element, refs);
+      }
+    }
+  }
+```
+
 
 ***The implementation of the same can be found [here](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/openapi_Context_Parsing.dart)***
 
@@ -483,6 +503,28 @@ Some more screenshots of my prototype working against a real FastAPI server for 
 ![](images/anshul_addUser_error.png)
 ![](images/anshul_addBook_error.png)
 
+
+```dart
+    // Showing error healing
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        messages.add(ApiMessage(role: 'system', content: "✅ PASS (${response.statusCode})"));
+      } else {
+        messages.add(ApiMessage(role: 'system', content: "❌ FAIL (${response.statusCode})"));
+
+        if (retryCount < maxRetries) {
+          messages.add(ApiMessage(
+              role: 'system',
+              content: "The API returned an error: ${response.statusCode} - ${response.body}. Please fix the parameters, analyze the OpenAPI and try again.",
+            ),
+          );
+          await retryLoop(retryCount: retryCount + 1); // Trigger the agentic fix
+        } else {
+          // Hard stop to prevent LLM infinite loops and await user's reply displaying the error message
+          messages.add(ApiMessage(role: 'system', content: "🛑 TERMINATED: Failed after $maxRetries retries."));
+        }
+      }
+  ```
+
 ***The retry loop is intentionally limited to three attempts to prevent uncontrolled request generation.(which can be adjusted based on the project requirements)***
 #### OpenAPI Context Handling in Agentic Mode
 
@@ -595,9 +637,33 @@ The GSoC brief mentions MCP, and the way the testing engine is designed makes th
 
 Following the mentors’ feedback to demonstrate how my MCP server would work in practice, I implemented a small working prototype that shows how API Dash can expose its testing engine through MCP tools.
 
+Code Snippet:
+ ```dart
+    void main() async {
+      // Listening to standard I/O to allow external AI IDEs to spawn APIDash (here Claude Desktop)
+      // as a headless execution engine.
+      stdin
+          .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .listen((line) async {
+        try {
+          final req = jsonDecode(line);
+          if (req['jsonrpc'] != '2.0') return;
+
+          final method = req['method'];
+          if (method == 'tools/call' && req['params']['name'] == 'execute_agentic_step') {
+            // ... headless ApiTestRunner is invoked here bypassing Flutter dependancy entirely
+          }
+        } catch (e) {}
+      });
+    }
+  ```
+
 The prototype currently includes
 - [mcp_server.dart](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/mcp_server.dart) 
 - [api_testRunner_headless.dart](https://github.com/TheAnshulPrakash/APIDash_AgenticAPITesting/blob/main/lib/screens/home_page/editor_pane/details_card/request_pane/ai_request/api_testRunner_headless.dart)
+
+
 
 The `api_testRunner_headless.dart` file contains a headless version of the test runner without the `better_networking` package dependency so it can run independently of the main UI environment.
 
@@ -607,7 +673,7 @@ UI screenshots of my interaction between Claude Desktop and the API Dash MCP ser
 
 ![mcp_image_2](images/anshul_mcp_claude_workflow2.png)
 
-Video demonstrating the workflow can be found [here](https://github.com/user-attachments/assets/87421b40-46b1-488d-8ed9-f64604640612)
+Video demonstrating the workflow can be found [here](https://www.youtube.com/watch?v=jUz__YChXYQ&t=77s)
 
 The main reason this integration is straightforward is because the execution layer is already separated from the UI, as described earlier in the proposal.
 
@@ -646,6 +712,38 @@ The assistant will call run_test_suite, `ApiTestRunner` runs the tests against t
 
 So MCP basically becomes another entry point into the same testing engine, similar to the CLI.
 
+## Risks & Mitigations
+While testing the prototype, I ran into a few real-world constraints. Building AI features into a local developer tool requires handling edge cases defensively. Here are the main risks with this architecture and how I plan to handle them:
+
+1. LLM Hallucinations and Malformed JSON
+
+    The Risk: Even with `context batching`, models can sometimes output broken JSON or invent parameters that don't exist in the OpenAPI spec.
+
+    How I'll mitigate it: The Dart execution engine will enforce strict schema validation before anything touches the network layer. If the generated test plan fails validation, the engine intercepts it and triggers a fast retry loop, feeding the exact syntax error back to the model to fix it before attempting execution.
+
+2. Recursive or Broken OpenAPI Schemas
+
+    The Risk: My deterministic batching algorithm works well, but massive enterprise specs often have deeply nested, recursive $ref dependencies or invalid syntax that can cause stack overflows during parsing.
+
+    How I'll mitigate it: I plan to build a robust resolver with a hard limit on recursion depth. If a specific schema chunk fails to parse or loops infinitely, the parser will gracefully truncate or skip that specific section instead of crashing the entire batching process.
+
+3. Agentic Infinite Loops
+
+    The Risk: In the conversational mode, if an endpoint consistently returns a 422 error, the AI might get stuck in an endless loop trying to "fix" the parameters.
+
+    How I'll mitigate it: I noticed this early while testing my prototype against a real FastAPI server. That’s why I implemented a hard-coded maxRetries = 3 limit in my agent's state manager. In the final implementation, this limit will be configurable. Once the limit is hit, the engine stops execution and explicitly yields to the human developer for intervention.
+
+4. Stress Testing Client Bottlenecks
+
+    The Risk: Generating heavy load locally using Dart isolates can exhaust OS file descriptors (socket limits) or max out the developer's CPU/RAM, causing API Dash to crash before the API even feels the load.
+
+    How I'll mitigate it: I propose to implement configurable concurrency limits and add a local resource monitor failsafe. If the client machine starts choking, the test will throttle itself or gracefully stop to keep the UI responsive.
+
+5. Context Window Creep in Long Conversations
+
+    The Risk: In agentic mode, appending every request, response, and error into the chat history will eventually bloat the prompt, slowing down the model and increasing costs.
+
+    How I'll mitigate it: I propose to implement a sliding window for conversation history. Instead of keeping the raw JSON of every past response, the system will summarize older successful steps into a lightweight "context state" while keeping only the most recent interactions and the relevant batched schema in the active prompt.
 
 ## Week-wise Breakdown
 
@@ -756,10 +854,3 @@ This is the same approach I plan to follow during GSoC, building directly within
 
 During GSoC, I’ll stay consistent with contributions, communicate actively, and iterate based on feedback. The goal is to deliver something solid that’s actually useful for the developer community and continues to be used even after the program ends.
 
-### Video walkthroughs of my current implementation
-
-https://github.com/user-attachments/assets/87421b40-46b1-488d-8ed9-f64604640612
-
-https://github.com/user-attachments/assets/2d8aee02-3c45-481f-8654-0c06023a5793
-
-https://github.com/user-attachments/assets/c2882952-1ae3-45f0-a236-125f8506d199
