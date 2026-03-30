@@ -866,11 +866,14 @@ Just to get a visual understanding of how it would look like after when spec fil
 to get a better understanding of what is happening.
 
 ![ Tests generated ](images/tests.png)
+
 Tests are generated form the user inputed Spec file, the user have the option to toggle off the tests that he don't want
 and then finally approve to execute.
 ![ results of generated tests ](images/results.png)
+
 The resulted tests which tests pass and which did not, if there is some tests failed due to API change then there is 
 a mechanism of self-healing.
+
 ![ healing of broken tests ](images/healing.png)
 
 
