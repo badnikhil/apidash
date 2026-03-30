@@ -5,12 +5,12 @@
 ###    **Personal Details:**
 
 Full Name	: 	BALASUBRAMANIAM L  
-Mobile	:	\+91 9345238008  
 Email		: 	 balasubramaniam12007@gmail.com  
 Discord	: 	.balasubramaniam  
-Github	: 	[Balasubramaniam](https://github.com/BalaSubramaniam12007)  
+GitHub	: 	[Balasubramaniam](https://github.com/BalaSubramaniam12007)  
 LinkedIn	:	[Balasubramaniam](http://www.linkedin.com/in/balasubramaniam2007)  
 Twitter	: 	[Balasubramaniam](https://x.com/BALASUBRAMAN1AM)  
+Resume	:	https://example.com/resume_balasubramaniam.pdf  
 Time zone	: 	GMT+5:30
 
 ## **University Info:**
@@ -254,10 +254,6 @@ Why this approach
 * Event-driven trigger runs only when sources are actually added  
 * Controls GitHub Action daily rate-limit pressure
 
-### 
-
-### 
-
 ### **4\. Source Specification Change Detection**
 
 How I will implement it
@@ -393,11 +389,11 @@ Why this approach
 
 **Click here to check the UI prototype:  [Figma Link](https://www.figma.com/design/QIvRRUuZJbau67cAOWI55k/apidash-ui?node-id=0-1&t=Nf5Zs7YJvaPyk191-1)**
 
-##  
-
 ## **Weekly Timeline (12 Weeks)**
 
 ### **Community Bonding Period**
+
+* Discuss the project scope, architecture, and boundaries with mentors  
 
 * Discuss the project scope, architecture, and boundaries with mentors  
 * Finalize template structure, metadata fields, and naming conventions  
@@ -406,7 +402,7 @@ Why this approach
 ### **Week 1: Project Setup & Repository Structure**
 
 * Set up the main API Dash repo and separate template repo  
-* Define registry.json, batches.json, global index, and per-API folder structure  
+* Define registry.json, batch.json, global index, and per-API folder structure  
 * Prepare base GitHub Actions workflow files
 
 *Deliverable: Both repositories structured; registry and batch logic ready*
