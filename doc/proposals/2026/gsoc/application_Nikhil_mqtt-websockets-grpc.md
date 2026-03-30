@@ -135,9 +135,13 @@ WebSockets require a stateful interaction model where the "Response" is not a si
 
 **2. The Live Console UI**
 
-![WebSocket Live Console UI](images/websocket_ui.png)
+![WebSocket Desktop UI](images/nikhil_ws_1.png)
 
-*Figure 1: Initial WebSocket interface concept*
+*Figure 1: WebSocket interface on desktop platform*
+
+![WebSocket Mobile UI](images/nikhil_ws_2.png)
+
+*Figure 2: WebSocket interface on mobile platform*
 
 - **Stream Visualization**: A high-performance scrolling list using `ListView.builder` to handle thousands of messages without frame drops.
 - **Directional UI**:
@@ -165,9 +169,13 @@ MQTT (Message Queuing Telemetry Transport) follows a Publish/Subscribe pattern, 
 
 **2. Topic & Subscription Management**
 
-![MQTT Interface](images/mqtt_ui.png)
+![MQTT Desktop UI](images/nikhil_mqtt_1.png)
 
-*Figure 2: Initial MQTT interface concept*
+*Figure 3: MQTT interface on desktop platform*
+
+![MQTT Mobile UI](images/nikhil_mqtt_2.png)
+
+*Figure 4: MQTT interface on mobile platform*
 
 - **Subscription Dashboard**: A side-panel within the MQTT tab where users can manage multiple active subscriptions.
 - **Wildcard Support**: Full support for `+` (single-level) and `#` (multi-level) wildcards.
@@ -193,7 +201,17 @@ gRPC requires a unique workflow involving Interface Definition Languages (IDL) a
 - **Reflection Support**: For servers that support the gRPC Reflection Protocol, I will add a "Refresh" button that fetches service definitions directly over the wire, removing the need for local `.proto` files.
 
 **2. Dynamic Form Generation (The "No-Code" Experience)**
+
 Instead of forcing users to write raw JSON for gRPC, I will build a dynamic form generator:
+
+![gRPC Desktop UI](images/nikhil_grpc_1.png)
+
+*Figure 5: gRPC interface on desktop platform*
+
+![gRPC Mobile UI](images/nikhil_grpc_2.png)
+
+*Figure 6: gRPC interface on mobile platform*
+
 - **Type-Aware Inputs**: If a field is defined as `bool`, a toggle is shown. For `enum`, a dropdown. For `repeated` fields, a list-builder.
 - **Validation**: Real-time validation against the Protobuf schema (e.g., preventing a string from being entered into an `int64` field).
 - **Default Values**: Automatically pre-populating fields with their Protobuf defaults to minimize typing.
