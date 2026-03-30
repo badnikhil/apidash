@@ -865,17 +865,17 @@ When `patchRequiresReview` is triggered, the `SelfHealingEngine` invokes the `re
 Just to get a visual understanding of how it would look like after when spec file would be parsed and send to generate tests, execution of generated tests and then healing of tests if some endpoints fails due to evolution of schema. This is just the template UI not the actual UI 
 to get a better understanding of what is happening.
 
-![ Tests generated ](images/tests.png)
+![ Tests generated ](images/hihry_tests.png)
 
 Tests are generated form the user inputed Spec file, the user have the option to toggle off the tests that they don't want
 and then finally approve to execute.
 
-![ results of generated tests ](images/results.png)
+![ results of generated tests ](images/hihry_results.png)
 
 The resulted tests which pass and failed are highlighted, if there is some tests failed due to API change then there is 
 a mechanism of self-healing.
 
-![ healing of broken tests ](images/healing.png)
+![ healing of broken tests ](images/hihry_healing.png)
 
 
 ##### 5.2.6 Flutter WebView as MCP App Host
