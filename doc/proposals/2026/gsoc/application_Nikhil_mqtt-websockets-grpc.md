@@ -427,7 +427,7 @@ I will implement a "Connection Pulse" system.
 
 ---
 
-### 3. CLI Technical Architecture
+#### 2.14. CLI Technical Architecture
 
 **A. Package Structure**
 ```
@@ -519,7 +519,7 @@ apidash test-suite --file test_config.yaml
 - CLI-GUI data synchronization and automation features.
 ---
 
-### 4. Detailed Weekly Timeline
+### 3. Detailed Weekly Timeline
 
 This timeline covers 14 weeks of coding plus community bonding period.
 
@@ -561,7 +561,7 @@ This timeline covers 14 weeks of coding plus community bonding period.
 
 ---
 
-### 5. Technical Challenges & Solutions
+### 4. Technical Challenges & Solutions
 
 **Challenge 1: State Management of Persistent Connections**
 *Problem*: If a user switches from a WebSocket request to a REST request, the WebSocket connection shouldn't close.
@@ -577,14 +577,14 @@ This timeline covers 14 weeks of coding plus community bonding period.
 
 ---
 
-### 6. Testing Strategy
+### 5. Testing Strategy
 
 - **Unit Tests**: Testing the serialization/deserialization of new Models (`MQTTRequestModel`, etc.).
 - **Mock Servers**: Using `mock_web_socket_server` and local Mosquitto brokers for integration tests.
 - **UI Tests**: Ensuring the polymorphic UI correctly swaps components when the protocol is changed.
 ---
 
-### 7. Final Deliverables
+### 6. Final Deliverables
 - Functional WebSocket, MQTT, and gRPC clients integrated into API Dash.
 - Real-time message visualization UI for streaming protocols.
 - Automated code generation for the new protocols.
