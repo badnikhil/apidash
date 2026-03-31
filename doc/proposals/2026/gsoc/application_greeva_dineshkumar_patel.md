@@ -23,6 +23,10 @@
 
 ---
 
+### 📄 Full Proposal (PDF)
+
+👉 [View Full Proposal](./Greeva_Dineshkumar_Patel_GSoC_2026_API_Dash_Proposal.pdf)
+
 ### Motivation & Past Experience
 
 1. Have you worked on or contributed to a FOSS project before?  
