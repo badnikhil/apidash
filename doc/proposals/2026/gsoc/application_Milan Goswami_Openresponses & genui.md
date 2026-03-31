@@ -163,10 +163,13 @@ Avoid breaking current features
 
 ### Demo Video[POC] : [Link](https://drive.google.com/file/d/1AdDqRp5puBQCJc9ZTA9kJaFX7E_6TtZt/view?usp=drive_link)
 
-### Screenshots :
-![](.images/a2ui_before_after.png)
+### Screenshots:
 
-![](.images/combine_before_after.png)
+**A2UI Before & After:**
+![A2UI Before After](doc/proposals/2026/gsoc/images/a2ui_before_after.png)
+
+**Combine Before & After:**
+![Combine Before After](doc/proposals/2026/gsoc/images/combine_before_after.png)
 
 - My focus on this project is to build a minimal and practical implementation that integrates well with the existing API Dash   architecture.
 
