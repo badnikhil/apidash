@@ -80,7 +80,14 @@ Goals (Core Deliverables for 175 hours)
 - Tests + documentation:
   - Unit tests for spec parsing, assertions, and normalization
   - Integration tests using fixture/sample MCP servers
-  - Run in less than 30 minutes onboarding guide
+  - "Run in less than 30 minutes" onboarding guide
+
+Measurable Success Criteria (for evaluation)
+- At least 20 deterministic MCP scenarios covering happy path, invalid input, protocol error, and timeout cases.
+- Scenario execution from API Dash UI with per-step pass/fail visibility and normalized trace artifacts.
+- Exportable JSON + Markdown reports for every run.
+- Clear failure taxonomy in output (transport/protocol/assertion/runtime) to reduce debugging time.
+- Tests for spec parsing, assertion engine, and trace normalization plus integration tests with fixture MCP servers.
 
 Non-Goals (to keep scope realistic)
 - A full benchmark suite for all MCP servers in the ecosystem.
@@ -199,6 +206,12 @@ Week 11
 Week 12 (Final)
 - Buffer week for mentor feedback, bugs, and polish.
 - Final demo/video and merge-ready PR set.
+
+Extended Roadmap (Post GSoC / Stretch Continuation)
+- Add baseline-vs-latest run comparison UI with categorized diffs.
+- Add optional MCP HTTP transport parity if only partially completed in core timeline.
+- Build reusable curated scenario packs for popular MCP servers.
+- Add CI-ready execution mode for teams to run MCP checks in automation pipelines.
 
 Appendix: Project Links
 
