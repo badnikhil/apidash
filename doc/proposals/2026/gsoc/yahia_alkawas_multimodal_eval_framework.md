@@ -31,7 +31,7 @@ To demonstrate the feasibility of the real-time streaming architecture, I have d
 * **Terminal UI Component:** Developed a custom React/TypeScript terminal component that handles high-frequency data updates with 0% to 100% progress tracking.
 * **Architecture:** Proves the "dependency-lite" approach by avoiding heavy message brokers like Redis, ensuring the framework remains lightweight and portable.
 
-Architecture: MCP Alignment
+### MCP Alignment Architecture
 ​Standardized Tooling: "I will utilize MCP to standardize how the evaluation framework connects to external 'Multimodal Tools' (e.g., Vision-to-Text APIs, Audio Analysis tools)."
 ​Agentic Testing: "By implementing an MCP-compatible server, the framework will be able to evaluate not just model outputs, but also the accuracy of tool-calls made by Agentic AI models."
 ​Interoperability: "This ensures that any MCP-compatible model or agent can be plugged into the API Dash evaluation pipeline without custom glue code."
