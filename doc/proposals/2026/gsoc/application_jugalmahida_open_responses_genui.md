@@ -196,20 +196,17 @@ AI describes the UI to display it.
 
 #### 4. Weekly Timeline
 
-| Week | Description | Outcomes |
-|---|---|---|
-| **Week 1** | Study Open Responses specifications, AI API responses formats of OpenAI, Gemini & Anthropic | Understanding of Open Response, AI API Responses & its structures and How to use Open Responses |
-| **Week 2** | Build  parser to support OpenAI, Anthropic and Gemini formats using open response, build SchemaDetector that auto-identifies the provider from response structure | Parser handles all 3 providers, auto-detection working |
-| **Week 3**  | Build `FunctionCallWidget` — expandable card showing function name, parsed arguments as key→value list, status chip and copy button | `FunctionCallWidget` integrated into response panel |
-| **Week 4**  | Build `UsageWidget` (token pills), `ResponseHeaderWidget` (model, status, timestamp), wire all widgets into the **Rendered** tab | Full Rendered tab visible in API Dash with real responses |
-| **Week 5**  | Add SSE / streaming support — progressive rendering as chunks arrive, token-by-token text display, partial tool call handling | Streaming responses render live inside the Rendered tab |
-| **Week 6** | Buffer week — fix bugs from weeks 1–5, improve edge case handling, write integration tests, mentor review | Stable, tested Open Responses Viewer ready for midterm |
-| **Week 7** | Study A2UI spec and GenUI SDK for Flutter, Build a working prototype | Understanding A2UI & GenUI libraries & A Working Prototype |
-| **Week 8**  | Build `GenUIPreviewWidget` — renders A2UI or GenUI JSON as real Flutter widgets, | Live Flutter widget preview working inside API Dash |
-| **Week 9**  | Build `CodeExportWidget` — generates ready-to-paste Dart code | One-click Dart code export working |
-| **Week 10** | Build React / TypeScript `GenUIPreview` component that renders the same A2UI JSON as HTML/CSS/React for web developers | Web version of GenUI Preview working and tested |
-| **Week 11**| End-to-end testing across all providers and A2UI components, fix edge cases, performance check on large responses | All features stable and tested end-to-end |
-| **Week 12** | Write documentation, add code comments, record a short demo video, clean up all PRs | Docs merged, demo video ready |
+| Week | Description | Outcomes | Hours |
+|---|---|---|---|
+| **Week 1** | Understand the APIDash project structure, identify files and folders that need to be worked on. | Understanding of APIDash project structure | 5 hrs |
+| **Week 2** | Explore and understand the Open Responses spec & AI response formats (OpenAI, Gemini, Claude), and build a simple prototype parser. | Simple prototype parser (AI Response → Open Response) | 10 hrs |
+| **Week 3** | Build an Open Response parser and integrate it into APIDash; also explore and understand the A2UI and GenUI SDK for Flutter. | Open Response Parser in APIDash & working knowledge of GenUI & A2UI libraries | 15 hrs |
+| **Week 4** | Build Flutter components that take Open Response output and convert it into Generative UI views in APIDash. | Generative UI Components | 15 hrs |
+| **Week 5** | Implement A2UI & GenUI components in APIDash. | A2UI & GenUI components integrated in APIDash | 15 hrs |
+| **Week 6** | Testing week — test all components (Flutter components and A2UI & GenUI) including edge cases. | All test cases and edge cases passing | 10 hrs |
+| **Week 7** | Add web and mobile support for all components. | Components supported across all platforms | 10 hrs |
+| **Week 8** | Showcase work to mentors and incorporate their feedback and requested changes. | All mentor feedback addressed | 5 hrs |
+| **Week 9** | Update documentation, finalize usage guides, and wrap up the project. | Complete documentation and finalized project | 5 hrs |
 
 5. Architecture Overview
 
