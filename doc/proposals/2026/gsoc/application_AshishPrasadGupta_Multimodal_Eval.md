@@ -129,28 +129,28 @@ The framework consists of five interlocking components:
 ┌─────────────────────┼───────────────────────────────┐
 │         FastAPI Evaluation Backend                  │
 │  ┌──────────────────┴──────────────────────────┐    │
-│  │           Async Eval Runner                  │   │
-│  │  asyncio orchestration · batch processing    │   │
-│  │  checkpoint/resume · SSE event streaming     │   │
-│  └──────┬──────────┬──────────┬────────────┘    │   │
-│         │          │          │                 │   │
-│    ┌────┴───┐ ┌────┴───┐ ┌───┴────────┐         │   │
-│    │  Text  │ │ Vision │ │   Agent    │         │   │
-│    │ Metrics│ │ Metrics│ │  Tracer    │         │   │
-│    │BLEU,   │ │CLIP,   │ │OTel spans,│          │   │
-│    │ROUGE,  │ │Caption │ │Tool-call  │          │   │
-│    │SemSim  │ │BLEU   │ │validation │           │   │
-│    └────────┘ └────────┘ └───────────┘          │   │
-│         │          │          │                 │   │
-│    ┌────┴──────────┴──────────┴────────────┐    │   │
-│    │  lm-evaluation-harness · lighteval     │   │   │
-│    │  (standard benchmark integration)      │   │   │
-│    └────────────────────────────────────────┘   │   │
-│                                                 │   │
-│    ┌────────────────────────────────────────┐   │   │
-│    │  Storage: SQLite (local) / S3+RDS      │   │   │
-│    └────────────────────────────────────────┘   │   │
-└─────────────────────────────────────────────────┘
+│  │           Async Eval Runner                 │    │
+│  │  asyncio orchestration · batch processing   │    │
+│  │  checkpoint/resume · SSE event streaming    │    │
+│  └──────┬──────────┬──────────┬────────────────┘    │
+│         │          │          │                     │
+│    ┌────┴───┐ ┌────┴───┐ ┌────┴───────┐             │
+│    │  Text  │ │ Vision │ │   Agent    │             │
+│    │ Metrics│ │ Metrics│ │  Tracer    │             │
+│    │BLEU,   │ │ CLIP,  │ │OTel spans, │             │
+│    │ROUGE,  │ │Caption │ │Tool-call   │             │
+│    │SemSim  │ │BLEU    │ │validation  │             │
+│    └────────┘ └────────┘ └────────────┘             │
+│         │          │          │                     │
+│    ┌────┴──────────┴──────────┴────────────┐        │
+│    │  lm-evaluation-harness · lighteval    │        │
+│    │  (standard benchmark integration)     │        │
+│    └───────────────────────────────────────┘        │
+│                                                     │
+│    ┌────────────────────────────────────────┐       │
+│    │  Storage: SQLite (local) / S3+RDS      │       │
+│    └────────────────────────────────────────┘       │
+└─────────────────────────────────────────────────────┘
 ```
 
 **Component 1: Dataset Manager.** Supports file upload of CSV, JSON, and JSONL datasets with drag-and-drop in the Flutter UI. Each dataset row contains an input (text, image URL, or audio file path), an expected output, optional metadata tags, and a modality label. Datasets are stored locally in SQLite via Hive for offline access and fast querying. The Dataset Manager integrates with the existing API Dash collection workspace so that users can manage evaluation datasets alongside their API collections.
