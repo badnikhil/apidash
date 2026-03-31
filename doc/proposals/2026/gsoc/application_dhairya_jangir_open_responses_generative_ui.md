@@ -1,5 +1,9 @@
+![GSOCBANNER_APIDASH](./images/dhairya%20application%20images/GSOCBANNER_APIDASH.jpg)
 
-# GSoC 2026 Proposal — Open Responses and Generative UI Dashboard for API Dash
+
+# GSoC 2026 Proposal - Open Responses and Generative UI Dashboard for API Dash
+
+<!-- #####  Dhairya Jangir -->
 
 **Organization:** API Dash (foss42/apidash)     
 **Contributor:** Dhairya Jangir         
@@ -11,15 +15,23 @@
 **University:** MIT Art Design and Technology University            
 **CGPA:** 8.60 / 10.00          
 **Expected Graduation:** September 2028             
-**Project Size:** medium        
+**Project Size:** medium  
 
+## University Info
 
+- University: MIT Art Design and Technology University
+- Program: B.Tech
+- Year: Second Year
+- CGPA: 8.60 / 10.00
+- Expected Graduation: September 2028
 
-### Motivation & Past Experience
+---
 
-1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
+## Motivation and Past Experience
 
-Yes. I am actively contributing to API Dash and other open source projects, with a strong focus on production-quality fixes and practical feature delivery. I have stayed consistent in open source for close to two years and regularly work across unfamiliar codebases by understanding architecture first, then implementing in small reviewable increments.
+### 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
+
+Yes. I actively contribute to API Dash and other open source projects. I work in architecture-first increments and prioritize production-ready quality.
 
 - API Dash contributions:
   - https://github.com/foss42/apidash/pull/1499
@@ -38,337 +50,393 @@ Yes. I am actively contributing to API Dash and other open source projects, with
   - SAKHI (Flutter): https://github.com/dhairyajangir/sakhi
   - Supply Chain Cargo Management System: https://github.com/dhairyajangir/Supply-Chain-Cargo-Management-System
 
-2. What is your one project/achievement that you are most proud of? Why?
+### 2. What is your one project or achievement that you are most proud of? Why?
 
-I am most proud of combining sustained open-source delivery with real Flutter product implementation. The key achievement is not a single patch, but the ability to repeatedly enter active repositories, understand constraints quickly, and ship maintainable work that passes review. That discipline directly maps to GSoC requirements: architecture awareness, implementation clarity, and reliable execution under feedback loops.
+I am most proud of sustained open-source delivery across multiple repositories. The key achievement is consistency: entering unfamiliar codebases quickly, understanding architecture constraints, and shipping maintainable work that passes review.
 
-3. What kind of problems or challenges motivate you the most to solve them?
+### 3. What kind of problems or challenges motivate you the most to solve them?
 
-I am most motivated by developer-experience bottlenecks where complexity is visible in data but invisible in UX. AI response workflows are exactly that kind of problem: the information is technically present, but the cognitive load is too high in raw JSON form. I enjoy converting this complexity into deterministic parsers, state-safe rendering flows, and testable UI surfaces that developers can trust.
+I am motivated by developer-experience bottlenecks where the data exists but practical understanding is difficult. AI response workflows are a good example: payloads contain rich state and semantics, but current tools expose them in a cognitively expensive way.
 
-4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
+### 4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
 
-I will prioritize GSoC as my primary commitment during coding weeks. I will continue lightweight university work in parallel, but my schedule is explicitly planned around this 90-hour project with dedicated implementation blocks, review buffer, and test/documentation time.
+I will prioritize GSoC as my primary commitment during coding weeks. I will continue lightweight university work in parallel, with fixed execution blocks dedicated to this project.
 
-5. Do you mind regularly syncing up with the project mentors?
+### 5. Do you mind regularly syncing up with project mentors?
 
-Not at all. I strongly prefer regular sync-ups because they reduce drift and improve delivery predictability. My operating model is:
+Not at all. I prefer regular syncs and scoped PR reviews. My execution model is:
+- small, reviewable PRs
+- early blocker reporting
+- fast turnaround on review feedback
+- visible weekly progress
 
-- small and scoped PRs,
-- early async updates with blockers,
-- rapid turnaround on review comments,
-- visible progress every week.
+### 6. What interests you the most about API Dash?
 
-6. What interests you the most about API Dash?
+API Dash already has strong response rendering foundations and AI-aware direction. This idea naturally extends existing architecture by adding structured interpretation for modern AI-native payloads.
 
-API Dash is one of the most promising open source AI-aware cross-platform API clients, and it already has strong response visualization foundations. Idea 5 fits naturally into the current architecture because the product already separates request execution from response rendering, which makes it feasible to introduce structured AI-specific views without destabilizing core request workflows.
+### 7. Can you mention some areas where the project can be improved?
 
-7. Can you mention some areas where the project can be improved?
+- Better observability for AI-native output types.
+- Better streaming debugging UX.
+- Better first-class Open Responses rendering.
+- Better in-client preview for generated UI descriptors.
 
-- Better response observability for AI-native payloads (reasoning, tool calls, tool outputs).
-- Better streaming UX for incremental event inspection.
-- Better Open Responses-first rendering instead of only raw JSON.
-- Better bridge between inspected output and app integration workflows for Flutter and web developers.
-
-8. Have you interacted with and helped API Dash community? (GitHub/Discord links)
+### 8. Have you interacted with and helped the API Dash community? (GitHub/Discord links)
 
 Yes.
+- API Dash PRs: https://github.com/foss42/apidash/pull/1492, https://github.com/foss42/apidash/pull/1499.
+- Discord handle: `warewolf13`.
+- GitHub: https://github.com/dhairyajangir
 
-- API Dash PRs:
-  - https://github.com/foss42/apidash/pull/1499
-  - https://github.com/foss42/apidash/pull/1492
-- Discord handle:
-  - warewolf13
+---
 
-### Project Proposal Information
+## Project Proposal Information
 
-1. Proposal Title
+### 1. Proposal Title
 
 Open Responses and Generative UI Dashboard for API Dash
 
-2. Abstract
+### 2. Abstract
 
-Modern LLM APIs increasingly return structured multi-item responses with reasoning traces, tool invocation metadata, and UI descriptors. In most developer workflows, this output is still consumed as raw JSON, which causes high cognitive load, weak debuggability for tool-chaining behavior, and slow integration loops.
+Modern AI APIs return structured, multi-item outputs that include reasoning traces, tool invocations, tool outputs, and UI descriptors. In most API debugging workflows, this output is still consumed as raw JSON. This increases cognitive load, slows debugging, and weakens confidence during iterative development.
 
-This project introduces a production-focused Open Responses and Generative UI Dashboard inside API Dash. The solution will implement schema-aware response detection, typed parsing for core output item types, streaming-aware incremental rendering, timeline-based flow inspection, and an MVP generative UI preview surface with graceful fallback. The expected outcome is a major upgrade in developer observability, confidence, and iteration speed when testing AI APIs.
+This project introduces a production-focused Open Responses and Generative UI Dashboard in API Dash. The solution adds:
+- schema-aware response detection
+- typed parsing for core Open Responses item families
+- call-output correlation rendering
+- streaming-aware timeline updates
+- MVP in-client GenUI preview with safe fallback behavior
 
-This proposal is intentionally structured in the same style as strong merged API Dash proposals from recent cycles: explicit problem definition, architecture-first design, phase-gated implementation, measurable deliverables, and test-backed verification.
+Expected outcome: faster debugging loops, higher observability, and better developer confidence when testing AI APIs.
 
-3. Detailed Description
+### 3. Detailed Description
 
-#### Problem Definition
+#### 3.1 Problem Definition
 
-AI responses in modern APIs are no longer simple completion strings. They are heterogeneous, stateful payloads that often include reasoning, function calls, function outputs, and generated UI descriptors. Today, the core challenge is not data availability but interpretability and temporal coherence during debugging.
+AI responses are no longer simple text completions. They are heterogeneous and stateful payloads that may include:
+- reasoning summaries
+- function calls
+- function call outputs
+- final assistant messages
+- streaming deltas
+- generated UI descriptors
 
-| Pain Point | Current Behavior | Engineering Impact | DX Impact |
-| --- | --- | --- | --- |
-| Structured output visibility | Rendered as generic raw JSON text | Hard to reason about schema semantics and item relationships | Slow manual inspection |
-| Tool call correlation | `function_call` and `function_call_output` are not visually paired | Difficult root-cause analysis of agent/tool failures | High debugging friction |
-| Streaming inspection | Delta events appear as fragmented text chunks | Loss of causal flow and state transitions | Poor confidence in in-flight behavior |
-| GenUI payload preview | UI descriptors require external app rendering | No fast feedback loop inside API client | Longer prototype cycles |
+The core challenge is interpretability, not data availability.
 
 #### Problem Visuals
 
-Raw Open Responses payload in current debugging context:
+Figure 1 - Raw Open Responses payload in current debugging flow:
 
-![Open Responses Raw JSON](./images/dhairya%20application%20images/Raw-Open-Responses-payload-in-current-debugging-context.png)
+![Raw Open Responses payload in current debugging flow](./images/dhairya%20application%20images/fig1.png)
 
-Raw A2UI payload without native preview:
+Figure 2 - Raw A2UI payload without in-client preview:
 
-![A2UI Raw Payload](./images/dhairya%20application%20images/Raw-A2UI-payload-without-native-preview.png)
+![Raw A2UI payload without in-client preview](./images/dhairya%20application%20images/fig2.png)
 
-Pain-point framing from existing API Dash proposal visual references:
+Figure 3 - Pain-point comparison:
 
-![Pain Point Comparison](./images/dhairya%20application%20images/Pain-point-framing.png)
+![Pain-point comparison](./images/dhairya%20application%20images/fig3.png)
 
-#### Current-State Problem Architecture
+Figure 4 - Observability gap framing:
 
-```mermaid
-flowchart TD
-  A[AI API Response] --> B[Raw JSON Viewer]
-  B --> C[Manual Scan by Developer]
-  C --> D[Infer Reasoning Flow]
-  C --> E[Match Tool Call and Output Manually]
-  C --> F[Reconstruct Streaming Timeline Mentally]
-  C --> G[Build Separate App to Preview GenUI]
-  D --> H[Slow Debug Loop]
-  E --> H
-  F --> H
-  G --> H
-```
+![Observability gap framing](./images/dhairya%20application%20images/fig4.png)
 
-#### Proposed Solution Overview
+Figure 5 - Better observability direction:
 
-I propose a schema-aware response intelligence layer inside API Dash that transforms raw Open Responses and generative UI payloads into interpretable, testable, and stream-aware visual workflows. The solution focuses on deterministic parsing, incremental rendering, component-level fallback safety, and documented integration pathways.
+![Better observability direction](./images/dhairya%20application%20images/fig5.png)
+
+#### Pain Point Table
+
+| Pain Point | Current Behavior | Engineering Impact | DX Impact |
+|---|---|---|---|
+| Structured output visibility | Rendered as raw JSON | Hard semantic interpretation | Slow manual inspection |
+| Tool call correlation | function_call and output are manually matched | Difficult root-cause analysis | High debugging friction |
+| Streaming inspection | Delta fragments shown without state context | Loss of temporal coherence | Poor in-flight confidence |
+| GenUI preview | Requires external runtime/app | Longer iteration loop | Slower prototype cycles |
+
+#### Current Landscape
+
+Most popular API clients (Postman, Insomnia, Hoppscotch, etc.) still render modern AI outputs - especially OpenAI's Responses API (with reasoning traces, tool calls, and structured outputs) and similar Anthropic payloads - as raw or syntax-highlighted JSON. Tool-call correlation is manual, streaming deltas lack temporal context, and there is almost no in-client preview for generated UI descriptors (GenUI / A2UI). This proposal positions API Dash as one of the first lightweight, beautiful, cross-platform clients with first-class, visual support for these emerging agentic and generative AI workflows, strengthening its 'AI-powered' identity.
+
+#### 3.2 Proposed Solution
+
+I propose a schema-aware response intelligence layer inside API Dash that converts raw Open Responses and GenUI payloads into interpretable, stream-aware visual workflows.
 
 #### Target UX Visuals
 
-Target structured rendering experience:
+Figure 6 - Target structured Open Responses view:
 
-![Open Responses Structured View](./images/dhairya%20application%20images/Target-structured-rendering-experience.png)
+![Target structured Open Responses view](./images/dhairya%20application%20images/fig6.png)
 
-Target generative UI preview experience:
+Figure 7 - Target rendered GenUI dashboard:
 
-![A2UI Rendered Dashboard](./images/dhairya%20application%20images/Target-generative-UI-preview-experience.png)
+![Target rendered GenUI dashboard](./images/dhairya%20application%20images/fig7.png)
 
-#### Proposed System Architecture
+#### 3.3 Architecture
 
-```mermaid
-flowchart LR
-  subgraph API_Dash_Runtime
-    RQ[Request Execution Layer]
-    RB[Response Body Resolver]
-    VS[View Selector]
-    SV[Structured Viewer]
-    TL[Timeline Viewer]
-    GV[GenUI Preview Renderer]
-  end
+##### 3.3.1 Current-State Debug Architecture
 
-  subgraph Parsing_and_State
-    FD[Format Detection]
-    PR[Open Responses Parser]
-    DM[Typed Domain Model]
-    SR[Streaming Reducer]
-    CR[Call Correlation Engine]
-    FR[Fallback Renderer]
-  end
+Figure 9 - Current-state debug architecture diagram:
 
-  subgraph Provider_Interface
-    MP[ModelProvider Output Formatter]
-    SU[Stream Output Formatter]
-    SSE[SSE Chunk Stream]
-  end
+![Current-state debug architecture diagram](./images/dhairya%20application%20images/3.3.1.png)
 
-  MP --> FD
-  SU --> FD
-  SSE --> SR
-  FD --> PR --> DM
-  DM --> CR --> SV
-  SR --> TL
-  DM --> GV
-  DM --> FR
-  RQ --> RB --> VS
-  VS --> SV
-  VS --> TL
-  VS --> GV
-```
+##### 3.3.1.1 Integration Points with Existing Codebase
 
-#### API Dash Integration Touchpoints
+The current response rendering pipeline is primarily handled in lib/features/home/widgets/response_pane/, particularly through components that manage ResponseBodyView, ResponseBodySuccess, and various previewers (JSON syntax highlighting, multimedia, HTML via flutter_inappwebview, etc.). Response models (HttpResponseModel, etc.) and core data structures live in the packages/apidash_core package. Streaming/SSE handling is already supported and can be found in the request execution and response processing layers. I plan to introduce:
 
-| Layer | Primary Responsibility | Existing Integration Surface |
-| --- | --- | --- |
-| Response view orchestration | Select appropriate render mode by response type | `lib/widgets/response_body.dart`, `lib/widgets/response_body_success.dart` |
-| Provider normalization | Map provider-specific payloads into common shape | `packages/genai/lib/models/model_provider.dart` |
-| Streaming intake | Parse SSE chunks and push incremental updates | `packages/genai/lib/utils/ai_request_utils.dart` |
-| Structured UI | Render reasoning, message, tool call, tool output cards | New or extended widgets in response rendering path |
-| GenUI preview | Render supported component descriptors with fallback | New renderer and component registry |
+- An OpenResponsesDetector (to differentiate Open Responses / GenUI payloads from standard JSON or SSE responses)
+- A typed OpenResponsesParser (placed in a new packages/apidash_core/lib/parsers/ai_responses/ or similar module)
 
-#### Data Contract Strategy
+These will plug into the existing ResponseBodyView via a content-type/schema-based router. This approach keeps the integration additive - no breakage to current non-AI, multimedia, or standard JSON rendering paths.
 
-The parser will use a typed item-dispatch architecture where each output item type has explicit validation and rendering semantics. Unknown item types will be safely preserved and surfaced through fallback cards to avoid data loss.
+##### 3.3.2 Proposed Runtime Architecture
+
+Figure 10 - Proposed runtime architecture diagram:
+
+![Proposed runtime architecture diagram](./images/dhairya%20application%20images/3.3.2.png)
+
+##### 3.3.3 Architecture Decision Flow
+
+Figure 11 - Architecture decision flow diagram:
+
+![Architecture decision flow diagram](./images/dhairya%20application%20images/3.3.3.png)
+
+##### 3.3.4 Streaming Event Processing
+
+Figure 12 - Streaming event processing diagram:
+
+![Streaming event processing diagram](./images/dhairya%20application%20images/3.3.4.png)
+
+#### 3.4 Data Contract Strategy
+
+The parser uses typed item dispatch. Each output family has explicit parse, render, and failure semantics.
 
 | Output Item Type | Parse Strategy | Render Strategy | Failure Strategy |
-| --- | --- | --- | --- |
-| `message` | Validate role and content blocks | Chat-style content card | Show raw segment if content schema is invalid |
-| `reasoning` | Parse summary and details payload | Collapsible reasoning card | Preserve text-only fallback |
-| `function_call` | Parse call id, name, arguments | Tool-call card with status chip | Render as unknown-call card |
-| `function_call_output` | Parse call id and output payload | Linked output card near originating call | Keep output as raw payload card |
-| unknown | Store raw node and metadata | Explicit unsupported-type card | Non-blocking fallback path |
+|---|---|---|---|
+| message | Validate role and content blocks | Message card | Raw segment fallback |
+| reasoning | Parse summary and details | Collapsible reasoning card | Text fallback |
+| function_call | Parse call id, name, args | Tool-call card with status | Unknown-call card |
+| function_call_output | Parse call id and output | Linked output card | Raw payload card |
+| unknown | Preserve raw node and metadata | Unsupported-type card | Non-blocking fallback |
+| streaming_delta | Accumulate into current item | Incremental timeline update | Safe partial rendering |
 
-#### Streaming Event Processing Design
+#### 3.5 Feature Breakdown with Priorities and Dependencies
 
-Streaming support will be implemented as an event-sourced reducer model. Each typed event mutates a deterministic state object keyed by output index and call-correlation identifiers. This prevents UI thrashing and preserves temporal consistency during long-running streams.
+| Priority | Feature | Dependency | Why Priority |
+|---|---|---|---|
+| P0 | Detection + typed parser + fallback | None | Foundation for all downstream features |
+| P0 | Structured non-streaming rendering | Parser | Immediate user value |
+| P0 | Call-output correlation | Parser | Essential for tool debugging |
+| P1 | Streaming reducer and timeline | P0 features | High-value in-flight observability |
+| P1 | Integration routing and regression guard | P0/P1 | Release safety |
+| P2 | GenUI MVP renderer | P1 baseline | Differentiator feature |
 
-```mermaid
-sequenceDiagram
-  participant API as AI API SSE Endpoint
-  participant IN as Stream Intake Layer
-  participant RD as Streaming Reducer
-  participant UI as Structured Timeline UI
+Dependency policy:
+- P0 must be complete before P1.
+- P1 must stabilize before broadening P2.
+- If schedule risk appears, P2 breadth is reduced first.
 
-  API->>IN: response.output_item.added
-  IN->>RD: create output item state
-  RD->>UI: render placeholder card
+#### 3.6 Scope, Deliverables, and Non-Goals
 
-  API->>IN: response.output_text.delta
-  IN->>RD: append text delta by output index
-  RD->>UI: incremental text patch
+Deliverables:
+- Open Responses format detector.
+- Typed parser and domain model for core item families.
+- Structured card-based response view with call correlation.
+- Streaming reducer and timeline renderer.
+- GenUI MVP component registry renderer with fallback.
+- Tests (unit, reducer, widget, integration, regression).
+- User and contributor documentation.
 
-  API->>IN: response.function_call_arguments.delta
-  IN->>RD: append arguments delta
-  RD->>UI: update function call args view
-
-  API->>IN: response.output_item.done
-  IN->>RD: finalize item status
-  RD->>UI: mark card completed
-```
-
-#### GenUI Preview Engine (MVP)
-
-The GenUI preview layer will use a registry-based component resolver. Supported descriptors are converted into Flutter widgets with controlled data binding and safe fallback behavior.
-
-| Component Group | MVP Support | Notes |
-| --- | --- | --- |
-| Layout | Container, Row, Column, List | Priority for stable composition |
-| Content | Text, status blocks | Markdown-compatible where possible |
-| Actions | Button | Event capture hooks for inspection |
-| Data | Table (basic) | Column and row safety checks |
-| Unsupported | Explicit fallback card | Never crashes render tree |
-
-#### Reliability and Test Strategy
-
-| Test Layer | Scope | Examples |
-| --- | --- | --- |
-| Unit tests | Parser and format detection | Valid and invalid Open Responses fixtures, unknown type handling |
-| Reducer tests | Streaming event state transitions | Delta append ordering, finalization state, partial stream recovery |
-| Widget tests | Structured cards and GenUI preview | Message, reasoning, tool card rendering, fallback rendering |
-| Integration tests | End-to-end request-to-render path | Response body routing, view switching, timeline continuity |
-
-#### Non-Goals for 90-Hour Scope Integrity
-
-- Full A2UI component parity in one cycle.
-- End-to-end production code generation for complete applications.
+Non-Goals for 90-Hour Integrity:
+- Full A2UI component parity.
+- Full application code generation workflows.
 - Large refactor outside response interpretation and visualization path.
 
-#### Implementation Plan (Phase-wise)
+#### 3.7 Implementation Strategy and Engineering Approach
 
-The implementation is divided into phase gates with explicit entry and exit criteria, mirroring accepted API Dash proposal execution discipline.
+Engineering Principles:
+- Deterministic state updates over implicit UI mutation.
+- Fallback-first rendering to avoid data loss.
+- Additive integration to preserve existing behavior.
+- Small PRs with scoped review surface.
+- Test-gated phase completion.
 
-| Phase | Objective | Key Tasks | Exit Criteria | Estimated Hours |
-| --- | --- | --- | --- | --- |
-| Phase 1: Contract Discovery and Design | Freeze scope and data contracts | Audit response pipeline, define parser interfaces, create fixture matrix | Signed-off parser contract and fixture set | 10h |
-| Phase 2: Parser and Domain Model | Build robust Open Responses parser | Item dispatch, validation guards, unknown fallback, unit tests | Core item types parsed with passing tests | 18h |
-| Phase 3: Structured Viewer and Correlation | Render interpretable item cards | Message and reasoning cards, `call_id` correlation, metadata panel | Structured mode stable for non-streaming payloads | 18h |
-| Phase 4: Streaming Timeline Engine | Add stream-aware progressive rendering | Event reducer, in-place delta updates, completion states, timeline UI | Stable incremental rendering for streamed responses | 16h |
-| Phase 5: GenUI Preview MVP | Render supported generative components | Component registry, binding support, fallback cards, widget tests | MVP component set rendering correctly | 18h |
-| Phase 6: Hardening and Documentation | Ship merge-ready quality | Edge-case fixes, docs, integration guide, final polish | Test suite green and docs complete | 10h |
+PR Slicing Strategy:
 
-Total: 90h
+| PR | Scope | Validation |
+|---|---|---|
+| PR-1 | Detection and parser contracts | Unit fixtures |
+| PR-2 | Core structured cards | Widget tests |
+| PR-3 | Call correlation and metadata rendering | Widget + unit tests |
+| PR-4 | Streaming reducer and timeline rendering | Reducer tests + stream fixtures |
+| PR-5 | GenUI MVP + fallback cards | Widget tests |
+| PR-6 | Hardening, docs, integration checks | Integration and regression checks |
 
-#### Architecture Decision Flow
+#### 3.8 Testing and Validation Strategy
 
-```mermaid
-flowchart TD
-  A[Incoming Response] --> B{Open Responses Format?}
-  B -- No --> C[Existing Response Renderer]
-  B -- Yes --> D[Typed Parser]
-  D --> E{Streaming?}
-  E -- No --> F[Structured Card Renderer]
-  E -- Yes --> G[Event Reducer plus Timeline Renderer]
-  D --> H{GenUI Payload Present?}
-  H -- Yes --> I[GenUI Component Registry]
-  H -- No --> F
-  I --> J{Component Supported?}
-  J -- Yes --> K[Render Interactive Widget]
-  J -- No --> L[Fallback Component Card]
-```
+| Test Layer | Scope | Example Coverage |
+|---|---|---|
+| Unit tests | Detection and parser correctness | Valid fixtures, malformed fixtures, unknown types |
+| Reducer tests | Stream event transitions | Delta ordering, finalization, partial stream recovery |
+| Widget tests | Structured cards and GenUI components | Reasoning/tool cards, fallback cards |
+| Integration tests | Request-to-render flow | View routing, timeline continuity |
+| Regression tests | Existing renderer stability | No breakage to current non-AI views |
 
-4. Weekly Timeline (90 Hours)
+Validation Gates:
+- Parser Gate: core item fixtures pass, fallback deterministic.
+- UI Gate: structured rendering stable for core item families.
+- Streaming Gate: no crash across defined stream fixtures.
+- GenUI Gate: supported components render and unsupported fallback safe.
+- Release Gate: integration and regression suites green.
 
-| Week | Hours | Focus | Deliverables | Verification Gate |
-| --- | --- | --- | --- | --- |
-| Week 1 | 15h | Foundation and contracts | Integration mapping, fixture inventory, parser contract doc | Contract review checklist complete |
-| Week 2 | 15h | Parsing core | Format detection, domain models, item parser implementation | Parser unit tests passing |
-| Week 3 | 15h | Structured UI | Message and reasoning cards, call-output correlation, metadata panel | Widget tests for core cards |
-| Week 4 | 15h | Streaming timeline | Event reducer, delta patching, timeline flow | Reducer tests and streaming fixtures passing |
-| Week 5 | 15h | GenUI MVP | Registry-based renderer, basic component support, fallback handling | Widget coverage for supported and unsupported components |
-| Week 6 | 15h | Hardening and docs | UX polish, edge-case fixes, user and developer docs, examples | End-to-end verification and PR readiness |
+#### 3.9 Timeline and Milestones (90 Hours)
 
-#### Timeline Visualization
+Weekly Timeline
 
-```mermaid
-gantt
-  title Open Responses and Generative UI Dashboard - 90h Plan
-  dateFormat  YYYY-MM-DD
-  axisFormat  %d %b
-  section Foundation
-  Contract and fixtures           :a1, 2026-06-01, 7d
-  section Parser
-  Detection and typed models      :a2, after a1, 7d
-  section Structured UI
-  Card renderer and correlations  :a3, after a2, 7d
-  section Streaming
-  Reducer and timeline            :a4, after a3, 7d
-  section GenUI MVP
-  Component registry and fallback :a5, after a4, 7d
-  section Finalization
-  Hardening and documentation     :a6, after a5, 7d
-```
+Week 1: Foundation and Contracts (15 hours)
 
-#### Risk Register and Mitigation
+Goal: Establish the detection and parsing foundation that all downstream features depend on.
 
-| Risk | Probability | Impact | Mitigation |
-| --- | --- | --- | --- |
-| Spec evolution or ambiguity | Medium | Medium | Version-aware parsing and unknown-item fallback |
-| Streaming edge-case instability | Medium | High | Deterministic reducer model plus fixture-driven state tests |
-| Scope creep in GenUI components | High | Medium | Strict MVP matrix and explicit non-goals |
-| Regression in existing response modes | Low | High | Isolated integration path and regression checks for existing views |
+- Map the full Open Responses payload structure across OpenAI, Anthropic, and other supported providers to identify all item types (message, reasoning, function_call, function_call_output, unknown).
+- Define the typed domain model and parser contract interfaces: each item type gets explicit parse, render, and failure semantics.
+- Build the fixture matrix with valid, malformed, and edge-case payloads for each item family.
+- Implement the schema-aware detection layer that identifies Open Responses vs. standard API responses.
+- Write unit tests for the detection and contract layers.
 
-#### Success Metrics
+Deliverables: Short architecture mapping document (added to doc/dev_guide/ or proposal folder), fixture matrix, parser contract interfaces, detection unit tests passing.
+
+Verification Gate: Contract checklist complete; all detection and parser contract unit tests green.
+
+Week 2: Parser Core Implementation (15 hours)
+
+Goal: Implement the typed parsing engine that transforms raw response payloads into structured domain objects.
+
+- Implement parsers for each core item type: message, reasoning, function_call, function_call_output.
+- Implement the unknown/fallback parser that preserves raw nodes and metadata without crashing.
+- Add call-ID extraction and indexing logic to support downstream call-output correlation.
+- Validate all parsers against the fixture matrix, including malformed input and graceful degradation cases.
+- Submit PR-1 (Detection and parser contracts) for mentor review.
+
+Deliverables: Typed parsers for all core item families, fallback parser, call-ID indexing, comprehensive unit tests.
+
+Verification Gate: Parser unit tests passing across all fixture families; deterministic fallback on invalid input.
+
+Week 3: Structured UI and Call Correlation (15 hours)
+
+Goal: Build the card-based visual rendering layer and implement tool call-output correlation.
+
+- Implement structured card widgets for each item type: message cards, collapsible reasoning cards, tool-call cards with status indicators, and linked output cards.
+- Build the call-output correlation renderer that visually links function_call items to their corresponding function_call_output items using shared call IDs.
+- Implement the unsupported-type fallback card for unknown item types.
+- Add metadata rendering (timestamps, token usage, model info) to card headers.
+- Write widget tests for all card components and correlation rendering.
+- Submit PR-2 (Core structured cards) and PR-3 (Call correlation and metadata rendering) for review.
+
+Deliverables: Card-based structured view, call-output visual correlation, widget tests for all card types.
+
+Verification Gate: Widget tests passing; structured rendering stable for all core item families.
+
+Week 4: Streaming Timeline and Reducer (15 hours)
+
+Goal: Add real-time streaming awareness with a deterministic state reducer and incremental timeline updates.
+
+- Implement the streaming event reducer that processes SSE delta fragments and maintains coherent accumulated state.
+- Build the incremental timeline renderer that shows in-flight streaming progress with temporal ordering.
+- Handle streaming edge cases: partial deltas, out-of-order events, interrupted streams, and finalization transitions.
+- Add stream state indicators (in-progress, completed, error) to the timeline UI.
+- Write reducer tests with stream fixture sequences covering normal, edge-case, and error scenarios.
+- Submit PR-4 (Streaming reducer and timeline rendering) for review.
+
+Deliverables: Streaming reducer, incremental timeline renderer, stream state indicators, reducer tests with stream fixtures.
+
+Verification Gate: Reducer tests passing; no crash across all defined stream fixtures; timeline renders correctly during active streams.
+
+Week 5: GenUI MVP Renderer (15 hours)
+
+Goal: Implement the MVP Generative UI preview with a component registry, safe rendering, and fallback handling.
+
+- Design and implement the GenUI component registry that maps UI descriptor types to Flutter widget renderers.
+- Build renderers for the MVP-scoped component set (text, buttons, cards, inputs, layout containers).
+- Implement safe fallback cards for unsupported or malformed UI descriptors, ensuring no crash and clear developer feedback.
+- Add a preview panel that renders GenUI payloads in-client without requiring an external runtime.
+- Write widget tests for all supported components and fallback behavior.
+- Submit PR-5 (GenUI MVP + fallback cards) for review.
+
+Deliverables: GenUI component registry, MVP component renderers, fallback handling, in-client preview panel, widget tests.
+
+Verification Gate: Supported components render correctly; unsupported descriptors fallback safely; widget tests green.
+
+Week 6: Hardening, Integration, and Documentation (15 hours)
+
+Goal: Harden the full feature set, run integration and regression suites, and complete documentation.
+
+- Run full integration tests across the request-to-render pipeline to verify view routing and timeline continuity.
+- Execute regression tests against existing non-AI response renderers to confirm zero breakage.
+- Fix edge cases, polish UI details, and address any issues from mentor review feedback on earlier PRs.
+- Write user-facing documentation covering the new Open Responses view, GenUI preview, and streaming timeline features.
+- Write contributor documentation with architecture overview and extension guide for adding new item types or GenUI components.
+- Submit PR-6 (Hardening, docs, integration checks) as the final PR.
+
+Deliverables: Integration and regression tests passing, edge-case fixes, user documentation, contributor extension guide, final polish.
+
+Verification Gate: End-to-end and regression checks green; documentation reviewed and merged; all prior PRs approved.
+
+Milestone Gates:
+
+| Milestone | Objective | Exit Criteria |
+|---|---|---|
+| M1 | Contract baseline | Parser contracts and fixture matrix finalized |
+| M2 | Parser readiness | Core parse tests and fallback tests pass |
+| M3 | Structured UI readiness | Core cards and call correlation stable |
+| M4 | Streaming readiness | Reducer deterministic on stream fixtures |
+| M5 | GenUI MVP readiness | Supported render + unsupported fallback safe |
+| M6 | Release readiness | Integration, regression, and docs complete |
+
+Figure 8 - Weekly timeline plan visual:
+
+![Week-wise timeline](./images/dhairya%20application%20images/timeline.png)
+
+#### 3.10 Risks and Mitigation Plan
+
+| Risk | Prob. | Impact | Mitigation | Contingency |
+|---|---|---|---|---|
+| Spec ambiguity or evolution | Medium | Medium | Version-aware parser and unknown fallback | Defer new types while preserving core behavior |
+| Streaming edge-case instability | Medium | High | Deterministic reducer + fixture-driven tests | Freeze to stable non-streaming path if needed |
+| GenUI scope creep | High | Medium | Strict MVP matrix and non-goals | Reduce P2 breadth before touching P0/P1 |
+| Existing view regressions | Low | High | Additive integration + regression suite | Roll back selector branch and keep parser progress |
+| Timeline compression | Medium | High | Weekly scope review and hard priorities | Ship P0/P1 fully and defer non-critical P2 |
+
+#### 3.11 Success Metrics
 
 | Metric | Target |
-| --- | --- |
-| Parser correctness on fixture suite | >= 95 percent valid-case pass with deterministic fallback for invalid cases |
-| Structured response render coverage | Core item types fully rendered in structured mode |
-| Streaming state stability | No crash across defined stream fixtures and completion scenarios |
-| GenUI preview reliability | Supported components render plus unsupported components fallback safely |
-| Documentation completeness | User flow and developer extension path documented |
+|---|---|
+| Parser correctness on fixture suite | 100% on all valid fixtures + deterministic, non-crashing fallback on malformed/unknown input |
+| Structured rendering coverage | All core item families (message, reasoning, function_call, function_call_output) fully rendered with correlation |
+| Streaming stability | No crashes across defined stream fixtures; coherent state accumulation |
+| GenUI reliability | All MVP components render correctly; unsupported descriptors fallback safely with clear feedback |
+| Documentation readiness | Complete user flows + contributor extension guide for new item types and GenUI components |
 
-### Why I Am a Strong Fit for Idea 5
+#### 3.12 Expected Impact on API Dash and Community
 
-I have long-term hands-on Flutter and Dart experience, strong API curiosity, and a delivery style focused on finishing high-value tasks cleanly. I use AI as an accelerator but keep implementation ownership fully technical, meaning I understand and verify every important code path I propose. My open-source consistency and cross-repository contribution history indicate that I can deliver under review-driven workflows.
+Product Impact:
+- Faster interpretation of AI-native responses.
+- Better confidence in tool-chaining and streaming behavior.
+- Faster prototype iteration for GenUI payloads.
+- Stronger AI observability positioning for API Dash.
 
-- I have contributed to API Dash and external mature projects.
-- I can move from architecture understanding to implementation quickly.
-- I prefer measurable progress: scoped PRs, test gates, and clear milestone closure.
+Community Impact:
+- Cleaner extension path for future output types and components.
+- Reusable fixture and testing strategy for new contributors.
+- Better onboarding through practical docs and architecture clarity.
 
-### Why Mentors Can Trust My Execution
+#### 3.13 Why I am a Strong Fit for This Project
 
-- I scope aggressively but realistically.
-- I communicate early and clearly when tradeoffs appear.
-- I implement in review-friendly increments.
-- I prioritize maintainability and reliability over superficial feature breadth.
+I bring active contributions to API Dash (PRs #1499 and #1492) along with hands-on experience across multiple open-source projects. Having worked in the response pane and related preview areas, I am already familiar with the existing previewer architecture, the emphasis on rich, fallback-safe rendering (e.g., multimedia and HTML previewers), and the project's commitment to clean, maintainable Flutter code. I follow an architecture-first approach, ensuring every feature is designed with scalability, backward compatibility, and clarity before implementation. I deliver work in small, review-friendly PRs with strong test coverage. I proactively communicate blockers, trade-offs, and design decisions early to stay aligned with mentors. This project is a natural extension of the response rendering foundations I have already touched. It directly builds on the existing AI-aware direction of API Dash while advancing its positioning as the best client for modern agentic and generative AI workflows. My focus remains on reliable, production-grade delivery rather than superficial feature expansion.
 
-### Post-GSoC Commitment
+#### 3.14 Post-GSoC Commitment
 
-I plan to continue beyond the coding period by expanding supported GenUI components, improving timeline introspection for complex agentic workflows, and helping with follow-up issue resolution and contributor onboarding in this feature area.
+I plan to continue contributing beyond GSoC by gradually expanding GenUI component support in a structured and stable manner. I will also enhance timeline introspection to better handle complex agentic workflows, making debugging and analysis more intuitive. Additionally, I aim to actively support follow-up issues, improve documentation, and help onboard new contributors. My focus is on ensuring the features evolve into a robust, maintainable, and widely usable part of the project.
+
+## Thank You
+
+Thank you for the opportunity to apply. I have taken time to understand API Dash's codebase, study previous GSoC proposals, and thoughtfully design an approach to implement this feature in a way that feels native to the project. I am ready to get started right away and fully committed to delivering a solution that the community will genuinely value.
