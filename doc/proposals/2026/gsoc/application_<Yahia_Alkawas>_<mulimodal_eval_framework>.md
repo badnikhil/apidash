@@ -2,7 +2,7 @@
 
 1. Yahia Ayman Ahmad Mohammad Alkawas
 2. yahia.alkawas.w@gmail.com
-3. YahiaAl-Kawas
+3. Yahia Al-Kawas
 4. Home page (N/A)
 5. Blog (I typically post on linkedin)
 6. https://github.com/YahyaElKawas
