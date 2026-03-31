@@ -2,7 +2,7 @@
 
 1. **Full Name:** Ashish Prasad Gupta
 2. **Contact info:** ashishgupta.op195@gmail.com
-3. **Discord handle:** [To be filled]
+3. **Discord handle:** aashish_op
 4. **GitHub profile:** [https://github.com/Aashish-Op](https://github.com/Aashish-Op)
 5. **LinkedIn:** [https://www.linkedin.com/in/ashishgupta1279/](https://linkedin.com/in/ashish-gupta)
 6. **Time zone:** IST (UTC+5:30)
@@ -12,7 +12,7 @@
 
 1. **University name:** Lovely Professional University, Punjab, India
 2. **Program:** B.Tech Computer Science and Engineering
-3. **Year:** 1st Year (2024–2028)
+3. **Year:** 2nd Year (2024–2028)
 4. **Expected graduation date:** 2028
 ---
 
