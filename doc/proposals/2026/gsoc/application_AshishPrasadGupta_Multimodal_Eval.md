@@ -46,7 +46,7 @@ Additionally, as **Operations Lead for the AWS Cloud Club** at my university, I 
 
 **4. Will you be working on GSoC full-time?**
 
-Yes, full-time. I am a first-year student, which means my summer is completely unencumbered by internships, thesis work, or advanced coursework. I will commit 40+ hours per week to this project. I also plan to use the Community Bonding period to complete structured Flutter/Dart learning so that I am productive in the API Dash codebase from the first day of coding.
+Yes, full-time. I am a Second -year student, which means my summer is completely unencumbered by internships, thesis work, or advanced coursework. I will commit 40+ hours per week to this project. I also plan to use the Community Bonding period to complete structured Flutter/Dart learning so that I am productive in the API Dash codebase from the first day of coding.
 
 **5. Do you mind regularly syncing up with the project mentors?**
 
