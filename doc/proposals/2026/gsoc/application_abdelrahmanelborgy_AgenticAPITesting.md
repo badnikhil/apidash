@@ -8,10 +8,10 @@
 * **Home page:** N/A
 * **Blog:** N/A
 * **GitHub profile link:** https://github.com/AbdelrahmanELBORGY
-* **Twitter, LinkedIn, other socials:** * LinkedIn: www.linkedin.com/in/abdelrahmann-elborgy
+* **Twitter, LinkedIn, other socials:** LinkedIn: www.linkedin.com/in/abdelrahmann-elborgy
   * DEV: https://dev.to/abdelrahmanelborgy
 * **Time zone:** EET / UTC+2
-* **Link to a resume:** [Abdelrahman ElBorgy's CV 2026.pdf]
+* **Link to a resume:** [Abdelrahman ElBorgy's CV 2026.pdf](https://drive.google.com/file/d/1p7uVXcy7my-TXgaMR-c6yhgn56xp1iL2/view?usp=sharing)
 
 ### University Info
 * **University name:** Alexandria University
