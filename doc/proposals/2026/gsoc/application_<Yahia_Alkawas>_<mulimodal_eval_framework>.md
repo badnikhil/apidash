@@ -9,7 +9,7 @@
 7. https://www.linkedin.com/in/yahya-ayman-5855701a6/
 8. Time zone: UTC +2 EET, (Cairo)
 9. CV link: https://drive.google.com/file/d/1ketWSvu-cDoIqczx5d-ECbUM_RfmKt8Z/view?usp=drive_link
-   Side note: Yaya is easier in pronunciation 
+   Side note: Yaya is easier in pronunciation that's why I typed it in the CV
 
 ### University Info
 
