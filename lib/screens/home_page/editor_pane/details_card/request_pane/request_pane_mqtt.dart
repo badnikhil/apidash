@@ -32,7 +32,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final requestModel = ref.watch(selectedRequestModelProvider);
-    final mqttModel = requestModel?.protocolModel as MQTTRequestModel?;
+    final protocolModel = requestModel?.protocolModel;
+    final mqttModel = protocolModel is MQTTRequestModel ? protocolModel : null;
 
     if (mqttModel == null) return kSizedBoxEmpty;
 

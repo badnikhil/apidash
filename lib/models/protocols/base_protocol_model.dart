@@ -1,5 +1,4 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'websocket_model.dart';
 import 'mqtt_model.dart';
 import 'grpc_model.dart';
@@ -25,20 +24,44 @@ class ProtocolModelConverter
       return GrpcRequestModel.fromJson(json);
     }
 
+    // Fallback
+    if (json.containsKey('brokerUrl')) {
+      return MQTTRequestModel.fromJson(json);
+    }
+    if (json.containsKey('url') && json.containsKey('autoReconnect')) {
+      return WebSocketRequestModel.fromJson(json);
+    }
+    if (json.containsKey('host') && json.containsKey('port') && !json.containsKey('brokerUrl')) {
+      return GrpcRequestModel.fromJson(json);
+    }
+
     return null;
   }
 
   @override
   Map<String, dynamic>? toJson(ProtocolModel? object) {
     if (object == null) return null;
+    Map<String, dynamic>? json;
+    String? type;
+
     if (object is WebSocketRequestModel) {
-      return object.toJson();
+      json = object.toJson();
+      type = APIType.websocket.name;
     } else if (object is MQTTRequestModel) {
-      return object.toJson();
+      json = object.toJson();
+      type = APIType.mqtt.name;
     } else if (object is GrpcRequestModel) {
-      return object.toJson();
+      json = object.toJson();
+      type = APIType.grpc.name;
     }
 
-    return null;
+    if (json != null && type != null) {
+      return {
+        ...json,
+        'type': type,
+      };
+    }
+
+    return json;
   }
 }

@@ -18,7 +18,8 @@ class EventStreamView extends ConsumerWidget {
     final apiType = requestModel?.apiType;
 
     if (apiType == APIType.websocket) {
-      final wsModel = requestModel?.protocolModel as WebSocketRequestModel?;
+      final protocolModel = requestModel?.protocolModel;
+      final wsModel = protocolModel is WebSocketRequestModel ? protocolModel : null;
       final history = wsModel?.messageHistory ?? [];
 
       return Column(
@@ -52,7 +53,8 @@ class EventStreamView extends ConsumerWidget {
     }
 
     if (apiType == APIType.mqtt) {
-      final mqttModel = requestModel?.protocolModel as MQTTRequestModel?;
+      final protocolModel = requestModel?.protocolModel;
+      final mqttModel = protocolModel is MQTTRequestModel ? protocolModel : null;
       final history = mqttModel?.messageHistory ?? [];
 
       return Column(
@@ -84,7 +86,8 @@ class EventStreamView extends ConsumerWidget {
     }
 
     if (apiType == APIType.grpc) {
-      final grpcModel = requestModel?.protocolModel as GrpcRequestModel?;
+      final protocolModel = requestModel?.protocolModel;
+      final grpcModel = protocolModel is GrpcRequestModel ? protocolModel : null;
       final history = grpcModel?.messageHistory ?? [];
 
       return Column(

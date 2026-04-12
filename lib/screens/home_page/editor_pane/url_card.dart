@@ -117,26 +117,50 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    final apiType = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.apiType));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.url));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.url));
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.protocolModel));
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
+
+    String? urlValue;
+    switch (requestModel.apiType) {
+      case APIType.ai:
+        urlValue = requestModel.aiRequestModel?.url;
+        break;
+      case APIType.websocket:
+        final pm = requestModel.protocolModel;
+        urlValue = pm is WebSocketRequestModel ? pm.url : null;
+        break;
+      case APIType.mqtt:
+        final pm = requestModel.protocolModel;
+        urlValue = pm is MQTTRequestModel ? pm.brokerUrl : null;
+        break;
+      case APIType.grpc:
+        final pm = requestModel.protocolModel;
+        if (pm is GrpcRequestModel) {
+          urlValue = pm.port == 50051 ? pm.host : '${pm.host}:${pm.port}';
+        }
+        break;
+      default:
+        urlValue = requestModel.httpRequestModel?.url;
+    }
+
     return EnvURLField(
+      // ValueKey encodes both the selected request and its protocol type.
+      // This forces Flutter to discard the old widget and create a fresh one
+      // whenever the user switches between requests or between protocol types,
+      // ensuring that `initialValue` is re-applied correctly instead of being
+      // stuck on the value from the previous protocol's form state.
+      key: ValueKey('${selectedId}_${apiType?.name}'),
       selectedId: selectedId,
-      initialValue: switch (requestModel.apiType) {
-        APIType.ai => requestModel.aiRequestModel?.url,
-        APIType.websocket => (requestModel.protocolModel as WebSocketRequestModel?)?.url,
-        APIType.mqtt => (requestModel.protocolModel as MQTTRequestModel?)?.brokerUrl,
-        APIType.grpc => (requestModel.protocolModel as GrpcRequestModel?) != null
-            ? ((requestModel.protocolModel as GrpcRequestModel).port == 50051
-                ? (requestModel.protocolModel as GrpcRequestModel).host
-                : "${(requestModel.protocolModel as GrpcRequestModel).host}:${(requestModel.protocolModel as GrpcRequestModel).port}")
-            : null,
-        _ => requestModel.httpRequestModel?.url,
-      },
+      initialValue: urlValue,
       hintText: switch (requestModel.apiType) {
         APIType.websocket => kHintTextWsCard,
         APIType.mqtt => kHintTextMqttCard,
@@ -149,13 +173,17 @@ class URLTextField extends ConsumerWidget {
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
         } else if (requestModel.apiType == APIType.websocket) {
-          ref.read(collectionStateNotifierProvider.notifier).update(
-              protocolModel: (requestModel.protocolModel as WebSocketRequestModel?)
-                  ?.copyWith(url: value));
+          final protocolModel = requestModel.protocolModel;
+          if (protocolModel is WebSocketRequestModel) {
+            ref.read(collectionStateNotifierProvider.notifier).update(
+                protocolModel: protocolModel.copyWith(url: value));
+          }
         } else if (requestModel.apiType == APIType.mqtt) {
-          ref.read(collectionStateNotifierProvider.notifier).update(
-              protocolModel: (requestModel.protocolModel as MQTTRequestModel?)
-                  ?.copyWith(brokerUrl: value));
+          final protocolModel = requestModel.protocolModel;
+          if (protocolModel is MQTTRequestModel) {
+            ref.read(collectionStateNotifierProvider.notifier).update(
+                protocolModel: protocolModel.copyWith(brokerUrl: value));
+          }
         } else if (requestModel.apiType == APIType.grpc) {
           String host = value.trim();
           int port = 50051;
@@ -165,9 +193,11 @@ class URLTextField extends ConsumerWidget {
             final p = int.tryParse(parts[1].trim());
             if (p != null) port = p;
           }
-          ref.read(collectionStateNotifierProvider.notifier).update(
-              protocolModel: (requestModel.protocolModel as GrpcRequestModel?)
-                  ?.copyWith(host: host, port: port));
+          final protocolModel = requestModel.protocolModel;
+          if (protocolModel is GrpcRequestModel) {
+            ref.read(collectionStateNotifierProvider.notifier).update(
+                protocolModel: protocolModel.copyWith(host: host, port: port));
+          }
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }

@@ -35,7 +35,8 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
   @override
   Widget build(BuildContext context) {
     final requestModel = ref.watch(selectedRequestModelProvider);
-    final grpcModel = requestModel?.protocolModel as GrpcRequestModel?;
+    final protocolModel = requestModel?.protocolModel;
+    final grpcModel = protocolModel is GrpcRequestModel ? protocolModel : null;
 
     if (grpcModel == null) return kSizedBoxEmpty;
 

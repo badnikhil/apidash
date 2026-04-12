@@ -29,7 +29,8 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final requestModel = ref.watch(selectedRequestModelProvider);
-    final wsModel = requestModel?.protocolModel as WebSocketRequestModel?;
+    final protocolModel = requestModel?.protocolModel;
+    final wsModel = protocolModel is WebSocketRequestModel ? protocolModel : null;
 
     if (wsModel == null) return kSizedBoxEmpty;
 
