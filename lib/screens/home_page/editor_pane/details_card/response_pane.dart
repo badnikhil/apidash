@@ -46,23 +46,7 @@ class ResponsePane extends ConsumerWidget {
         hasMessages = protocolModel.messageHistory.isNotEmpty;
       }
 
-      bool showStreamView = isStreaming;
-      if (apiType == APIType.grpc && protocolModel is GrpcRequestModel) {
-        final receivedCount = protocolModel.messageHistory
-            .where((m) => m.messageType == WebSocketMessageType.received)
-            .length;
-        // If it's a single response and we're not still streaming,
-        // show the  HTTP like response instead of the console.
-        if (receivedCount == 1 && !isStreaming) {
-          showStreamView = false;
-        } else {
-          showStreamView = isStreaming || protocolModel.messageHistory.isNotEmpty;
-        }
-      } else {
-        showStreamView = isStreaming || hasMessages;
-      }
-
-      if (showStreamView) {
+      if (isStreaming || hasMessages) {
         return const _WsResponsePanel();
       }
      
@@ -92,8 +76,6 @@ class ResponsePane extends ConsumerWidget {
   }
 }
 
-/// WebSocket response panel matching the proposal image layout:
-/// has "Response Body" | "Headers" tabs, with the log view under Response Body.
 class _WsResponsePanel extends ConsumerWidget {
   const _WsResponsePanel();
 

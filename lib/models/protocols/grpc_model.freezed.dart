@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GrpcParameterModel {
 
- String get name; String get type; String get value; bool get enabled; List<String>? get enumValues;
+ String get name; int? get tag; String get type; String get value; bool get enabled; List<String>? get enumValues;
 /// Create a copy of GrpcParameterModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $GrpcParameterModelCopyWith<GrpcParameterModel> get copyWith => _$GrpcParameterM
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GrpcParameterModel&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&(identical(other.enabled, enabled) || other.enabled == enabled)&&const DeepCollectionEquality().equals(other.enumValues, enumValues));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GrpcParameterModel&&(identical(other.name, name) || other.name == name)&&(identical(other.tag, tag) || other.tag == tag)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&(identical(other.enabled, enabled) || other.enabled == enabled)&&const DeepCollectionEquality().equals(other.enumValues, enumValues));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,type,value,enabled,const DeepCollectionEquality().hash(enumValues));
+int get hashCode => Object.hash(runtimeType,name,tag,type,value,enabled,const DeepCollectionEquality().hash(enumValues));
 
 @override
 String toString() {
-  return 'GrpcParameterModel(name: $name, type: $type, value: $value, enabled: $enabled, enumValues: $enumValues)';
+  return 'GrpcParameterModel(name: $name, tag: $tag, type: $type, value: $value, enabled: $enabled, enumValues: $enumValues)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $GrpcParameterModelCopyWith<$Res>  {
   factory $GrpcParameterModelCopyWith(GrpcParameterModel value, $Res Function(GrpcParameterModel) _then) = _$GrpcParameterModelCopyWithImpl;
 @useResult
 $Res call({
- String name, String type, String value, bool enabled, List<String>? enumValues
+ String name, int? tag, String type, String value, bool enabled, List<String>? enumValues
 });
 
 
@@ -65,10 +65,11 @@ class _$GrpcParameterModelCopyWithImpl<$Res>
 
 /// Create a copy of GrpcParameterModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? type = null,Object? value = null,Object? enabled = null,Object? enumValues = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? tag = freezed,Object? type = null,Object? value = null,Object? enabled = null,Object? enumValues = freezed,}) {
   return _then(_self.copyWith(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,tag: freezed == tag ? _self.tag : tag // ignore: cast_nullable_to_non_nullable
+as int?,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,enabled: null == enabled ? _self.enabled : enabled // ignore: cast_nullable_to_non_nullable
 as bool,enumValues: freezed == enumValues ? _self.enumValues : enumValues // ignore: cast_nullable_to_non_nullable
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String type,  String value,  bool enabled,  List<String>? enumValues)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  int? tag,  String type,  String value,  bool enabled,  List<String>? enumValues)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GrpcParameterModel() when $default != null:
-return $default(_that.name,_that.type,_that.value,_that.enabled,_that.enumValues);case _:
+return $default(_that.name,_that.tag,_that.type,_that.value,_that.enabled,_that.enumValues);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.name,_that.type,_that.value,_that.enabled,_that.enumValues
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String type,  String value,  bool enabled,  List<String>? enumValues)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  int? tag,  String type,  String value,  bool enabled,  List<String>? enumValues)  $default,) {final _that = this;
 switch (_that) {
 case _GrpcParameterModel():
-return $default(_that.name,_that.type,_that.value,_that.enabled,_that.enumValues);case _:
+return $default(_that.name,_that.tag,_that.type,_that.value,_that.enabled,_that.enumValues);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.name,_that.type,_that.value,_that.enabled,_that.enumValues
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String type,  String value,  bool enabled,  List<String>? enumValues)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  int? tag,  String type,  String value,  bool enabled,  List<String>? enumValues)?  $default,) {final _that = this;
 switch (_that) {
 case _GrpcParameterModel() when $default != null:
-return $default(_that.name,_that.type,_that.value,_that.enabled,_that.enumValues);case _:
+return $default(_that.name,_that.tag,_that.type,_that.value,_that.enabled,_that.enumValues);case _:
   return null;
 
 }
@@ -213,10 +214,11 @@ return $default(_that.name,_that.type,_that.value,_that.enabled,_that.enumValues
 @JsonSerializable()
 
 class _GrpcParameterModel implements GrpcParameterModel {
-  const _GrpcParameterModel({required this.name, this.type = "string", this.value = "", this.enabled = true, final  List<String>? enumValues}): _enumValues = enumValues;
+  const _GrpcParameterModel({required this.name, this.tag, this.type = "string", this.value = "", this.enabled = true, final  List<String>? enumValues}): _enumValues = enumValues;
   factory _GrpcParameterModel.fromJson(Map<String, dynamic> json) => _$GrpcParameterModelFromJson(json);
 
 @override final  String name;
+@override final  int? tag;
 @override@JsonKey() final  String type;
 @override@JsonKey() final  String value;
 @override@JsonKey() final  bool enabled;
@@ -243,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GrpcParameterModel&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&(identical(other.enabled, enabled) || other.enabled == enabled)&&const DeepCollectionEquality().equals(other._enumValues, _enumValues));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GrpcParameterModel&&(identical(other.name, name) || other.name == name)&&(identical(other.tag, tag) || other.tag == tag)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&(identical(other.enabled, enabled) || other.enabled == enabled)&&const DeepCollectionEquality().equals(other._enumValues, _enumValues));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,type,value,enabled,const DeepCollectionEquality().hash(_enumValues));
+int get hashCode => Object.hash(runtimeType,name,tag,type,value,enabled,const DeepCollectionEquality().hash(_enumValues));
 
 @override
 String toString() {
-  return 'GrpcParameterModel(name: $name, type: $type, value: $value, enabled: $enabled, enumValues: $enumValues)';
+  return 'GrpcParameterModel(name: $name, tag: $tag, type: $type, value: $value, enabled: $enabled, enumValues: $enumValues)';
 }
 
 
@@ -263,7 +265,7 @@ abstract mixin class _$GrpcParameterModelCopyWith<$Res> implements $GrpcParamete
   factory _$GrpcParameterModelCopyWith(_GrpcParameterModel value, $Res Function(_GrpcParameterModel) _then) = __$GrpcParameterModelCopyWithImpl;
 @override @useResult
 $Res call({
- String name, String type, String value, bool enabled, List<String>? enumValues
+ String name, int? tag, String type, String value, bool enabled, List<String>? enumValues
 });
 
 
@@ -280,10 +282,11 @@ class __$GrpcParameterModelCopyWithImpl<$Res>
 
 /// Create a copy of GrpcParameterModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? type = null,Object? value = null,Object? enabled = null,Object? enumValues = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? tag = freezed,Object? type = null,Object? value = null,Object? enabled = null,Object? enumValues = freezed,}) {
   return _then(_GrpcParameterModel(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as String,tag: freezed == tag ? _self.tag : tag // ignore: cast_nullable_to_non_nullable
+as int?,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,enabled: null == enabled ? _self.enabled : enabled // ignore: cast_nullable_to_non_nullable
 as bool,enumValues: freezed == enumValues ? _self._enumValues : enumValues // ignore: cast_nullable_to_non_nullable

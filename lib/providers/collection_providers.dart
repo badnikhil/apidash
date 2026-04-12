@@ -15,6 +15,7 @@ import '../models/protocols/grpc_model.dart';
 
 import '../services/connection_manager.dart';
 import '../services/services.dart';
+import '../services/grpc_reflection_service.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import '../utils/utils.dart';
 
@@ -1197,7 +1198,7 @@ class CollectionStateNotifier
             isWorking: (grpcModel.service != null && grpcModel.method != null),
             isStreaming: true,
             protocolModel: currentGrpcModel.copyWith(
-              messageHistory: [...currentGrpcModel.messageHistory, msg],
+              messageHistory: [msg],
             ),
           ),
         };
@@ -1208,39 +1209,49 @@ class CollectionStateNotifier
           print(
             "gRPC: Invoking method ${grpcModel.service}/${grpcModel.method}",
           );
+          
+          GrpcMethodSchema? methodSchema;
+          if (grpcModel.useReflection) {
+            methodSchema = await GrpcReflectionService.getMethodSchema(
+              requestId, grpcModel, grpcModel.service!, grpcModel.method!);
+          }
+          
           final startTime = DateTime.now();
+          final requestData = grpcModel.parameters.isNotEmpty
+              ? GrpcUtils.paramsToBytes(grpcModel.parameters)
+              : utf8.encode(grpcModel.requestBody);
+
           final call = ConnectionManager.instance.callGrpcMethod(
             requestId,
             grpcModel.service!,
             grpcModel.method!,
-            utf8.encode(grpcModel.requestBody),
+            requestData,
             metadata: grpcModel.metadataMap,
           );
 
           call.listen(
             (data) {
               final duration = DateTime.now().difference(startTime);
-              final responseMsg = WebSocketMessage(
-                payload:
-                    "Response (${duration.inMilliseconds}ms): ${data.toString()}",
-                timestamp: DateTime.now(),
-                outgoing: false,
-                messageType: WebSocketMessageType.received,
-              );
+                  final payload = GrpcUtils.decodeBinaryResponse(data, schema: methodSchema);
+                  final responseMsg = WebSocketMessage(
+                    payload:
+                        "Response (${duration.inMilliseconds}ms):\n$payload",
+                    timestamp: DateTime.now(),
+                    outgoing: false,
+                    messageType: WebSocketMessageType.received,
+                  );
 
-              final currentRequest = state?[requestId];
-              if (currentRequest != null) {
-                final protocolModel = currentRequest.protocolModel;
-                if (protocolModel is GrpcRequestModel) {
-                  final receivedCount = protocolModel.messageHistory
-                      .where(
-                        (m) => m.messageType == WebSocketMessageType.received,
-                      )
-                      .length;
+                  final currentRequest = state?[requestId];
+                  if (currentRequest != null) {
+                    final protocolModel = currentRequest.protocolModel;
+                    if (protocolModel is GrpcRequestModel) {
+                      final receivedCount = protocolModel.messageHistory
+                          .where(
+                            (m) => m.messageType == WebSocketMessageType.received,
+                          )
+                          .length;
 
-                  final payload = GrpcUtils.decodeBinaryResponse(data);
-
-                  state = {
+                      state = {
                     ...state!,
                     requestId: currentRequest.copyWith(
                       isWorking: false,

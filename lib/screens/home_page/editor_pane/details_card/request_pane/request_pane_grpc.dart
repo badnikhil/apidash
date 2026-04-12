@@ -45,7 +45,7 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
     }
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Column(
         children: [
           TabBar(
@@ -54,6 +54,7 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                 Theme.of(context).colorScheme.onSurfaceVariant,
             tabs: const [
               Tab(text: "Invocation"),
+              Tab(text: "Body"),
               Tab(text: "Metadata"),
               Tab(text: "Settings"),
             ],
@@ -145,6 +146,15 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                             [];
                                       }
                                     }
+                                  } else if (grpcModel.useReflection &&
+                                      requestModel != null &&
+                                      grpcModel.service != null) {
+                                    params = await GrpcReflectionService
+                                        .getParamsForMethod(
+                                            requestModel.id,
+                                            grpcModel,
+                                            grpcModel.service!,
+                                            val);
                                   }
 
                                   ref
@@ -153,6 +163,7 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                         protocolModel: grpcModel.copyWith(
                                           method: val,
                                           parameters: params,
+                                          requestBody: GrpcUtils.paramsToJson(params),
                                         ),
                                       );
                                 }
@@ -166,6 +177,7 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                           style: kTextStyleButtonSmall),
                       kVSpacer10,
                       Expanded(
+                        flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
@@ -175,11 +187,20 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                           child: const EditGrpcRequestParameters(),
                         ),
                       ),
-                      kVSpacer20,
+                    ],
+                  ),
+                ),
+                // Body Tab
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       const Text("Request Body (JSON)",
                           style: kTextStyleButtonSmall),
                       kVSpacer10,
                       Expanded(
+                        flex: 1,
                         child: TextField(
                           controller: _bodyController,
                           maxLines: null,
@@ -318,6 +339,14 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                             final services =
                                 await GrpcReflectionService.listServices(
                                     requestModel.id, grpcModel);
+                            List<String> methods = [];
+                            if (services.isNotEmpty) {
+                              final res = await GrpcReflectionService
+                                  .getMethodsForService(requestModel.id,
+                                      grpcModel, services.first);
+                              methods = res[services.first] ?? [];
+                            }
+
                             ref
                                 .read(collectionStateNotifierProvider.notifier)
                                 .update(
@@ -326,7 +355,7 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                     service: services.isNotEmpty
                                         ? services.first
                                         : null,
-                                    availableMethods: [], // Need more reflection for methods
+                                    availableMethods: methods,
                                     parameters: [],
                                   ),
                                 );

@@ -37,9 +37,7 @@ _RequestModel _$RequestModelFromJson(Map json) => _RequestModel(
       : AIRequestModel.fromJson(
           Map<String, Object?>.from(json['aiRequestModel'] as Map),
         ),
-  protocolModel: const ProtocolModelConverter().fromJson(
-    json['protocolModel'] as Map<String, dynamic>?,
-  ),
+  protocolModel: const ProtocolModelConverter().fromJson(json['protocolModel']),
 );
 
 Map<String, dynamic> _$RequestModelToJson(_RequestModel instance) =>

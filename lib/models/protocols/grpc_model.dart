@@ -11,6 +11,7 @@ enum GrpcStreamingType { unary, client, server, bidi }
 abstract class GrpcParameterModel with _$GrpcParameterModel {
   const factory GrpcParameterModel({
     required String name,
+    int? tag,
     @Default("string") String type,
     @Default("") String value,
     @Default(true) bool enabled,

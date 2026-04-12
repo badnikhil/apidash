@@ -9,6 +9,7 @@ part of 'grpc_model.dart';
 _GrpcParameterModel _$GrpcParameterModelFromJson(Map<String, dynamic> json) =>
     _GrpcParameterModel(
       name: json['name'] as String,
+      tag: (json['tag'] as num?)?.toInt(),
       type: json['type'] as String? ?? "string",
       value: json['value'] as String? ?? "",
       enabled: json['enabled'] as bool? ?? true,
@@ -20,6 +21,7 @@ _GrpcParameterModel _$GrpcParameterModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$GrpcParameterModelToJson(_GrpcParameterModel instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'tag': instance.tag,
       'type': instance.type,
       'value': instance.value,
       'enabled': instance.enabled,

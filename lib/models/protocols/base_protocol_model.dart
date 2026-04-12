@@ -3,18 +3,17 @@ import 'websocket_model.dart';
 import 'mqtt_model.dart';
 import 'grpc_model.dart';
 
-
 /// Abstract base class for all protocol-specific request models.
 abstract class ProtocolModel {}
 
 /// Polymorphic converter for [ProtocolModel] to handle JSON serialization.
-class ProtocolModelConverter
-    implements JsonConverter<ProtocolModel?, Map<String, dynamic>?> {
+class ProtocolModelConverter implements JsonConverter<ProtocolModel?, dynamic> {
   const ProtocolModelConverter();
 
   @override
-  ProtocolModel? fromJson(Map<String, dynamic>? json) {
-    if (json == null) return null;
+  ProtocolModel? fromJson(dynamic jsonInput) {
+    if (jsonInput == null || jsonInput is! Map) return null;
+    final json = Map<String, dynamic>.from(jsonInput);
     final typeStr = json['type'] as String?;
     if (typeStr == APIType.websocket.name) {
       return WebSocketRequestModel.fromJson(json);
@@ -31,7 +30,9 @@ class ProtocolModelConverter
     if (json.containsKey('url') && json.containsKey('autoReconnect')) {
       return WebSocketRequestModel.fromJson(json);
     }
-    if (json.containsKey('host') && json.containsKey('port') && !json.containsKey('brokerUrl')) {
+    if (json.containsKey('host') &&
+        json.containsKey('port') &&
+        !json.containsKey('brokerUrl')) {
       return GrpcRequestModel.fromJson(json);
     }
 
@@ -56,10 +57,7 @@ class ProtocolModelConverter
     }
 
     if (json != null && type != null) {
-      return {
-        ...json,
-        'type': type,
-      };
+      return {...json, 'type': type};
     }
 
     return json;

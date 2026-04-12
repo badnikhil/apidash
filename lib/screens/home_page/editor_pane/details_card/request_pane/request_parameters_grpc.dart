@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/protocols/grpc_model.dart';
+import 'package:apidash/utils/grpc_utils.dart';
 
 class EditGrpcRequestParameters extends ConsumerWidget {
   const EditGrpcRequestParameters({super.key});
@@ -85,7 +86,10 @@ class EditGrpcRequestParameters extends ConsumerWidget {
     final newParams = List<GrpcParameterModel>.from(grpcModel.parameters);
     newParams[index] = newParams[index].copyWith(value: value);
     ref.read(collectionStateNotifierProvider.notifier).update(
-          protocolModel: grpcModel.copyWith(parameters: newParams),
+          protocolModel: grpcModel.copyWith(
+            parameters: newParams,
+            requestBody: GrpcUtils.paramsToJson(newParams),
+          ),
         );
   }
 }
