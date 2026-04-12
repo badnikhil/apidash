@@ -225,6 +225,48 @@ class CollectionStateNotifier
     }
   }
 
+  void subscribeMqttTopic(String requestId, String topic, int qos) {
+    final currentRequest = state?[requestId];
+    if (currentRequest != null &&
+        currentRequest.protocolModel is MQTTRequestModel) {
+      final mqttModel = currentRequest.protocolModel as MQTTRequestModel;
+      ConnectionManager.instance.subscribeMqtt(requestId, topic, qos);
+
+      final logMsg = WebSocketMessage(
+        payload: "Subscribed to topic: $topic",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final updatedModel = mqttModel.copyWith(
+        messageHistory: [...mqttModel.messageHistory, logMsg],
+      );
+      update(id: requestId, protocolModel: updatedModel, isWorking: false);
+    }
+  }
+
+  void unsubscribeMqttTopic(String requestId, String topic) {
+    final currentRequest = state?[requestId];
+    if (currentRequest != null &&
+        currentRequest.protocolModel is MQTTRequestModel) {
+      final mqttModel = currentRequest.protocolModel as MQTTRequestModel;
+      ConnectionManager.instance.unsubscribeMqtt(requestId, topic);
+
+      final logMsg = WebSocketMessage(
+        payload: "Unsubscribed from topic: $topic",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final updatedModel = mqttModel.copyWith(
+        messageHistory: [...mqttModel.messageHistory, logMsg],
+      );
+      update(id: requestId, protocolModel: updatedModel, isWorking: false);
+    }
+  }
+
   void clearResponse({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null || state?[rId] == null) return;
@@ -1023,17 +1065,32 @@ class CollectionStateNotifier
         messageType: WebSocketMessageType.connected,
       );
 
+      final List<WebSocketMessage> subscriptionLogs = [];
       // Subscribe to initial topics
-      for (final topic in mqttModel.subscribedTopics) {
-        ConnectionManager.instance.subscribeMqtt(
-          requestId,
-          topic,
-          mqttModel.qos,
-        );
+      for (int i = 0; i < mqttModel.subscribedTopics.length; i++) {
+        bool isEnabled = i < mqttModel.isTopicEnabledList.length
+            ? mqttModel.isTopicEnabledList[i]
+            : true;
+        if (isEnabled) {
+          final topic = mqttModel.subscribedTopics[i].name;
+          if (topic.isNotEmpty) {
+            ConnectionManager.instance.subscribeMqtt(
+              requestId,
+              topic,
+              mqttModel.qos,
+            );
+            subscriptionLogs.add(WebSocketMessage(
+              payload: "Subscribed to topic: $topic",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.connected,
+            ));
+          }
+        }
       }
 
       final updatedMqttModel = mqttModel.copyWith(
-        messageHistory: [connMsg1, connMsg2],
+        messageHistory: [connMsg1, connMsg2, ...subscriptionLogs],
       );
 
       state = {

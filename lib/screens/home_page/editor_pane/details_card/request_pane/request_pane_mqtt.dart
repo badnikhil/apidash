@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/protocols/mqtt_model.dart';
-import 'package:apidash/services/connection_manager.dart';
+import 'request_topics_mqtt.dart';
 
 class EditMQTTRequestPane extends ConsumerStatefulWidget {
   const EditMQTTRequestPane({
@@ -19,14 +19,12 @@ class EditMQTTRequestPane extends ConsumerStatefulWidget {
 
 class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
   final TextEditingController _messageController = TextEditingController();
-  final TextEditingController _topicController = TextEditingController();
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    _topicController.dispose();
-    super.dispose();
-  }
+ 
+   @override
+   void dispose() {
+     _messageController.dispose();
+     super.dispose();
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +38,6 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
     // Sync controllers if model changes from outside (e.g. selection)
     if (_messageController.text != mqttModel.message) {
         _messageController.text = mqttModel.message;
-    }
-    if (_topicController.text != mqttModel.publishTopic) {
-        _topicController.text = mqttModel.publishTopic;
     }
 
     return DefaultTabController(
@@ -67,6 +62,46 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
+                      Autocomplete<String>(
+                        initialValue: TextEditingValue(text: mqttModel.publishTopic),
+                        optionsBuilder: (TextEditingValue textEditingValue) {
+                          if (textEditingValue.text.isEmpty) {
+                            return mqttModel.subscribedTopics
+                                .map((e) => e.name)
+                                .where((e) => e.isNotEmpty);
+                          }
+                          return mqttModel.subscribedTopics
+                              .map((e) => e.name)
+                              .where((e) => e.isNotEmpty && e.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+                        },
+                        onSelected: (String selection) {
+                          ref.read(collectionStateNotifierProvider.notifier).update(
+                            protocolModel: mqttModel.copyWith(publishTopic: selection),
+                          );
+                        },
+                        fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                          // Sync internal controller with model if needed
+                          // But better to just use this controller for the field
+                           if (controller.text != mqttModel.publishTopic) {
+                             controller.text = mqttModel.publishTopic;
+                           }
+
+                          return TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            decoration: const InputDecoration(
+                              labelText: "Send to topic:",
+                              border: UnderlineInputBorder(),
+                            ),
+                            onChanged: (val) {
+                              ref.read(collectionStateNotifierProvider.notifier).update(
+                                protocolModel: mqttModel.copyWith(publishTopic: val),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      kVSpacer20,
                       Expanded(
                         child: TextField(
                           controller: _messageController,
@@ -91,29 +126,16 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       kVSpacer20,
                        ElevatedButton(
                             onPressed: (requestModel?.isStreaming ?? false) ? () {
-                               if (selectedId != null && _topicController.text.isNotEmpty) {
+                               if (selectedId != null && mqttModel.publishTopic.isNotEmpty) {
                                   ref.read(collectionStateNotifierProvider.notifier).sendMqttMessage(
                                     selectedId,
-                                    _topicController.text,
-                                    _messageController.text,
+                                    mqttModel.publishTopic,
+                                    mqttModel.message,
                                   );
                                }
                             } : null,
                             child: const Text("Publish"),
                           ),
-                      kVSpacer20,
-                      TextField(
-                        controller: _topicController,
-                        decoration: const InputDecoration(
-                            labelText: "Send to topic:",
-                            border: UnderlineInputBorder(),
-                        ),
-                        onChanged: (val) {
-                             ref.read(collectionStateNotifierProvider.notifier).update(
-                               protocolModel: mqttModel.copyWith(publishTopic: val),
-                             );
-                        },
-                      ),
                     ],
                   ),
                 ),
@@ -225,50 +247,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   ),
                 ),
                 // Topic Subscriptions Tab
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                       Expanded(
-                        child: ListView.builder(
-                          itemCount: mqttModel.subscribedTopics.length,
-                          itemBuilder: (context, index) {
-                            final topic = mqttModel.subscribedTopics[index];
-                            return ListTile(
-                              title: Text(topic),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () {
-                                  final newList = List<String>.from(mqttModel.subscribedTopics)..removeAt(index);
-                                  ref.read(collectionStateNotifierProvider.notifier).update(
-                                        protocolModel: mqttModel.copyWith(subscribedTopics: newList),
-                                      );
-                                  if ((requestModel?.isStreaming ?? false) && selectedId != null) {
-                                     ConnectionManager.instance.unsubscribeMqtt(selectedId, topic);
-                                  }
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                       TextField(
-                          decoration: const InputDecoration(hintText: "Add topic to subscribe..."),
-                            onSubmitted: (value) {
-                             if (selectedId != null && value.isNotEmpty) {
-                               final newList = List<String>.from(mqttModel.subscribedTopics)..add(value);
-                               ref.read(collectionStateNotifierProvider.notifier).update(
-                                     protocolModel: mqttModel.copyWith(subscribedTopics: newList),
-                                   );
-                               if (requestModel?.isStreaming ?? false) {
-                                  ConnectionManager.instance.subscribeMqtt(selectedId, value, mqttModel.qos);
-                               }
-                             }
-                           },
-                        ),
-                    ],
-                  ),
-                ),
+                const EditMQTTTopics(),
               ],
             ),
           ),

@@ -18,7 +18,12 @@ _MQTTRequestModel _$MQTTRequestModelFromJson(Map<String, dynamic> json) =>
           MQTTVersion.v5,
       subscribedTopics:
           (json['subscribedTopics'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => NameValueModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      isTopicEnabledList:
+          (json['isTopicEnabledList'] as List<dynamic>?)
+              ?.map((e) => e as bool)
               .toList() ??
           const [],
       useTLS: json['useTLS'] as bool? ?? false,
@@ -42,6 +47,7 @@ Map<String, dynamic> _$MQTTRequestModelToJson(_MQTTRequestModel instance) =>
       'password': instance.password,
       'version': _$MQTTVersionEnumMap[instance.version]!,
       'subscribedTopics': instance.subscribedTopics,
+      'isTopicEnabledList': instance.isTopicEnabledList,
       'useTLS': instance.useTLS,
       'useWebSocket': instance.useWebSocket,
       'qos': instance.qos,
