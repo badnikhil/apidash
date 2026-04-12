@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +8,14 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
 import '../models/models.dart';
+import '../models/protocols/base_protocol_model.dart';
+import '../models/protocols/websocket_model.dart';
+import '../models/protocols/mqtt_model.dart';
+import '../models/protocols/grpc_model.dart';
+
+import '../services/connection_manager.dart';
 import '../services/services.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 import '../utils/utils.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
@@ -119,17 +127,27 @@ class CollectionStateNotifier
 
   void remove({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null) return;
     var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(rId!);
+    int idx = itemIds.indexOf(rId);
+
+    // Cleanup of active connections
+    ConnectionManager.instance.disconnectWebSocket(rId);
+    ConnectionManager.instance.disconnectMqtt(rId);
     cancelHttpRequest(rId);
+
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
 
     String? newId;
-    if (idx == 0 && itemIds.isNotEmpty) {
-      newId = itemIds[0];
-    } else if (itemIds.length > 1) {
-      newId = itemIds[idx - 1];
+    if (itemIds.isNotEmpty) {
+      if (idx == 0) {
+        newId = itemIds[0];
+      } else if (idx < itemIds.length) {
+        newId = itemIds[idx];
+      } else {
+        newId = itemIds.last;
+      }
     } else {
       newId = null;
     }
@@ -140,6 +158,65 @@ class CollectionStateNotifier
     map.remove(rId);
     state = map;
     unsave();
+  }
+
+  void sendWebSocketMessage(String requestId, String message) {
+    final currentRequest = state?[requestId];
+    if (currentRequest != null && currentRequest.apiType == APIType.websocket) {
+      final wsModel = currentRequest.protocolModel as WebSocketRequestModel;
+      try {
+        final channel = ConnectionManager.instance.getWebSocketChannel(
+          requestId,
+        );
+        channel.sink.add(message);
+
+        final newMessage = WebSocketMessage(
+          payload: message,
+          timestamp: DateTime.now(),
+          outgoing: true,
+          messageType: WebSocketMessageType.sent,
+        );
+
+        final updatedWsModel = wsModel.copyWith(
+          messageHistory: [...wsModel.messageHistory, newMessage],
+        );
+
+        update(id: requestId, protocolModel: updatedWsModel);
+      } catch (e) {
+        debugPrint("Error sending WS message: $e");
+      }
+    }
+  }
+
+  void sendMqttMessage(String requestId, String topic, String message) {
+    final currentRequest = state?[requestId];
+    if (currentRequest != null && currentRequest.apiType == APIType.mqtt) {
+      final mqttModel = currentRequest.protocolModel as MQTTRequestModel;
+      try {
+        ConnectionManager.instance.publishMqtt(
+          requestId,
+          topic,
+          message,
+          mqttModel.qos,
+        );
+
+        final newMessage = WebSocketMessage(
+          payload: "Topic: $topic\nMessage: $message",
+          timestamp: DateTime.now(),
+          outgoing: true,
+          messageType: WebSocketMessageType.sent,
+          qos: mqttModel.qos,
+        );
+
+        final updatedMqttModel = mqttModel.copyWith(
+          messageHistory: [...mqttModel.messageHistory, newMessage],
+        );
+
+        update(id: requestId, protocolModel: updatedMqttModel);
+      } catch (e) {
+        debugPrint("Error sending MQTT message: $e");
+      }
+    }
   }
 
   void clearResponse({String? id}) {
@@ -242,6 +319,9 @@ class CollectionStateNotifier
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    ProtocolModel? protocolModel,
+    bool? isStreaming,
+    bool? isWorking,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -263,6 +343,7 @@ class CollectionStateNotifier
           description: description ?? currentModel.description,
           httpRequestModel: const HttpRequestModel(),
           aiRequestModel: null,
+          protocolModel: null,
         ),
         APIType.ai => currentModel.copyWith(
           apiType: apiType,
@@ -273,6 +354,35 @@ class CollectionStateNotifier
           aiRequestModel: defaultModel == null
               ? const AIRequestModel()
               : AIRequestModel.fromJson(defaultModel),
+          protocolModel: null,
+        ),
+        APIType.websocket => currentModel.copyWith(
+          apiType: apiType,
+          requestTabIndex: 0,
+          name: name ?? currentModel.name,
+          description: description ?? currentModel.description,
+          httpRequestModel: null,
+          aiRequestModel: null,
+          protocolModel: const WebSocketRequestModel(url: ""),
+        ),
+        APIType.mqtt => currentModel.copyWith(
+          apiType: apiType,
+          requestTabIndex: 0,
+          name: name ?? currentModel.name,
+          description: description ?? currentModel.description,
+          httpRequestModel: null,
+          aiRequestModel: null,
+          protocolModel: const MQTTRequestModel(brokerUrl: "", port: 1883),
+        ),
+
+        APIType.grpc => currentModel.copyWith(
+          apiType: apiType,
+          requestTabIndex: 0,
+          name: name ?? currentModel.name,
+          description: description ?? currentModel.description,
+          httpRequestModel: null,
+          aiRequestModel: null,
+          protocolModel: const GrpcRequestModel(host: ""),
         ),
       };
     } else {
@@ -298,12 +408,28 @@ class CollectionStateNotifier
           query: query ?? currentHttpRequestModel.query,
           formData: formData ?? currentHttpRequestModel.formData,
         ),
+        protocolModel:
+            protocolModel ??
+            ((currentModel.protocolModel is GrpcRequestModel)
+                ? (currentModel.protocolModel as GrpcRequestModel).copyWith(
+                    metadata:
+                        headers ??
+                        (currentModel.protocolModel as GrpcRequestModel)
+                            .metadata,
+                    isMetadataEnabled:
+                        isHeaderEnabledList ??
+                        (currentModel.protocolModel as GrpcRequestModel)
+                            .isMetadataEnabled,
+                  )
+                : currentModel.protocolModel),
         responseStatus: responseStatus ?? currentModel.responseStatus,
         message: message ?? currentModel.message,
         httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
         preRequestScript: preRequestScript ?? currentModel.preRequestScript,
         postRequestScript: postRequestScript ?? currentModel.postRequestScript,
         aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+        isStreaming: isStreaming ?? currentModel.isStreaming,
+        isWorking: isWorking ?? currentModel.isWorking,
       );
     }
 
@@ -323,7 +449,8 @@ class CollectionStateNotifier
 
     RequestModel? requestModel = state![requestId];
     if (requestModel?.httpRequestModel == null &&
-        requestModel?.aiRequestModel == null) {
+        requestModel?.aiRequestModel == null &&
+        requestModel?.protocolModel == null) {
       return;
     }
 
@@ -354,6 +481,25 @@ class CollectionStateNotifier
 
     APIType apiType = executionRequestModel.apiType;
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+
+    if (apiType == APIType.websocket) {
+      final wsModel = requestModel.protocolModel as WebSocketRequestModel;
+      await _connectWebSocket(requestId, requestModel, wsModel);
+      return;
+    }
+
+    if (apiType == APIType.mqtt) {
+      final mqttModel = requestModel.protocolModel as MQTTRequestModel;
+      await _connectMqtt(requestId, requestModel, mqttModel);
+      return;
+    }
+
+    if (apiType == APIType.grpc) {
+      final grpcModel = requestModel.protocolModel as GrpcRequestModel;
+      await _connectGrpc(requestId, requestModel, grpcModel);
+      return;
+    }
+
     HttpRequestModel substitutedHttpRequestModel;
 
     if (apiType == APIType.ai) {
@@ -579,6 +725,42 @@ class CollectionStateNotifier
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
+    if (id == null) return;
+
+    final requestModel = state?[id];
+    final apiType = requestModel?.apiType;
+
+    if (apiType == APIType.websocket) {
+      // Set streaming to false first so onDone doesn't trigger auto-reconnect
+      final map = {...state!};
+      map[id] = requestModel!.copyWith(isWorking: false, isStreaming: false);
+      state = map;
+
+      ConnectionManager.instance.disconnectWebSocket(id);
+      unsave();
+      return;
+    }
+
+    if (apiType == APIType.mqtt) {
+      final map = {...state!};
+      map[id] = requestModel!.copyWith(isWorking: false, isStreaming: false);
+      state = map;
+
+      ConnectionManager.instance.disconnectMqtt(id);
+      unsave();
+      return;
+    }
+
+    if (apiType == APIType.grpc) {
+      final map = {...state!};
+      map[id] = requestModel!.copyWith(isWorking: false, isStreaming: false);
+      state = map;
+
+      ConnectionManager.instance.disconnectGrpc(id);
+      unsave();
+      return;
+    }
+
     cancelHttpRequest(id);
     unsave();
   }
@@ -658,5 +840,408 @@ class CollectionStateNotifier
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
 
     return substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
+  }
+
+  Future<void> _connectWebSocket(
+    String requestId,
+    RequestModel requestModel,
+    WebSocketRequestModel wsModel,
+  ) async {
+    state = {
+      ...state!,
+      requestId: requestModel.copyWith(
+        isWorking: true,
+        sendingTime: DateTime.now(),
+      ),
+    };
+    try {
+      final now = DateTime.now();
+      final connMsg1 = WebSocketMessage(
+        payload: "Attempting to connect to ${wsModel.url}",
+        timestamp: now,
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+      final connMsg2 = WebSocketMessage(
+        payload: "WebSocket channel created, waiting for connection...",
+        timestamp: now,
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final channel = await ConnectionManager.instance.connectWebSocket(
+        requestId,
+        wsModel,
+      );
+
+      final connMsg3 = WebSocketMessage(
+        payload: "Connected to ${wsModel.url}",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final connectedWsModel = wsModel.copyWith(
+        messageHistory: [connMsg1, connMsg2, connMsg3],
+      );
+      state = {
+        ...state!,
+        requestId: requestModel.copyWith(
+          isWorking: false,
+          isStreaming: true,
+          protocolModel: connectedWsModel,
+        ),
+      };
+
+      channel.stream.listen(
+        (data) {
+          final currentRequest = state?[requestId];
+          if (currentRequest != null) {
+            final currentWsModel =
+                currentRequest.protocolModel as WebSocketRequestModel;
+            final newMessage = WebSocketMessage(
+              payload: data.toString(),
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.received,
+            );
+            final updatedWsModel = currentWsModel.copyWith(
+              messageHistory: [...currentWsModel.messageHistory, newMessage],
+            );
+            update(id: requestId, protocolModel: updatedWsModel);
+          }
+        },
+        onError: (e) {
+          update(id: requestId, message: e.toString());
+        },
+        onDone: () async {
+          final currentRequest = state?[requestId];
+          if (currentRequest == null ||
+              currentRequest.protocolModel is! WebSocketRequestModel)
+            return;
+
+          final ws = currentRequest.protocolModel as WebSocketRequestModel;
+
+          // If it was a manual stop, isStreaming would already be or will be false.
+          // We check the state to see if we should attempt a reconnect.
+          if (ws.autoReconnect && currentRequest.isStreaming) {
+            final now = DateTime.now();
+            final reconnectMsg = WebSocketMessage(
+              payload:
+                  "Connection lost. Attempting to reconnect in 3 seconds...",
+              timestamp: now,
+              outgoing: false,
+              messageType: WebSocketMessageType.connected,
+            );
+            final updatedWsModel = ws.copyWith(
+              messageHistory: [...ws.messageHistory, reconnectMsg],
+            );
+            update(id: requestId, protocolModel: updatedWsModel);
+
+            await Future.delayed(const Duration(seconds: 3));
+
+            // Check again if we should still reconnect (user might have stopped it during the delay)
+            final latestReq = state?[requestId];
+            if (latestReq != null && latestReq.isStreaming) {
+              _connectWebSocket(requestId, latestReq, updatedWsModel);
+            }
+          } else {
+            update(id: requestId, isStreaming: false);
+          }
+        },
+      );
+    } catch (e) {
+      state = {
+        ...state!,
+        requestId: requestModel.copyWith(
+          isWorking: false,
+          message: e.toString(),
+        ),
+      };
+    }
+  }
+
+  Future<void> _connectMqtt(
+    String requestId,
+    RequestModel requestModel,
+    MQTTRequestModel mqttModel,
+  ) async {
+    state = {
+      ...state!,
+      requestId: requestModel.copyWith(
+        isWorking: true,
+        isStreaming: false,
+        sendingTime: DateTime.now(),
+        message: null,
+      ),
+    };
+    try {
+      final now = DateTime.now();
+      final connMsg1 = WebSocketMessage(
+        payload: "Attempting to connect to ${mqttModel.brokerUrl}",
+        timestamp: now,
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final client = await ConnectionManager.instance.connectMqtt(
+        requestId,
+        mqttModel,
+      );
+
+      final connMsg2 = WebSocketMessage(
+        payload: "Connected to ${mqttModel.brokerUrl}",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      // Subscribe to initial topics
+      for (final topic in mqttModel.subscribedTopics) {
+        ConnectionManager.instance.subscribeMqtt(
+          requestId,
+          topic,
+          mqttModel.qos,
+        );
+      }
+
+      final updatedMqttModel = mqttModel.copyWith(
+        messageHistory: [connMsg1, connMsg2],
+      );
+
+      state = {
+        ...state!,
+        requestId: requestModel.copyWith(
+          isWorking: false,
+          isStreaming: true,
+          protocolModel: updatedMqttModel,
+        ),
+      };
+
+      client.updates!.listen(
+        (List<MqttReceivedMessage<MqttMessage?>>? c) {
+          final recMess = c![0].payload as MqttPublishMessage;
+          final pt = MqttPublishPayload.bytesToStringAsString(
+            recMess.payload.message,
+          );
+
+          final currentRequest = state?[requestId];
+          if (currentRequest != null) {
+            final currentMqttModel =
+                currentRequest.protocolModel as MQTTRequestModel;
+            final newMessage = WebSocketMessage(
+              payload: "Topic: ${c[0].topic}\n$pt",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.received,
+              qos: recMess.header?.qos.index,
+            );
+            final updatedModel = currentMqttModel.copyWith(
+              messageHistory: [...currentMqttModel.messageHistory, newMessage],
+            );
+            update(id: requestId, protocolModel: updatedModel);
+          }
+        },
+        onError: (e) {
+          update(id: requestId, message: e.toString());
+        },
+        onDone: () {
+          update(id: requestId, isStreaming: false);
+        },
+      );
+    } catch (e) {
+      final errorMsg = WebSocketMessage(
+        payload: "Connection Error: ${e.toString()}",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.error,
+      );
+
+      final currentRequest = state?[requestId];
+      if (currentRequest != null &&
+          currentRequest.protocolModel is MQTTRequestModel) {
+        final currentMqttModel =
+            currentRequest.protocolModel as MQTTRequestModel;
+        final updatedModel = currentMqttModel.copyWith(
+          messageHistory: [...currentMqttModel.messageHistory, errorMsg],
+        );
+        state = {
+          ...state!,
+          requestId: currentRequest.copyWith(
+            isWorking: false,
+            message: e.toString(),
+            protocolModel: updatedModel,
+          ),
+        };
+      } else {
+        state = {
+          ...state!,
+          requestId: requestModel.copyWith(
+            isWorking: false,
+            message: e.toString(),
+          ),
+        };
+      }
+    }
+  }
+
+  Future<void> _connectGrpc(
+    String requestId,
+    RequestModel requestModel,
+    GrpcRequestModel grpcModel,
+  ) async {
+    try {
+      update(id: requestId, isWorking: true);
+      await ConnectionManager.instance.connectGrpc(requestId, grpcModel);
+
+      final msg = WebSocketMessage(
+        payload: "Connected to gRPC host: ${grpcModel.host}:${grpcModel.port}",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final currentRequest = state?[requestId];
+      if (currentRequest != null &&
+          currentRequest.protocolModel is GrpcRequestModel) {
+        final currentGrpcModel =
+            currentRequest.protocolModel as GrpcRequestModel;
+        state = {
+          ...state!,
+          requestId: currentRequest.copyWith(
+            isWorking: (grpcModel.service != null && grpcModel.method != null),
+            isStreaming: true,
+            protocolModel: currentGrpcModel.copyWith(
+              messageHistory: [...currentGrpcModel.messageHistory, msg],
+            ),
+          ),
+        };
+
+        print("gRPC: Host established. Checking for method invocation...");
+        // Invoke method 
+        if (grpcModel.service != null && grpcModel.method != null) {
+          print("gRPC: Invoking method ${grpcModel.service}/${grpcModel.method}");
+          final startTime = DateTime.now();
+          final call = ConnectionManager.instance.callGrpcMethod(
+            requestId,
+            grpcModel.service!,
+            grpcModel.method!,
+            utf8.encode(grpcModel.requestBody),
+            metadata: grpcModel.metadataMap,
+          );
+  
+          call.listen(
+            (data) {
+              final duration = DateTime.now().difference(startTime);
+              final responseMsg = WebSocketMessage(
+                payload:
+                    "Response (${duration.inMilliseconds}ms): ${data.toString()}",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.received,
+              );
+
+              final currentRequest = state?[requestId];
+              if (currentRequest != null &&
+                  currentRequest.protocolModel is GrpcRequestModel) {
+                final currentGrpcModel =
+                    currentRequest.protocolModel as GrpcRequestModel;
+                
+                final receivedCount = currentGrpcModel.messageHistory
+                    .where((m) => m.messageType == WebSocketMessageType.received)
+                    .length;
+
+                final payload = GrpcUtils.decodeBinaryResponse(data);
+
+                state = {
+                  ...state!,
+                  requestId: currentRequest.copyWith(
+                    isWorking: false,
+                    isStreaming: false,
+                    responseStatus: receivedCount == 0 ? 200 : null,
+                    httpResponseModel: receivedCount == 0 
+                      ? HttpResponseModel(
+                          body: payload,
+                          time: duration,
+                        )
+                      : currentRequest.httpResponseModel,
+                    protocolModel: currentGrpcModel.copyWith(
+                      messageHistory: [
+                        ...currentGrpcModel.messageHistory,
+                        responseMsg,
+                      ],
+                    ),
+                  ),
+                };
+              }
+            },
+            onDone: () {
+              final currentRequest = state?[requestId];
+              if (currentRequest != null) {
+                state = {
+                  ...state!,
+                  requestId: currentRequest.copyWith(
+                    isWorking: false,
+                    isStreaming: false,
+                  ),
+                };
+              }
+            },
+            onError: (e) {
+              final errorMsg = WebSocketMessage(
+                payload: "RPC Error: ${e.toString()}",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.error,
+              );
+
+              final currentRequest = state?[requestId];
+              if (currentRequest != null &&
+                  currentRequest.protocolModel is GrpcRequestModel) {
+                final currentGrpcModel =
+                    currentRequest.protocolModel as GrpcRequestModel;
+                state = {
+                  ...state!,
+                  requestId: currentRequest.copyWith(
+                    isWorking: false,
+                    isStreaming: false,
+                    protocolModel: currentGrpcModel.copyWith(
+                      messageHistory: [
+                        ...currentGrpcModel.messageHistory,
+                        errorMsg,
+                      ],
+                    ),
+                  ),
+                };
+              }
+            },
+          );
+        }
+      }
+    } catch (e) {
+      final errorMsg = WebSocketMessage(
+        payload: "Connection Error: ${e.toString()}",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.error,
+      );
+
+      final currentRequest = state?[requestId];
+      if (currentRequest != null &&
+          currentRequest.protocolModel is GrpcRequestModel) {
+        final currentGrpcModel =
+            currentRequest.protocolModel as GrpcRequestModel;
+        state = {
+          ...state!,
+          requestId: currentRequest.copyWith(
+            isWorking: false,
+            message: e.toString(),
+            protocolModel: currentGrpcModel.copyWith(
+              messageHistory: [...currentGrpcModel.messageHistory, errorMsg],
+            ),
+          ),
+        };
+      }
+    }
   }
 }

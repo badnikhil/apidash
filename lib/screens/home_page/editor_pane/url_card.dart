@@ -1,9 +1,14 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/models/protocols/websocket_model.dart';
+import 'package:apidash/models/protocols/mqtt_model.dart';
+import 'package:apidash/models/protocols/grpc_model.dart';
+
 import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
@@ -36,6 +41,11 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.websocket ||
+                    APIType.mqtt ||
+                    APIType.grpc =>
+                      kSizedBoxEmpty,
+
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -53,6 +63,11 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.websocket ||
+                    APIType.mqtt ||
+                    APIType.grpc =>
+                      kSizedBoxEmpty,
+
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -113,13 +128,46 @@ class URLTextField extends ConsumerWidget {
       selectedId: selectedId,
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
+        APIType.websocket => (requestModel.protocolModel as WebSocketRequestModel?)?.url,
+        APIType.mqtt => (requestModel.protocolModel as MQTTRequestModel?)?.brokerUrl,
+        APIType.grpc => (requestModel.protocolModel as GrpcRequestModel?) != null
+            ? ((requestModel.protocolModel as GrpcRequestModel).port == 50051
+                ? (requestModel.protocolModel as GrpcRequestModel).host
+                : "${(requestModel.protocolModel as GrpcRequestModel).host}:${(requestModel.protocolModel as GrpcRequestModel).port}")
+            : null,
         _ => requestModel.httpRequestModel?.url,
+      },
+      hintText: switch (requestModel.apiType) {
+        APIType.websocket => kHintTextWsCard,
+        APIType.mqtt => kHintTextMqttCard,
+        APIType.grpc => kHintTextGrpcCard,
+        _ => kHintTextUrlCard,
       },
       onChanged: (value) {
         if (requestModel.apiType == APIType.ai) {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
+        } else if (requestModel.apiType == APIType.websocket) {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+              protocolModel: (requestModel.protocolModel as WebSocketRequestModel?)
+                  ?.copyWith(url: value));
+        } else if (requestModel.apiType == APIType.mqtt) {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+              protocolModel: (requestModel.protocolModel as MQTTRequestModel?)
+                  ?.copyWith(brokerUrl: value));
+        } else if (requestModel.apiType == APIType.grpc) {
+          String host = value.trim();
+          int port = 50051;
+          if (host.contains(':')) {
+            final parts = host.split(':');
+            host = parts[0].trim();
+            final p = int.tryParse(parts[1].trim());
+            if (p != null) port = p;
+          }
+          ref.read(collectionStateNotifierProvider.notifier).update(
+              protocolModel: (requestModel.protocolModel as GrpcRequestModel?)
+                  ?.copyWith(host: host, port: port));
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }
