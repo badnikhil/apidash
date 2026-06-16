@@ -1,4 +1,3 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'ws_request_model.dart';
 
@@ -27,6 +26,30 @@ abstract class MQTTRequestModel
     @Default([]) List<WebSocketMessage> messageHistory,
     @Default("") String message,
     @Default("") String publishTopic,
+
+    // ── TLS (carry-over from the TLS agent) ──────────────────────────────
+    /// When true, the TLS handshake will accept self-signed / untrusted
+    /// certificates (wires `onBadCertificate` in [ConnectionManager]). Lets
+    /// brokers like `test.mosquitto.org:8883` (private "Mosquitto CA") connect.
+    /// Default false — strict validation, the safe default.
+    @Default(false) bool allowInvalidCertificates,
+
+    // ── MQTT v5 only ─────────────────────────────────────────────────────
+    /// v5 User Properties attached to the CONNECT and PUBLISH packets
+    /// (key/value metadata, analogous to HTTP headers). Ignored for v3.1.1.
+    @Default([]) List<NameValueModel> userProperties,
+    @Default([]) List<bool> isUserPropertyEnabledList,
+
+    /// v5 Request/Response: response topic + correlation data on PUBLISH.
+    @Default("") String responseTopic,
+    @Default("") String correlationData,
+
+    /// v5 Session Expiry Interval (seconds). Replaces the v3 binary
+    /// clean-session flag. 0 = session ends on disconnect (clean start).
+    @Default(0) int sessionExpiryInterval,
+
+    /// v5 per-publish Message Expiry Interval (TTL, seconds). 0 = no expiry.
+    @Default(0) int messageExpiryInterval,
   }) = _MQTTRequestModel;
 
   factory MQTTRequestModel.fromJson(Map<String, dynamic> json) =>

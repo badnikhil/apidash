@@ -40,6 +40,23 @@ _MQTTRequestModel _$MQTTRequestModelFromJson(Map json) => _MQTTRequestModel(
       const [],
   message: json['message'] as String? ?? "",
   publishTopic: json['publishTopic'] as String? ?? "",
+  allowInvalidCertificates: json['allowInvalidCertificates'] as bool? ?? false,
+  userProperties:
+      (json['userProperties'] as List<dynamic>?)
+          ?.map(
+            (e) => NameValueModel.fromJson(Map<String, Object?>.from(e as Map)),
+          )
+          .toList() ??
+      const [],
+  isUserPropertyEnabledList:
+      (json['isUserPropertyEnabledList'] as List<dynamic>?)
+          ?.map((e) => e as bool)
+          .toList() ??
+      const [],
+  responseTopic: json['responseTopic'] as String? ?? "",
+  correlationData: json['correlationData'] as String? ?? "",
+  sessionExpiryInterval: (json['sessionExpiryInterval'] as num?)?.toInt() ?? 0,
+  messageExpiryInterval: (json['messageExpiryInterval'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$MQTTRequestModelToJson(
@@ -59,6 +76,13 @@ Map<String, dynamic> _$MQTTRequestModelToJson(
   'messageHistory': instance.messageHistory.map((e) => e.toJson()).toList(),
   'message': instance.message,
   'publishTopic': instance.publishTopic,
+  'allowInvalidCertificates': instance.allowInvalidCertificates,
+  'userProperties': instance.userProperties.map((e) => e.toJson()).toList(),
+  'isUserPropertyEnabledList': instance.isUserPropertyEnabledList,
+  'responseTopic': instance.responseTopic,
+  'correlationData': instance.correlationData,
+  'sessionExpiryInterval': instance.sessionExpiryInterval,
+  'messageExpiryInterval': instance.messageExpiryInterval,
 };
 
 const _$MQTTVersionEnumMap = {
