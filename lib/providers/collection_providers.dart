@@ -252,6 +252,7 @@ class CollectionStateNotifier
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
     WebSocketRequestModel? wsRequestModel,
+    MQTTRequestModel? mqttRequestModel,
     bool? isStreaming,
     bool? isWorking,
   }) {
@@ -296,6 +297,17 @@ class CollectionStateNotifier
           httpRequestModel: null,
           aiRequestModel: null,
           wsRequestModel: const WebSocketRequestModel(),
+          mqttRequestModel: null,
+        ),
+        APIType.mqtt => currentModel.copyWith(
+          apiType: apiType,
+          requestTabIndex: 0,
+          name: name ?? currentModel.name,
+          description: description ?? currentModel.description,
+          httpRequestModel: null,
+          aiRequestModel: null,
+          wsRequestModel: null,
+          mqttRequestModel: const MQTTRequestModel(brokerUrl: ''),
         ),
       };
     } else {
@@ -354,6 +366,7 @@ class CollectionStateNotifier
                     currentModel.wsRequestModel?.isParamEnabledList,
               )
             : (wsRequestModel ?? currentModel.wsRequestModel),
+        mqttRequestModel: mqttRequestModel ?? currentModel.mqttRequestModel,
         isStreaming: isStreaming ?? currentModel.isStreaming,
         isWorking: isWorking ?? currentModel.isWorking,
       );
@@ -363,6 +376,36 @@ class CollectionStateNotifier
     map[rId] = newModel;
     state = map;
     unsave();
+  }
+
+  void subscribeMqttTopic(String requestId, String topic, int qos) {
+    final currentRequest = state?[requestId];
+    if (currentRequest != null && currentRequest.apiType == APIType.mqtt) {
+      final mqttModel = currentRequest.mqttRequestModel;
+      if (mqttModel == null) return;
+      ConnectionManager.instance.subscribeMqtt(requestId, topic, qos);
+    }
+  }
+
+  void unsubscribeMqttTopic(String requestId, String topic) {
+    final currentRequest = state?[requestId];
+    if (currentRequest != null && currentRequest.apiType == APIType.mqtt) {
+      final mqttModel = currentRequest.mqttRequestModel;
+      if (mqttModel == null) return;
+      ConnectionManager.instance.unsubscribeMqtt(requestId, topic);
+
+      final logMsg = WebSocketMessage(
+        payload: "Unsubscribed from topic: $topic",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final updatedModel = mqttModel.copyWith(
+        messageHistory: [...mqttModel.messageHistory, logMsg],
+      );
+      update(id: requestId, mqttRequestModel: updatedModel);
+    }
   }
 
   /// Send a text message over an active WebSocket connection.
@@ -392,6 +435,41 @@ class CollectionStateNotifier
       );
     } catch (e) {
       debugPrint("Error sending WS message: $e");
+    }
+  }
+
+  /// Send a text message over an active MQTT connection.
+  void sendMqttMessage(String requestId, String message, String topic) {
+    final currentRequest = state?[requestId];
+    if (currentRequest == null || currentRequest.apiType != APIType.mqtt)
+      return;
+    final mqttModel = currentRequest.mqttRequestModel;
+    if (mqttModel == null) return;
+
+    try {
+      ConnectionManager.instance.sendMqtt(
+        requestId,
+        topic,
+        message,
+        qos: mqttModel.qos,
+      );
+
+      final newMessage = WebSocketMessage(
+        payload: message,
+        timestamp: DateTime.now(),
+        outgoing: true,
+        messageType: WebSocketMessageType.sent,
+        metadata: topic,
+      );
+
+      update(
+        id: requestId,
+        mqttRequestModel: mqttModel.copyWith(
+          messageHistory: [...mqttModel.messageHistory, newMessage],
+        ),
+      );
+    } catch (e) {
+      debugPrint('MQTT publish error: $e');
     }
   }
 
@@ -508,6 +586,7 @@ class CollectionStateNotifier
         requestId: (latestRequest ?? requestModel).copyWith(
           isWorking: false,
           isStreaming: true,
+          httpResponseModel: null,
           wsRequestModel: currentWs.copyWith(
             messageHistory: [...currentWs.messageHistory, connectedMessage],
           ),
@@ -669,7 +748,8 @@ class CollectionStateNotifier
     RequestModel? requestModel = state![requestId];
     if (requestModel?.httpRequestModel == null &&
         requestModel?.aiRequestModel == null &&
-        requestModel?.wsRequestModel == null) {
+        requestModel?.wsRequestModel == null &&
+        requestModel?.mqttRequestModel == null) {
       return;
     }
 
@@ -702,6 +782,148 @@ class CollectionStateNotifier
         await _connectWebSocket(requestId, requestModel, wsModel, historyId: newHistoryId);
       } else {
         update(id: requestId, message: "Invalid WebSocket model");
+      }
+      return;
+    }
+
+    if (requestModel.apiType == APIType.mqtt) {
+      final mqttModel = requestModel.mqttRequestModel;
+      if (mqttModel != null) {
+        state = {
+          ...state!,
+          requestId: requestModel.copyWith(
+            isWorking: true,
+            isStreaming: false,
+            sendingTime: DateTime.now(),
+            message: null,
+          ),
+        };
+        
+        try {
+          await ConnectionManager.instance.connectMqtt(
+            requestId,
+            mqttModel.brokerUrl,
+            mqttModel.port,
+            clientId: mqttModel.clientId,
+            username: mqttModel.username,
+            password: mqttModel.password,
+            useTLS: mqttModel.useTLS,
+            onSubscribed: (topic) {
+              final currentModel = state![requestId]?.mqttRequestModel;
+              if (currentModel == null) return;
+              final msg = WebSocketMessage(
+                payload: "Subscribed to topic: $topic",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.connected,
+                metadata: topic,
+              );
+              update(
+                id: requestId,
+                mqttRequestModel: currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+            },
+            onMessage: (topic, payload) {
+              final currentModel = state![requestId]?.mqttRequestModel;
+              if (currentModel == null) return;
+              final msg = WebSocketMessage(
+                payload: payload,
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.received,
+                metadata: topic,
+              );
+              update(
+                id: requestId,
+                mqttRequestModel: currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+            },
+            onDisconnected: () {
+              final currentModel = state![requestId]?.mqttRequestModel;
+              if (currentModel == null) return;
+              final msg = WebSocketMessage(
+                payload: "Disconnected from broker",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.disconnected,
+              );
+              update(
+                id: requestId,
+                isStreaming: false,
+                isWorking: false,
+                message: "MQTT disconnected",
+                mqttRequestModel: currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+            },
+          );
+
+          // Once connected, explicitly log the broker connection success
+          final latestModelAfterConnect =
+              state![requestId]?.mqttRequestModel ?? mqttModel;
+          final connectedMsg = WebSocketMessage(
+            payload: "Connected to broker: ${mqttModel.brokerUrl}",
+            timestamp: DateTime.now(),
+            outgoing: false,
+            messageType: WebSocketMessageType.connected,
+          );
+
+          update(
+            id: requestId,
+            isWorking: false,
+            isStreaming: true,
+            message: "MQTT connected to ${mqttModel.brokerUrl}",
+            httpResponseModel: null,
+            mqttRequestModel: latestModelAfterConnect.copyWith(
+              messageHistory: [
+                ...latestModelAfterConnect.messageHistory,
+                connectedMsg,
+              ],
+            ),
+          );
+
+          // Now subscribe to the active topics
+          final subModel =
+              state![requestId]?.mqttRequestModel ?? latestModelAfterConnect;
+          for (int i = 0; i < subModel.subscribedTopics.length; i++) {
+            final topic = subModel.subscribedTopics[i];
+            final isEnabled = i < subModel.isTopicEnabledList.length
+                ? subModel.isTopicEnabledList[i]
+                : false;
+
+            if (isEnabled && topic.name.trim().isNotEmpty) {
+              ConnectionManager.instance.subscribeMqtt(
+                requestId,
+                topic.name,
+                subModel.qos,
+              );
+            }
+          }
+        } catch (e) {
+          final errModel = state![requestId]?.mqttRequestModel ?? mqttModel;
+          final errMsg = WebSocketMessage(
+            payload: "Connection failed: $e",
+            timestamp: DateTime.now(),
+            outgoing: false,
+            messageType: WebSocketMessageType.error,
+          );
+          update(
+            id: requestId,
+            isWorking: false,
+            isStreaming: false,
+            message: "MQTT Error",
+            mqttRequestModel: errModel.copyWith(
+              messageHistory: [...errModel.messageHistory, errMsg],
+            ),
+          );
+        }
+      } else {
+        update(id: requestId, message: "Invalid MQTT model");
       }
       return;
     }
@@ -974,6 +1196,12 @@ class CollectionStateNotifier
         update(id: id, isStreaming: false, isWorking: false);
       }
       ConnectionManager.instance.disconnect(id);
+    } else if (requestModel?.apiType == APIType.mqtt) {
+      final mqttModel = requestModel?.mqttRequestModel;
+      if (mqttModel != null) {
+        ConnectionManager.instance.disconnectMqtt(id);
+      }
+      update(id: id, isStreaming: false, isWorking: false);
     } else {
       cancelHttpRequest(id);
     }

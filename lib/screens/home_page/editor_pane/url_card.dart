@@ -38,6 +38,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
                     APIType.websocket => kSizedBoxEmpty,
+                    APIType.mqtt => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -56,6 +57,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
                     APIType.websocket => kSizedBoxEmpty,
+                    APIType.mqtt => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -125,6 +127,9 @@ class URLTextField extends ConsumerWidget {
       case APIType.websocket:
         urlValue = requestModel.wsRequestModel?.url;
         break;
+      case APIType.mqtt:
+        urlValue = requestModel.mqttRequestModel?.brokerUrl;
+        break;
       default:
         urlValue = requestModel.httpRequestModel?.url;
     }
@@ -140,6 +145,7 @@ class URLTextField extends ConsumerWidget {
       initialValue: urlValue,
       hintText: switch (requestModel.apiType) {
         APIType.websocket => kHintTextWsCard,
+        APIType.mqtt => "mqtt://...",
         _ => kHintTextUrlCard,
       },
       onChanged: (value) {
@@ -152,6 +158,12 @@ class URLTextField extends ConsumerWidget {
           if (wsModel != null) {
             ref.read(collectionStateNotifierProvider.notifier).update(
                 wsRequestModel: wsModel.copyWith(url: value));
+          }
+        } else if (requestModel.apiType == APIType.mqtt) {
+          final mqttModel = requestModel.mqttRequestModel;
+          if (mqttModel != null) {
+            ref.read(collectionStateNotifierProvider.notifier).update(
+                mqttRequestModel: mqttModel.copyWith(brokerUrl: value));
           }
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
@@ -185,8 +197,8 @@ class SendRequestButton extends ConsumerWidget {
     return SendButton(
       isStreaming: isStreaming ?? false,
       isWorking: isWorking ?? false,
-      sendLabel: apiType == APIType.websocket ? "Connect" : kLabelSend,
-      activeLabel: apiType == APIType.websocket ? "Disconnect" : null,
+      sendLabel: apiType == APIType.websocket || apiType == APIType.mqtt ? "Connect" : kLabelSend,
+      activeLabel: apiType == APIType.websocket || apiType == APIType.mqtt ? "Disconnect" : null,
       onTap: () {
         onTap?.call();
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
