@@ -1,12 +1,13 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'ws_request_model.dart';
+import 'mqtt_request_model.dart';
 
 part 'request_model.freezed.dart';
 
 part 'request_model.g.dart';
 
 @freezed
- class RequestModel with _$RequestModel {
+abstract class RequestModel with _$RequestModel {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -28,6 +29,7 @@ part 'request_model.g.dart';
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
     WebSocketRequestModel? wsRequestModel,
+    MQTTRequestModel? mqttRequestModel,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>

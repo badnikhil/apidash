@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,75 +19,190 @@ class RealtimeEventStreamView extends ConsumerStatefulWidget {
 
 class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamView> {
   final TextEditingController _filterController = TextEditingController();
+  TextEditingController? _autocompleteController;
   String _filterQuery = "";
+  final List<String> _selectedTopics = [];
 
   @override
   void dispose() {
     _filterController.dispose();
+    _autocompleteController = null;
     super.dispose();
+  }
+
+  bool _isTopicMatch(String filterTopic, String actualTopic) {
+    if (filterTopic == actualTopic) return true;
+
+    List<String> filterLevels = filterTopic.split('/');
+    List<String> topicLevels = actualTopic.split('/');
+
+    for (int i = 0; i < filterLevels.length; i++) {
+      if (filterLevels[i] == '#') {
+        return true;
+      }
+      if (i >= topicLevels.length) {
+        return false;
+      }
+      if (filterLevels[i] != '+' && filterLevels[i] != topicLevels[i]) {
+        return false;
+      }
+    }
+    return filterLevels.length == topicLevels.length;
   }
 
   @override
   Widget build(BuildContext context) {
     final requestModel = ref.watch(selectedRequestModelProvider);
     final wsModel = requestModel?.wsRequestModel;
-    final history = wsModel?.messageHistory ?? [];
+    final mqttModel = requestModel?.mqttRequestModel;
+    
+    final history = requestModel?.apiType == APIType.websocket 
+        ? (wsModel?.messageHistory ?? [])
+        : (mqttModel?.messageHistory ?? []);
 
-    final filteredHistory = _filterQuery.isEmpty
-        ? history
-        : history.where((msg) => msg.payload.toLowerCase().contains(_filterQuery.toLowerCase())).toList();
+    final availableTopics = history
+        .map((e) => e.metadata)
+        .whereType<String>()
+        .toSet()
+        .toList();
+
+    final filteredHistory = history.where((msg) {
+      bool matchesTopics = true;
+      if (_selectedTopics.isNotEmpty) {
+        matchesTopics = msg.metadata != null && 
+            _selectedTopics.any((filter) => _isTopicMatch(filter, msg.metadata!));
+      }
+      
+      bool matchesQuery = true;
+      if (_filterQuery.isNotEmpty) {
+        matchesQuery = msg.payload.toLowerCase().contains(_filterQuery.toLowerCase());
+      }
+      
+      return matchesTopics && matchesQuery;
+    }).toList();
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (history.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TextField(
-              controller: _filterController,
-              decoration: InputDecoration(
-                hintText: "Filter messages...",
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                prefixIcon: const Icon(Icons.filter_list, size: 18),
-                suffixIcon: _filterQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, size: 16),
-                        onPressed: () {
-                          _filterController.clear();
-                          setState(() {
-                            _filterQuery = "";
+                if (_selectedTopics.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: _selectedTopics.map((topic) {
+                        return InputChip(
+                          label: Text(topic, style: const TextStyle(fontSize: 12)),
+                          visualDensity: VisualDensity.compact,
+                          onDeleted: () {
+                            setState(() {
+                              _selectedTopics.remove(topic);
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Autocomplete<String>(
+                        optionsBuilder: (TextEditingValue textEditingValue) {
+                          if (textEditingValue.text.isEmpty) {
+                            return const Iterable<String>.empty();
+                          }
+                          return availableTopics.where((String option) {
+                            return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
                           });
                         },
-                      )
-                    : null,
-              ),
-              onChanged: (val) {
-                setState(() {
-                  _filterQuery = val;
-                });
-              },
-            ),
-          ),
+                        onSelected: (String selection) {
+                          setState(() {
+                            if (!_selectedTopics.contains(selection)) {
+                              _selectedTopics.add(selection);
+                            }
+                            _filterQuery = "";
+                          });
+                          // Autocomplete automatically updates the controller with the selection,
+                          // so we need to clear it in the next frame.
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _autocompleteController?.clear();
+                          });
+                        },
+                        fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                          _autocompleteController = controller;
+                          return TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            decoration: InputDecoration(
+                              hintText: requestModel?.apiType == APIType.mqtt 
+                                  ? "Press Enter to filter by topic..."
+                                  : "Filter messages...",
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                              prefixIcon: const Icon(Icons.filter_list, size: 18),
+                              suffixIcon: controller.text.isNotEmpty || _selectedTopics.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear, size: 16),
+                                      onPressed: () {
+                                        controller.clear();
+                                        setState(() {
+                                          _filterQuery = "";
+                                          _selectedTopics.clear();
+                                        });
+                                      },
+                                    )
+                                  : null,
+                            ),
+                            onSubmitted: (val) {
+                              if (val.trim().isNotEmpty && requestModel?.apiType == APIType.mqtt) {
+                                setState(() {
+                                  if (!_selectedTopics.contains(val.trim())) {
+                                    _selectedTopics.add(val.trim());
+                                  }
+                                  controller.clear();
+                                  _filterQuery = "";
+                                });
+                              }
+                            },
+                            onChanged: (val) {
+                              setState(() {
+                                _filterQuery = val;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
           kHSpacer5,
           IconButton(
             icon: const Icon(Icons.delete_outline, size: 18),
             tooltip: "Clear messages",
             onPressed: () {
-              if (wsModel != null) {
+              if (requestModel?.apiType == APIType.websocket && wsModel != null) {
                 ref.read(collectionStateNotifierProvider.notifier).update(
                       wsRequestModel:
                           wsModel.copyWith(messageHistory: []),
                     );
+              } else if (requestModel?.apiType == APIType.mqtt && mqttModel != null) {
+                ref.read(collectionStateNotifierProvider.notifier).update(
+                      mqttRequestModel:
+                          mqttModel.copyWith(messageHistory: []),
+                    );
               }
             },
           ),
-        ],
-      ),
-    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         const Divider(height: 1),
         // Log content
         Expanded(
@@ -200,6 +316,15 @@ class _LogEntryState extends State<_LogEntry> {
                 text: displayPayload,
                 style: kCodeStyle.copyWith(fontSize: 12),
               ),
+              if (msg.metadata != null && msg.metadata!.isNotEmpty)
+                TextSpan(
+                  text: "\n  Topic: ${msg.metadata}",
+                  style: kCodeStyle.copyWith(
+                    fontSize: 11,
+                    color: Colors.grey.shade400,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
             ],
           ),
         ),

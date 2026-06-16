@@ -6,7 +6,7 @@ part 'history_request_model.freezed.dart';
 part 'history_request_model.g.dart';
 
 @freezed
-class HistoryRequestModel with _$HistoryRequestModel {
+abstract class HistoryRequestModel with _$HistoryRequestModel {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -16,6 +16,8 @@ class HistoryRequestModel with _$HistoryRequestModel {
     required HistoryMetaModel metaData,
     HttpRequestModel? httpRequestModel,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? wsRequestModel,
+    MQTTRequestModel? mqttRequestModel,
     required HttpResponseModel httpResponseModel,
     String? preRequestScript,
     String? postRequestScript,
