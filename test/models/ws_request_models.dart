@@ -13,6 +13,7 @@ const wsMessage1Json = {
   'timestamp': '2023-01-01T00:00:00.000',
   'outgoing': true,
   'messageType': 'sent',
+  'metadata': null,
 };
 
 final wsMessage2 = WebSocketMessage(
@@ -27,6 +28,7 @@ const wsMessage2Json = {
   'timestamp': '2023-01-01T00:00:00.000',
   'outgoing': false,
   'messageType': 'received',
+  'metadata': null,
 };
 
 const wsMessage3 = WebSocketMessage(payload: 'Test');
@@ -58,6 +60,7 @@ const wsRequestModel1Json = {
       'timestamp': '2023-01-01T00:00:00.000',
       'outgoing': true,
       'messageType': 'sent',
+      'metadata': null,
     }
   ],
   'headers': [
@@ -107,6 +110,7 @@ const wsMessageNullTimestampJson = {
   'timestamp': null,
   'outgoing': false,
   'messageType': 'error',
+  'metadata': null,
 };
 
 // One message fixture per WebSocketMessageType enum value, with matching JSON.
@@ -119,6 +123,7 @@ const wsMessageConnectedJson = {
   'timestamp': null,
   'outgoing': true,
   'messageType': 'connected',
+  'metadata': null,
 };
 
 const wsMessageSent = WebSocketMessage(
@@ -130,6 +135,7 @@ const wsMessageSentJson = {
   'timestamp': null,
   'outgoing': true,
   'messageType': 'sent',
+  'metadata': null,
 };
 
 const wsMessageReceived = WebSocketMessage(
@@ -141,6 +147,7 @@ const wsMessageReceivedJson = {
   'timestamp': null,
   'outgoing': true,
   'messageType': 'received',
+  'metadata': null,
 };
 
 const wsMessageError = WebSocketMessage(
@@ -152,6 +159,7 @@ const wsMessageErrorJson = {
   'timestamp': null,
   'outgoing': true,
   'messageType': 'error',
+  'metadata': null,
 };
 
 const wsMessageDisconnected = WebSocketMessage(
@@ -163,6 +171,7 @@ const wsMessageDisconnectedJson = {
   'timestamp': null,
   'outgoing': true,
   'messageType': 'disconnected',
+  'metadata': null,
 };
 
 // A model whose messageHistory holds multiple messages (covers list round-trip).
@@ -196,18 +205,21 @@ const wsRequestModelMultiHistoryJson = {
       'timestamp': '2023-01-01T00:00:00.000',
       'outgoing': true,
       'messageType': 'sent',
+      'metadata': null,
     },
     {
       'payload': 'second',
       'timestamp': '2023-01-02T00:00:00.000',
       'outgoing': false,
       'messageType': 'received',
+      'metadata': null,
     },
     {
       'payload': 'third',
       'timestamp': null,
       'outgoing': true,
       'messageType': 'error',
+      'metadata': null,
     },
   ],
   'headers': null,
