@@ -438,6 +438,22 @@ class CollectionStateNotifier
     }
   }
 
+  /// Returns the enabled v5 User Properties for [mqttModel] as a flat list,
+  /// honouring the per-row enabled flags (defaults to enabled when the flag
+  /// list is shorter than the property list).
+  List<NameValueModel> _enabledUserProperties(MQTTRequestModel mqttModel) {
+    final props = mqttModel.userProperties;
+    final enabled = mqttModel.isUserPropertyEnabledList;
+    final result = <NameValueModel>[];
+    for (int i = 0; i < props.length; i++) {
+      final isOn = i < enabled.length ? enabled[i] : true;
+      if (isOn && props[i].name.trim().isNotEmpty) {
+        result.add(props[i]);
+      }
+    }
+    return result;
+  }
+
   /// Send a text message over an active MQTT connection.
   void sendMqttMessage(String requestId, String message, String topic) {
     final currentRequest = state?[requestId];
@@ -452,6 +468,11 @@ class CollectionStateNotifier
         topic,
         message,
         qos: mqttModel.qos,
+        // v5-only extras (ignored on the v3 path by ConnectionManager).
+        userProperties: _enabledUserProperties(mqttModel),
+        responseTopic: mqttModel.responseTopic,
+        correlationData: mqttModel.correlationData,
+        messageExpiryInterval: mqttModel.messageExpiryInterval,
       );
 
       final newMessage = WebSocketMessage(
@@ -804,10 +825,31 @@ class CollectionStateNotifier
             requestId,
             mqttModel.brokerUrl,
             mqttModel.port,
+            version: mqttModel.version,
             clientId: mqttModel.clientId,
             username: mqttModel.username,
             password: mqttModel.password,
             useTLS: mqttModel.useTLS,
+            useWebSocket: mqttModel.useWebSocket,
+            allowInvalidCertificates: mqttModel.allowInvalidCertificates,
+            userProperties: _enabledUserProperties(mqttModel),
+            sessionExpiryInterval: mqttModel.sessionExpiryInterval,
+            onInfo: (info) {
+              final currentModel = state![requestId]?.mqttRequestModel;
+              if (currentModel == null) return;
+              final msg = WebSocketMessage(
+                payload: info,
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.connected,
+              );
+              update(
+                id: requestId,
+                mqttRequestModel: currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+            },
             onSubscribed: (topic) {
               final currentModel = state![requestId]?.mqttRequestModel;
               if (currentModel == null) return;
