@@ -57,6 +57,12 @@ _MQTTRequestModel _$MQTTRequestModelFromJson(Map json) => _MQTTRequestModel(
   correlationData: json['correlationData'] as String? ?? "",
   sessionExpiryInterval: (json['sessionExpiryInterval'] as num?)?.toInt() ?? 0,
   messageExpiryInterval: (json['messageExpiryInterval'] as num?)?.toInt() ?? 0,
+  keepAlivePeriod: (json['keepAlivePeriod'] as num?)?.toInt() ?? 60,
+  retainMessage: json['retainMessage'] as bool? ?? false,
+  willTopic: json['willTopic'] as String? ?? "",
+  willMessage: json['willMessage'] as String? ?? "",
+  willRetain: json['willRetain'] as bool? ?? false,
+  willQos: (json['willQos'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$MQTTRequestModelToJson(
@@ -83,6 +89,12 @@ Map<String, dynamic> _$MQTTRequestModelToJson(
   'correlationData': instance.correlationData,
   'sessionExpiryInterval': instance.sessionExpiryInterval,
   'messageExpiryInterval': instance.messageExpiryInterval,
+  'keepAlivePeriod': instance.keepAlivePeriod,
+  'retainMessage': instance.retainMessage,
+  'willTopic': instance.willTopic,
+  'willMessage': instance.willMessage,
+  'willRetain': instance.willRetain,
+  'willQos': instance.willQos,
 };
 
 const _$MQTTVersionEnumMap = {

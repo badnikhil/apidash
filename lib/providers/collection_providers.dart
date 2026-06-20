@@ -457,8 +457,9 @@ class CollectionStateNotifier
   /// Send a text message over an active MQTT connection.
   void sendMqttMessage(String requestId, String message, String topic) {
     final currentRequest = state?[requestId];
-    if (currentRequest == null || currentRequest.apiType != APIType.mqtt)
+    if (currentRequest == null || currentRequest.apiType != APIType.mqtt) {
       return;
+    }
     final mqttModel = currentRequest.mqttRequestModel;
     if (mqttModel == null) return;
 
@@ -468,6 +469,7 @@ class CollectionStateNotifier
         topic,
         message,
         qos: mqttModel.qos,
+        retain: mqttModel.retainMessage,
         // v5-only extras (ignored on the v3 path by ConnectionManager).
         userProperties: _enabledUserProperties(mqttModel),
         responseTopic: mqttModel.responseTopic,
@@ -834,6 +836,11 @@ class CollectionStateNotifier
             allowInvalidCertificates: mqttModel.allowInvalidCertificates,
             userProperties: _enabledUserProperties(mqttModel),
             sessionExpiryInterval: mqttModel.sessionExpiryInterval,
+            keepAlivePeriod: mqttModel.keepAlivePeriod,
+            willTopic: mqttModel.willTopic.trim().isNotEmpty ? mqttModel.willTopic.trim() : null,
+            willMessage: mqttModel.willMessage.trim().isNotEmpty ? mqttModel.willMessage : null,
+            willRetain: mqttModel.willRetain,
+            willQos: mqttModel.willQos,
             onInfo: (info) {
               final currentModel = state![requestId]?.mqttRequestModel;
               if (currentModel == null) return;

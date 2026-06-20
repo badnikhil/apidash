@@ -50,6 +50,16 @@ abstract class MQTTRequestModel
 
     /// v5 per-publish Message Expiry Interval (TTL, seconds). 0 = no expiry.
     @Default(0) int messageExpiryInterval,
+
+    // ── Keep Alive & Retain ──────────────────────────────────────────────
+    @Default(60) int keepAlivePeriod,
+    @Default(false) bool retainMessage,
+
+    // ── Last Will & Testament (LWT) ──────────────────────────────────────
+    @Default("") String willTopic,
+    @Default("") String willMessage,
+    @Default(false) bool willRetain,
+    @Default(0) int willQos,
   }) = _MQTTRequestModel;
 
   factory MQTTRequestModel.fromJson(Map<String, dynamic> json) =>

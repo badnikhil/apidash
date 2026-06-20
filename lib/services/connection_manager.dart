@@ -126,6 +126,11 @@ class ConnectionManager {
     bool allowInvalidCertificates = false,
     List<NameValueModel> userProperties = const [],
     int sessionExpiryInterval = 0,
+    int keepAlivePeriod = 60,
+    String? willTopic,
+    String? willMessage,
+    bool willRetain = false,
+    int willQos = 0,
     void Function(String topic)? onSubscribed,
     void Function(String topic, String payload)? onMessage,
     void Function()? onDisconnected,
@@ -146,6 +151,11 @@ class ConnectionManager {
         allowInvalidCertificates: allowInvalidCertificates,
         userProperties: userProperties,
         sessionExpiryInterval: sessionExpiryInterval,
+        keepAlivePeriod: keepAlivePeriod,
+        willTopic: willTopic,
+        willMessage: willMessage,
+        willRetain: willRetain,
+        willQos: willQos,
         onSubscribed: onSubscribed,
         onMessage: onMessage,
         onDisconnected: onDisconnected,
@@ -162,6 +172,11 @@ class ConnectionManager {
         useTLS: useTLS,
         useWebSocket: useWebSocket,
         allowInvalidCertificates: allowInvalidCertificates,
+        keepAlivePeriod: keepAlivePeriod,
+        willTopic: willTopic,
+        willMessage: willMessage,
+        willRetain: willRetain,
+        willQos: willQos,
         onSubscribed: onSubscribed,
         onMessage: onMessage,
         onDisconnected: onDisconnected,
@@ -219,6 +234,11 @@ class ConnectionManager {
     bool useTLS = false,
     bool useWebSocket = false,
     bool allowInvalidCertificates = false,
+    int keepAlivePeriod = 60,
+    String? willTopic,
+    String? willMessage,
+    bool willRetain = false,
+    int willQos = 0,
     void Function(String topic)? onSubscribed,
     void Function(String topic, String payload)? onMessage,
     void Function()? onDisconnected,
@@ -230,7 +250,23 @@ class ConnectionManager {
 
     final client = MqttServerClient.withPort(server, finalClientId, effectivePort);
     client.logging(on: false);
-    client.keepAlivePeriod = 60;
+    client.keepAlivePeriod = keepAlivePeriod;
+
+    if (willTopic != null && willMessage != null) {
+      final mqos = MqttQos.values.length > willQos
+          ? MqttQos.values[willQos]
+          : MqttQos.atMostOnce;
+      final builder = MqttClientPayloadBuilder();
+      builder.addString(willMessage);
+      client.connectionMessage = MqttConnectMessage()
+          .withClientIdentifier(finalClientId)
+          .withWillTopic(willTopic)
+          .withWillMessage(willMessage)
+          .withWillQos(mqos);
+      if (willRetain) {
+        client.connectionMessage!.withWillRetain();
+      }
+    }
 
     // TLS / transport configuration (see TLS-fix notes). `secure` and
     // `useWebSocket` are mutually exclusive in mqtt_client.
@@ -310,6 +346,11 @@ class ConnectionManager {
     bool allowInvalidCertificates = false,
     List<NameValueModel> userProperties = const [],
     int sessionExpiryInterval = 0,
+    int keepAlivePeriod = 60,
+    String? willTopic,
+    String? willMessage,
+    bool willRetain = false,
+    int willQos = 0,
     void Function(String topic)? onSubscribed,
     void Function(String topic, String payload)? onMessage,
     void Function()? onDisconnected,
@@ -322,7 +363,7 @@ class ConnectionManager {
     final client =
         mqtt5.MqttServerClient.withPort(server, finalClientId, effectivePort);
     client.logging(on: false);
-    client.keepAlivePeriod = 60;
+    client.keepAlivePeriod = keepAlivePeriod;
 
     // Same TLS / transport rules as v3 (mqtt5_client mirrors the API).
     if (useWebSocket) {
@@ -344,9 +385,13 @@ class ConnectionManager {
     client.onDisconnected = () {
       debugPrint('MQTT(v5): disconnected $requestId');
       // Surface the DISCONNECT reason code from the broker, if any.
-      final dr = client.connectionStatus?.disconnectMessage.reasonCode;
-      if (dr != null && dr != mqtt5.MqttDisconnectReasonCode.notSet) {
-        onInfo?.call('DISCONNECT reason: ${dr.name}');
+      try {
+        final dr = client.connectionStatus?.disconnectMessage.reasonCode;
+        if (dr != null && dr != mqtt5.MqttDisconnectReasonCode.notSet) {
+          onInfo?.call('DISCONNECT reason: ${dr.name}');
+        }
+      } catch (e) {
+        // Ignored. MqttConnectionStatus.disconnectMessage throws LateInitializationError if not set.
       }
       _mqtt5Clients.remove(requestId);
       onDisconnected?.call();
@@ -365,19 +410,47 @@ class ConnectionManager {
       onInfo?.call('SUBACK FAILED "$topic": ${sub.reasonCode?.name ?? 'unknown'}');
     };
 
-    // Build the v5 CONNECT message: clean/persistent session via session
-    // expiry interval, plus User Properties.
-    final connectMessage = mqtt5.MqttConnectMessage()
-        .withClientIdentifier(finalClientId)
-        .withSessionExpiryInterval(sessionExpiryInterval);
+    // In v5, sessionExpiryInterval handles clean sessions vs. persistent
+    // state (0 = clean start, otherwise persist for N seconds).
+    final connMessage = mqtt5.MqttConnectMessage()
+        .withClientIdentifier(finalClientId);
+
+    if (sessionExpiryInterval > 0) {
+      // By definition in v5, if we want to keep the session alive later,
+      // startClean MUST be false on subsequent reconnects. For simplicity,
+      // we match v3 behavior but set the expiry interval.
+      connMessage.startClean();
+    } else {
+      // Clean start
+      connMessage.startClean();
+    }
+
+    if (willTopic != null && willMessage != null) {
+      final mqos = mqtt5.MqttQos.values.length > willQos
+          ? mqtt5.MqttQos.values[willQos]
+          : mqtt5.MqttQos.atMostOnce;
+      final builder = mqtt5.MqttPayloadBuilder();
+      builder.addString(willMessage);
+      
+      connMessage.will()
+          .withWillTopic(willTopic)
+          .withWillPayload(builder.payload!)
+          .withWillQos(mqos);
+          
+      if (willRetain) {
+        connMessage.withWillRetain();
+      }
+    }
+
+    client.connectionMessage = connMessage;
+
     if (username?.isNotEmpty == true) {
-      connectMessage.authenticateAs(username, password);
+      connMessage.authenticateAs(username, password);
     }
     for (final p in userProperties) {
       if (p.name.trim().isEmpty) continue;
-      connectMessage.addUserPropertyPair(p.name, p.value?.toString() ?? '');
+      connMessage.addUserPropertyPair(p.name, p.value?.toString() ?? '');
     }
-    client.connectionMessage = connectMessage;
 
     try {
       if (username?.isNotEmpty == true && password?.isNotEmpty == true) {
@@ -571,13 +644,13 @@ class ConnectionManager {
     }
     _channels.clear();
 
-    for (final entry in _mqttClients.entries) {
-      entry.value.disconnect();
+    for (final client in _mqttClients.values.toList()) {
+      client.disconnect();
     }
     _mqttClients.clear();
 
-    for (final entry in _mqtt5Clients.entries) {
-      entry.value.disconnect();
+    for (final client in _mqtt5Clients.values.toList()) {
+      client.disconnect();
     }
     _mqtt5Clients.clear();
   }

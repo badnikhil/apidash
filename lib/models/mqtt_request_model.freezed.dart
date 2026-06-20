@@ -27,7 +27,9 @@ mixin _$MQTTRequestModel {
  String get responseTopic; String get correlationData;/// v5 Session Expiry Interval (seconds). Replaces the v3 binary
 /// clean-session flag. 0 = session ends on disconnect (clean start).
  int get sessionExpiryInterval;/// v5 per-publish Message Expiry Interval (TTL, seconds). 0 = no expiry.
- int get messageExpiryInterval;
+ int get messageExpiryInterval;// ── Keep Alive & Retain ──────────────────────────────────────────────
+ int get keepAlivePeriod; bool get retainMessage;// ── Last Will & Testament (LWT) ──────────────────────────────────────
+ String get willTopic; String get willMessage; bool get willRetain; int get willQos;
 /// Create a copy of MQTTRequestModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -40,16 +42,16 @@ $MQTTRequestModelCopyWith<MQTTRequestModel> get copyWith => _$MQTTRequestModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MQTTRequestModel&&(identical(other.brokerUrl, brokerUrl) || other.brokerUrl == brokerUrl)&&(identical(other.port, port) || other.port == port)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.username, username) || other.username == username)&&(identical(other.password, password) || other.password == password)&&(identical(other.version, version) || other.version == version)&&const DeepCollectionEquality().equals(other.subscribedTopics, subscribedTopics)&&const DeepCollectionEquality().equals(other.isTopicEnabledList, isTopicEnabledList)&&(identical(other.useTLS, useTLS) || other.useTLS == useTLS)&&(identical(other.useWebSocket, useWebSocket) || other.useWebSocket == useWebSocket)&&(identical(other.qos, qos) || other.qos == qos)&&const DeepCollectionEquality().equals(other.messageHistory, messageHistory)&&(identical(other.message, message) || other.message == message)&&(identical(other.publishTopic, publishTopic) || other.publishTopic == publishTopic)&&(identical(other.allowInvalidCertificates, allowInvalidCertificates) || other.allowInvalidCertificates == allowInvalidCertificates)&&const DeepCollectionEquality().equals(other.userProperties, userProperties)&&const DeepCollectionEquality().equals(other.isUserPropertyEnabledList, isUserPropertyEnabledList)&&(identical(other.responseTopic, responseTopic) || other.responseTopic == responseTopic)&&(identical(other.correlationData, correlationData) || other.correlationData == correlationData)&&(identical(other.sessionExpiryInterval, sessionExpiryInterval) || other.sessionExpiryInterval == sessionExpiryInterval)&&(identical(other.messageExpiryInterval, messageExpiryInterval) || other.messageExpiryInterval == messageExpiryInterval));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MQTTRequestModel&&(identical(other.brokerUrl, brokerUrl) || other.brokerUrl == brokerUrl)&&(identical(other.port, port) || other.port == port)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.username, username) || other.username == username)&&(identical(other.password, password) || other.password == password)&&(identical(other.version, version) || other.version == version)&&const DeepCollectionEquality().equals(other.subscribedTopics, subscribedTopics)&&const DeepCollectionEquality().equals(other.isTopicEnabledList, isTopicEnabledList)&&(identical(other.useTLS, useTLS) || other.useTLS == useTLS)&&(identical(other.useWebSocket, useWebSocket) || other.useWebSocket == useWebSocket)&&(identical(other.qos, qos) || other.qos == qos)&&const DeepCollectionEquality().equals(other.messageHistory, messageHistory)&&(identical(other.message, message) || other.message == message)&&(identical(other.publishTopic, publishTopic) || other.publishTopic == publishTopic)&&(identical(other.allowInvalidCertificates, allowInvalidCertificates) || other.allowInvalidCertificates == allowInvalidCertificates)&&const DeepCollectionEquality().equals(other.userProperties, userProperties)&&const DeepCollectionEquality().equals(other.isUserPropertyEnabledList, isUserPropertyEnabledList)&&(identical(other.responseTopic, responseTopic) || other.responseTopic == responseTopic)&&(identical(other.correlationData, correlationData) || other.correlationData == correlationData)&&(identical(other.sessionExpiryInterval, sessionExpiryInterval) || other.sessionExpiryInterval == sessionExpiryInterval)&&(identical(other.messageExpiryInterval, messageExpiryInterval) || other.messageExpiryInterval == messageExpiryInterval)&&(identical(other.keepAlivePeriod, keepAlivePeriod) || other.keepAlivePeriod == keepAlivePeriod)&&(identical(other.retainMessage, retainMessage) || other.retainMessage == retainMessage)&&(identical(other.willTopic, willTopic) || other.willTopic == willTopic)&&(identical(other.willMessage, willMessage) || other.willMessage == willMessage)&&(identical(other.willRetain, willRetain) || other.willRetain == willRetain)&&(identical(other.willQos, willQos) || other.willQos == willQos));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,brokerUrl,port,clientId,username,password,version,const DeepCollectionEquality().hash(subscribedTopics),const DeepCollectionEquality().hash(isTopicEnabledList),useTLS,useWebSocket,qos,const DeepCollectionEquality().hash(messageHistory),message,publishTopic,allowInvalidCertificates,const DeepCollectionEquality().hash(userProperties),const DeepCollectionEquality().hash(isUserPropertyEnabledList),responseTopic,correlationData,sessionExpiryInterval,messageExpiryInterval]);
+int get hashCode => Object.hashAll([runtimeType,brokerUrl,port,clientId,username,password,version,const DeepCollectionEquality().hash(subscribedTopics),const DeepCollectionEquality().hash(isTopicEnabledList),useTLS,useWebSocket,qos,const DeepCollectionEquality().hash(messageHistory),message,publishTopic,allowInvalidCertificates,const DeepCollectionEquality().hash(userProperties),const DeepCollectionEquality().hash(isUserPropertyEnabledList),responseTopic,correlationData,sessionExpiryInterval,messageExpiryInterval,keepAlivePeriod,retainMessage,willTopic,willMessage,willRetain,willQos]);
 
 @override
 String toString() {
-  return 'MQTTRequestModel(brokerUrl: $brokerUrl, port: $port, clientId: $clientId, username: $username, password: $password, version: $version, subscribedTopics: $subscribedTopics, isTopicEnabledList: $isTopicEnabledList, useTLS: $useTLS, useWebSocket: $useWebSocket, qos: $qos, messageHistory: $messageHistory, message: $message, publishTopic: $publishTopic, allowInvalidCertificates: $allowInvalidCertificates, userProperties: $userProperties, isUserPropertyEnabledList: $isUserPropertyEnabledList, responseTopic: $responseTopic, correlationData: $correlationData, sessionExpiryInterval: $sessionExpiryInterval, messageExpiryInterval: $messageExpiryInterval)';
+  return 'MQTTRequestModel(brokerUrl: $brokerUrl, port: $port, clientId: $clientId, username: $username, password: $password, version: $version, subscribedTopics: $subscribedTopics, isTopicEnabledList: $isTopicEnabledList, useTLS: $useTLS, useWebSocket: $useWebSocket, qos: $qos, messageHistory: $messageHistory, message: $message, publishTopic: $publishTopic, allowInvalidCertificates: $allowInvalidCertificates, userProperties: $userProperties, isUserPropertyEnabledList: $isUserPropertyEnabledList, responseTopic: $responseTopic, correlationData: $correlationData, sessionExpiryInterval: $sessionExpiryInterval, messageExpiryInterval: $messageExpiryInterval, keepAlivePeriod: $keepAlivePeriod, retainMessage: $retainMessage, willTopic: $willTopic, willMessage: $willMessage, willRetain: $willRetain, willQos: $willQos)';
 }
 
 
@@ -60,7 +62,7 @@ abstract mixin class $MQTTRequestModelCopyWith<$Res>  {
   factory $MQTTRequestModelCopyWith(MQTTRequestModel value, $Res Function(MQTTRequestModel) _then) = _$MQTTRequestModelCopyWithImpl;
 @useResult
 $Res call({
- String brokerUrl, int port, String? clientId, String? username, String? password, MQTTVersion version, List<NameValueModel> subscribedTopics, List<bool> isTopicEnabledList, bool useTLS, bool useWebSocket, int qos, List<WebSocketMessage> messageHistory, String message, String publishTopic, bool allowInvalidCertificates, List<NameValueModel> userProperties, List<bool> isUserPropertyEnabledList, String responseTopic, String correlationData, int sessionExpiryInterval, int messageExpiryInterval
+ String brokerUrl, int port, String? clientId, String? username, String? password, MQTTVersion version, List<NameValueModel> subscribedTopics, List<bool> isTopicEnabledList, bool useTLS, bool useWebSocket, int qos, List<WebSocketMessage> messageHistory, String message, String publishTopic, bool allowInvalidCertificates, List<NameValueModel> userProperties, List<bool> isUserPropertyEnabledList, String responseTopic, String correlationData, int sessionExpiryInterval, int messageExpiryInterval, int keepAlivePeriod, bool retainMessage, String willTopic, String willMessage, bool willRetain, int willQos
 });
 
 
@@ -77,7 +79,7 @@ class _$MQTTRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of MQTTRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? brokerUrl = null,Object? port = null,Object? clientId = freezed,Object? username = freezed,Object? password = freezed,Object? version = null,Object? subscribedTopics = null,Object? isTopicEnabledList = null,Object? useTLS = null,Object? useWebSocket = null,Object? qos = null,Object? messageHistory = null,Object? message = null,Object? publishTopic = null,Object? allowInvalidCertificates = null,Object? userProperties = null,Object? isUserPropertyEnabledList = null,Object? responseTopic = null,Object? correlationData = null,Object? sessionExpiryInterval = null,Object? messageExpiryInterval = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? brokerUrl = null,Object? port = null,Object? clientId = freezed,Object? username = freezed,Object? password = freezed,Object? version = null,Object? subscribedTopics = null,Object? isTopicEnabledList = null,Object? useTLS = null,Object? useWebSocket = null,Object? qos = null,Object? messageHistory = null,Object? message = null,Object? publishTopic = null,Object? allowInvalidCertificates = null,Object? userProperties = null,Object? isUserPropertyEnabledList = null,Object? responseTopic = null,Object? correlationData = null,Object? sessionExpiryInterval = null,Object? messageExpiryInterval = null,Object? keepAlivePeriod = null,Object? retainMessage = null,Object? willTopic = null,Object? willMessage = null,Object? willRetain = null,Object? willQos = null,}) {
   return _then(_self.copyWith(
 brokerUrl: null == brokerUrl ? _self.brokerUrl : brokerUrl // ignore: cast_nullable_to_non_nullable
 as String,port: null == port ? _self.port : port // ignore: cast_nullable_to_non_nullable
@@ -100,6 +102,12 @@ as List<bool>,responseTopic: null == responseTopic ? _self.responseTopic : respo
 as String,correlationData: null == correlationData ? _self.correlationData : correlationData // ignore: cast_nullable_to_non_nullable
 as String,sessionExpiryInterval: null == sessionExpiryInterval ? _self.sessionExpiryInterval : sessionExpiryInterval // ignore: cast_nullable_to_non_nullable
 as int,messageExpiryInterval: null == messageExpiryInterval ? _self.messageExpiryInterval : messageExpiryInterval // ignore: cast_nullable_to_non_nullable
+as int,keepAlivePeriod: null == keepAlivePeriod ? _self.keepAlivePeriod : keepAlivePeriod // ignore: cast_nullable_to_non_nullable
+as int,retainMessage: null == retainMessage ? _self.retainMessage : retainMessage // ignore: cast_nullable_to_non_nullable
+as bool,willTopic: null == willTopic ? _self.willTopic : willTopic // ignore: cast_nullable_to_non_nullable
+as String,willMessage: null == willMessage ? _self.willMessage : willMessage // ignore: cast_nullable_to_non_nullable
+as String,willRetain: null == willRetain ? _self.willRetain : willRetain // ignore: cast_nullable_to_non_nullable
+as bool,willQos: null == willQos ? _self.willQos : willQos // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -185,10 +193,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String brokerUrl,  int port,  String? clientId,  String? username,  String? password,  MQTTVersion version,  List<NameValueModel> subscribedTopics,  List<bool> isTopicEnabledList,  bool useTLS,  bool useWebSocket,  int qos,  List<WebSocketMessage> messageHistory,  String message,  String publishTopic,  bool allowInvalidCertificates,  List<NameValueModel> userProperties,  List<bool> isUserPropertyEnabledList,  String responseTopic,  String correlationData,  int sessionExpiryInterval,  int messageExpiryInterval)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String brokerUrl,  int port,  String? clientId,  String? username,  String? password,  MQTTVersion version,  List<NameValueModel> subscribedTopics,  List<bool> isTopicEnabledList,  bool useTLS,  bool useWebSocket,  int qos,  List<WebSocketMessage> messageHistory,  String message,  String publishTopic,  bool allowInvalidCertificates,  List<NameValueModel> userProperties,  List<bool> isUserPropertyEnabledList,  String responseTopic,  String correlationData,  int sessionExpiryInterval,  int messageExpiryInterval,  int keepAlivePeriod,  bool retainMessage,  String willTopic,  String willMessage,  bool willRetain,  int willQos)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MQTTRequestModel() when $default != null:
-return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.password,_that.version,_that.subscribedTopics,_that.isTopicEnabledList,_that.useTLS,_that.useWebSocket,_that.qos,_that.messageHistory,_that.message,_that.publishTopic,_that.allowInvalidCertificates,_that.userProperties,_that.isUserPropertyEnabledList,_that.responseTopic,_that.correlationData,_that.sessionExpiryInterval,_that.messageExpiryInterval);case _:
+return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.password,_that.version,_that.subscribedTopics,_that.isTopicEnabledList,_that.useTLS,_that.useWebSocket,_that.qos,_that.messageHistory,_that.message,_that.publishTopic,_that.allowInvalidCertificates,_that.userProperties,_that.isUserPropertyEnabledList,_that.responseTopic,_that.correlationData,_that.sessionExpiryInterval,_that.messageExpiryInterval,_that.keepAlivePeriod,_that.retainMessage,_that.willTopic,_that.willMessage,_that.willRetain,_that.willQos);case _:
   return orElse();
 
 }
@@ -206,10 +214,10 @@ return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.p
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String brokerUrl,  int port,  String? clientId,  String? username,  String? password,  MQTTVersion version,  List<NameValueModel> subscribedTopics,  List<bool> isTopicEnabledList,  bool useTLS,  bool useWebSocket,  int qos,  List<WebSocketMessage> messageHistory,  String message,  String publishTopic,  bool allowInvalidCertificates,  List<NameValueModel> userProperties,  List<bool> isUserPropertyEnabledList,  String responseTopic,  String correlationData,  int sessionExpiryInterval,  int messageExpiryInterval)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String brokerUrl,  int port,  String? clientId,  String? username,  String? password,  MQTTVersion version,  List<NameValueModel> subscribedTopics,  List<bool> isTopicEnabledList,  bool useTLS,  bool useWebSocket,  int qos,  List<WebSocketMessage> messageHistory,  String message,  String publishTopic,  bool allowInvalidCertificates,  List<NameValueModel> userProperties,  List<bool> isUserPropertyEnabledList,  String responseTopic,  String correlationData,  int sessionExpiryInterval,  int messageExpiryInterval,  int keepAlivePeriod,  bool retainMessage,  String willTopic,  String willMessage,  bool willRetain,  int willQos)  $default,) {final _that = this;
 switch (_that) {
 case _MQTTRequestModel():
-return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.password,_that.version,_that.subscribedTopics,_that.isTopicEnabledList,_that.useTLS,_that.useWebSocket,_that.qos,_that.messageHistory,_that.message,_that.publishTopic,_that.allowInvalidCertificates,_that.userProperties,_that.isUserPropertyEnabledList,_that.responseTopic,_that.correlationData,_that.sessionExpiryInterval,_that.messageExpiryInterval);case _:
+return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.password,_that.version,_that.subscribedTopics,_that.isTopicEnabledList,_that.useTLS,_that.useWebSocket,_that.qos,_that.messageHistory,_that.message,_that.publishTopic,_that.allowInvalidCertificates,_that.userProperties,_that.isUserPropertyEnabledList,_that.responseTopic,_that.correlationData,_that.sessionExpiryInterval,_that.messageExpiryInterval,_that.keepAlivePeriod,_that.retainMessage,_that.willTopic,_that.willMessage,_that.willRetain,_that.willQos);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -226,10 +234,10 @@ return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.p
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String brokerUrl,  int port,  String? clientId,  String? username,  String? password,  MQTTVersion version,  List<NameValueModel> subscribedTopics,  List<bool> isTopicEnabledList,  bool useTLS,  bool useWebSocket,  int qos,  List<WebSocketMessage> messageHistory,  String message,  String publishTopic,  bool allowInvalidCertificates,  List<NameValueModel> userProperties,  List<bool> isUserPropertyEnabledList,  String responseTopic,  String correlationData,  int sessionExpiryInterval,  int messageExpiryInterval)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String brokerUrl,  int port,  String? clientId,  String? username,  String? password,  MQTTVersion version,  List<NameValueModel> subscribedTopics,  List<bool> isTopicEnabledList,  bool useTLS,  bool useWebSocket,  int qos,  List<WebSocketMessage> messageHistory,  String message,  String publishTopic,  bool allowInvalidCertificates,  List<NameValueModel> userProperties,  List<bool> isUserPropertyEnabledList,  String responseTopic,  String correlationData,  int sessionExpiryInterval,  int messageExpiryInterval,  int keepAlivePeriod,  bool retainMessage,  String willTopic,  String willMessage,  bool willRetain,  int willQos)?  $default,) {final _that = this;
 switch (_that) {
 case _MQTTRequestModel() when $default != null:
-return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.password,_that.version,_that.subscribedTopics,_that.isTopicEnabledList,_that.useTLS,_that.useWebSocket,_that.qos,_that.messageHistory,_that.message,_that.publishTopic,_that.allowInvalidCertificates,_that.userProperties,_that.isUserPropertyEnabledList,_that.responseTopic,_that.correlationData,_that.sessionExpiryInterval,_that.messageExpiryInterval);case _:
+return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.password,_that.version,_that.subscribedTopics,_that.isTopicEnabledList,_that.useTLS,_that.useWebSocket,_that.qos,_that.messageHistory,_that.message,_that.publishTopic,_that.allowInvalidCertificates,_that.userProperties,_that.isUserPropertyEnabledList,_that.responseTopic,_that.correlationData,_that.sessionExpiryInterval,_that.messageExpiryInterval,_that.keepAlivePeriod,_that.retainMessage,_that.willTopic,_that.willMessage,_that.willRetain,_that.willQos);case _:
   return null;
 
 }
@@ -241,7 +249,7 @@ return $default(_that.brokerUrl,_that.port,_that.clientId,_that.username,_that.p
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _MQTTRequestModel implements MQTTRequestModel {
-  const _MQTTRequestModel({required this.brokerUrl, this.port = 1883, this.clientId, this.username, this.password, this.version = MQTTVersion.v5, final  List<NameValueModel> subscribedTopics = const [], final  List<bool> isTopicEnabledList = const [], this.useTLS = false, this.useWebSocket = false, this.qos = 0, final  List<WebSocketMessage> messageHistory = const [], this.message = "", this.publishTopic = "", this.allowInvalidCertificates = false, final  List<NameValueModel> userProperties = const [], final  List<bool> isUserPropertyEnabledList = const [], this.responseTopic = "", this.correlationData = "", this.sessionExpiryInterval = 0, this.messageExpiryInterval = 0}): _subscribedTopics = subscribedTopics,_isTopicEnabledList = isTopicEnabledList,_messageHistory = messageHistory,_userProperties = userProperties,_isUserPropertyEnabledList = isUserPropertyEnabledList;
+  const _MQTTRequestModel({required this.brokerUrl, this.port = 1883, this.clientId, this.username, this.password, this.version = MQTTVersion.v5, final  List<NameValueModel> subscribedTopics = const [], final  List<bool> isTopicEnabledList = const [], this.useTLS = false, this.useWebSocket = false, this.qos = 0, final  List<WebSocketMessage> messageHistory = const [], this.message = "", this.publishTopic = "", this.allowInvalidCertificates = false, final  List<NameValueModel> userProperties = const [], final  List<bool> isUserPropertyEnabledList = const [], this.responseTopic = "", this.correlationData = "", this.sessionExpiryInterval = 0, this.messageExpiryInterval = 0, this.keepAlivePeriod = 60, this.retainMessage = false, this.willTopic = "", this.willMessage = "", this.willRetain = false, this.willQos = 0}): _subscribedTopics = subscribedTopics,_isTopicEnabledList = isTopicEnabledList,_messageHistory = messageHistory,_userProperties = userProperties,_isUserPropertyEnabledList = isUserPropertyEnabledList;
   factory _MQTTRequestModel.fromJson(Map<String, dynamic> json) => _$MQTTRequestModelFromJson(json);
 
 @override final  String brokerUrl;
@@ -310,6 +318,14 @@ class _MQTTRequestModel implements MQTTRequestModel {
 @override@JsonKey() final  int sessionExpiryInterval;
 /// v5 per-publish Message Expiry Interval (TTL, seconds). 0 = no expiry.
 @override@JsonKey() final  int messageExpiryInterval;
+// ── Keep Alive & Retain ──────────────────────────────────────────────
+@override@JsonKey() final  int keepAlivePeriod;
+@override@JsonKey() final  bool retainMessage;
+// ── Last Will & Testament (LWT) ──────────────────────────────────────
+@override@JsonKey() final  String willTopic;
+@override@JsonKey() final  String willMessage;
+@override@JsonKey() final  bool willRetain;
+@override@JsonKey() final  int willQos;
 
 /// Create a copy of MQTTRequestModel
 /// with the given fields replaced by the non-null parameter values.
@@ -324,16 +340,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MQTTRequestModel&&(identical(other.brokerUrl, brokerUrl) || other.brokerUrl == brokerUrl)&&(identical(other.port, port) || other.port == port)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.username, username) || other.username == username)&&(identical(other.password, password) || other.password == password)&&(identical(other.version, version) || other.version == version)&&const DeepCollectionEquality().equals(other._subscribedTopics, _subscribedTopics)&&const DeepCollectionEquality().equals(other._isTopicEnabledList, _isTopicEnabledList)&&(identical(other.useTLS, useTLS) || other.useTLS == useTLS)&&(identical(other.useWebSocket, useWebSocket) || other.useWebSocket == useWebSocket)&&(identical(other.qos, qos) || other.qos == qos)&&const DeepCollectionEquality().equals(other._messageHistory, _messageHistory)&&(identical(other.message, message) || other.message == message)&&(identical(other.publishTopic, publishTopic) || other.publishTopic == publishTopic)&&(identical(other.allowInvalidCertificates, allowInvalidCertificates) || other.allowInvalidCertificates == allowInvalidCertificates)&&const DeepCollectionEquality().equals(other._userProperties, _userProperties)&&const DeepCollectionEquality().equals(other._isUserPropertyEnabledList, _isUserPropertyEnabledList)&&(identical(other.responseTopic, responseTopic) || other.responseTopic == responseTopic)&&(identical(other.correlationData, correlationData) || other.correlationData == correlationData)&&(identical(other.sessionExpiryInterval, sessionExpiryInterval) || other.sessionExpiryInterval == sessionExpiryInterval)&&(identical(other.messageExpiryInterval, messageExpiryInterval) || other.messageExpiryInterval == messageExpiryInterval));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MQTTRequestModel&&(identical(other.brokerUrl, brokerUrl) || other.brokerUrl == brokerUrl)&&(identical(other.port, port) || other.port == port)&&(identical(other.clientId, clientId) || other.clientId == clientId)&&(identical(other.username, username) || other.username == username)&&(identical(other.password, password) || other.password == password)&&(identical(other.version, version) || other.version == version)&&const DeepCollectionEquality().equals(other._subscribedTopics, _subscribedTopics)&&const DeepCollectionEquality().equals(other._isTopicEnabledList, _isTopicEnabledList)&&(identical(other.useTLS, useTLS) || other.useTLS == useTLS)&&(identical(other.useWebSocket, useWebSocket) || other.useWebSocket == useWebSocket)&&(identical(other.qos, qos) || other.qos == qos)&&const DeepCollectionEquality().equals(other._messageHistory, _messageHistory)&&(identical(other.message, message) || other.message == message)&&(identical(other.publishTopic, publishTopic) || other.publishTopic == publishTopic)&&(identical(other.allowInvalidCertificates, allowInvalidCertificates) || other.allowInvalidCertificates == allowInvalidCertificates)&&const DeepCollectionEquality().equals(other._userProperties, _userProperties)&&const DeepCollectionEquality().equals(other._isUserPropertyEnabledList, _isUserPropertyEnabledList)&&(identical(other.responseTopic, responseTopic) || other.responseTopic == responseTopic)&&(identical(other.correlationData, correlationData) || other.correlationData == correlationData)&&(identical(other.sessionExpiryInterval, sessionExpiryInterval) || other.sessionExpiryInterval == sessionExpiryInterval)&&(identical(other.messageExpiryInterval, messageExpiryInterval) || other.messageExpiryInterval == messageExpiryInterval)&&(identical(other.keepAlivePeriod, keepAlivePeriod) || other.keepAlivePeriod == keepAlivePeriod)&&(identical(other.retainMessage, retainMessage) || other.retainMessage == retainMessage)&&(identical(other.willTopic, willTopic) || other.willTopic == willTopic)&&(identical(other.willMessage, willMessage) || other.willMessage == willMessage)&&(identical(other.willRetain, willRetain) || other.willRetain == willRetain)&&(identical(other.willQos, willQos) || other.willQos == willQos));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,brokerUrl,port,clientId,username,password,version,const DeepCollectionEquality().hash(_subscribedTopics),const DeepCollectionEquality().hash(_isTopicEnabledList),useTLS,useWebSocket,qos,const DeepCollectionEquality().hash(_messageHistory),message,publishTopic,allowInvalidCertificates,const DeepCollectionEquality().hash(_userProperties),const DeepCollectionEquality().hash(_isUserPropertyEnabledList),responseTopic,correlationData,sessionExpiryInterval,messageExpiryInterval]);
+int get hashCode => Object.hashAll([runtimeType,brokerUrl,port,clientId,username,password,version,const DeepCollectionEquality().hash(_subscribedTopics),const DeepCollectionEquality().hash(_isTopicEnabledList),useTLS,useWebSocket,qos,const DeepCollectionEquality().hash(_messageHistory),message,publishTopic,allowInvalidCertificates,const DeepCollectionEquality().hash(_userProperties),const DeepCollectionEquality().hash(_isUserPropertyEnabledList),responseTopic,correlationData,sessionExpiryInterval,messageExpiryInterval,keepAlivePeriod,retainMessage,willTopic,willMessage,willRetain,willQos]);
 
 @override
 String toString() {
-  return 'MQTTRequestModel(brokerUrl: $brokerUrl, port: $port, clientId: $clientId, username: $username, password: $password, version: $version, subscribedTopics: $subscribedTopics, isTopicEnabledList: $isTopicEnabledList, useTLS: $useTLS, useWebSocket: $useWebSocket, qos: $qos, messageHistory: $messageHistory, message: $message, publishTopic: $publishTopic, allowInvalidCertificates: $allowInvalidCertificates, userProperties: $userProperties, isUserPropertyEnabledList: $isUserPropertyEnabledList, responseTopic: $responseTopic, correlationData: $correlationData, sessionExpiryInterval: $sessionExpiryInterval, messageExpiryInterval: $messageExpiryInterval)';
+  return 'MQTTRequestModel(brokerUrl: $brokerUrl, port: $port, clientId: $clientId, username: $username, password: $password, version: $version, subscribedTopics: $subscribedTopics, isTopicEnabledList: $isTopicEnabledList, useTLS: $useTLS, useWebSocket: $useWebSocket, qos: $qos, messageHistory: $messageHistory, message: $message, publishTopic: $publishTopic, allowInvalidCertificates: $allowInvalidCertificates, userProperties: $userProperties, isUserPropertyEnabledList: $isUserPropertyEnabledList, responseTopic: $responseTopic, correlationData: $correlationData, sessionExpiryInterval: $sessionExpiryInterval, messageExpiryInterval: $messageExpiryInterval, keepAlivePeriod: $keepAlivePeriod, retainMessage: $retainMessage, willTopic: $willTopic, willMessage: $willMessage, willRetain: $willRetain, willQos: $willQos)';
 }
 
 
@@ -344,7 +360,7 @@ abstract mixin class _$MQTTRequestModelCopyWith<$Res> implements $MQTTRequestMod
   factory _$MQTTRequestModelCopyWith(_MQTTRequestModel value, $Res Function(_MQTTRequestModel) _then) = __$MQTTRequestModelCopyWithImpl;
 @override @useResult
 $Res call({
- String brokerUrl, int port, String? clientId, String? username, String? password, MQTTVersion version, List<NameValueModel> subscribedTopics, List<bool> isTopicEnabledList, bool useTLS, bool useWebSocket, int qos, List<WebSocketMessage> messageHistory, String message, String publishTopic, bool allowInvalidCertificates, List<NameValueModel> userProperties, List<bool> isUserPropertyEnabledList, String responseTopic, String correlationData, int sessionExpiryInterval, int messageExpiryInterval
+ String brokerUrl, int port, String? clientId, String? username, String? password, MQTTVersion version, List<NameValueModel> subscribedTopics, List<bool> isTopicEnabledList, bool useTLS, bool useWebSocket, int qos, List<WebSocketMessage> messageHistory, String message, String publishTopic, bool allowInvalidCertificates, List<NameValueModel> userProperties, List<bool> isUserPropertyEnabledList, String responseTopic, String correlationData, int sessionExpiryInterval, int messageExpiryInterval, int keepAlivePeriod, bool retainMessage, String willTopic, String willMessage, bool willRetain, int willQos
 });
 
 
@@ -361,7 +377,7 @@ class __$MQTTRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of MQTTRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? brokerUrl = null,Object? port = null,Object? clientId = freezed,Object? username = freezed,Object? password = freezed,Object? version = null,Object? subscribedTopics = null,Object? isTopicEnabledList = null,Object? useTLS = null,Object? useWebSocket = null,Object? qos = null,Object? messageHistory = null,Object? message = null,Object? publishTopic = null,Object? allowInvalidCertificates = null,Object? userProperties = null,Object? isUserPropertyEnabledList = null,Object? responseTopic = null,Object? correlationData = null,Object? sessionExpiryInterval = null,Object? messageExpiryInterval = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? brokerUrl = null,Object? port = null,Object? clientId = freezed,Object? username = freezed,Object? password = freezed,Object? version = null,Object? subscribedTopics = null,Object? isTopicEnabledList = null,Object? useTLS = null,Object? useWebSocket = null,Object? qos = null,Object? messageHistory = null,Object? message = null,Object? publishTopic = null,Object? allowInvalidCertificates = null,Object? userProperties = null,Object? isUserPropertyEnabledList = null,Object? responseTopic = null,Object? correlationData = null,Object? sessionExpiryInterval = null,Object? messageExpiryInterval = null,Object? keepAlivePeriod = null,Object? retainMessage = null,Object? willTopic = null,Object? willMessage = null,Object? willRetain = null,Object? willQos = null,}) {
   return _then(_MQTTRequestModel(
 brokerUrl: null == brokerUrl ? _self.brokerUrl : brokerUrl // ignore: cast_nullable_to_non_nullable
 as String,port: null == port ? _self.port : port // ignore: cast_nullable_to_non_nullable
@@ -384,6 +400,12 @@ as List<bool>,responseTopic: null == responseTopic ? _self.responseTopic : respo
 as String,correlationData: null == correlationData ? _self.correlationData : correlationData // ignore: cast_nullable_to_non_nullable
 as String,sessionExpiryInterval: null == sessionExpiryInterval ? _self.sessionExpiryInterval : sessionExpiryInterval // ignore: cast_nullable_to_non_nullable
 as int,messageExpiryInterval: null == messageExpiryInterval ? _self.messageExpiryInterval : messageExpiryInterval // ignore: cast_nullable_to_non_nullable
+as int,keepAlivePeriod: null == keepAlivePeriod ? _self.keepAlivePeriod : keepAlivePeriod // ignore: cast_nullable_to_non_nullable
+as int,retainMessage: null == retainMessage ? _self.retainMessage : retainMessage // ignore: cast_nullable_to_non_nullable
+as bool,willTopic: null == willTopic ? _self.willTopic : willTopic // ignore: cast_nullable_to_non_nullable
+as String,willMessage: null == willMessage ? _self.willMessage : willMessage // ignore: cast_nullable_to_non_nullable
+as String,willRetain: null == willRetain ? _self.willRetain : willRetain // ignore: cast_nullable_to_non_nullable
+as bool,willQos: null == willQos ? _self.willQos : willQos // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
