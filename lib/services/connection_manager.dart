@@ -138,6 +138,16 @@ class ConnectionManager {
   }) async {
     disconnectMqtt(requestId);
 
+    // Strip any lingering port from the URL if the user typed it manually 
+    // and the UI didn't aggressively strip it to preserve cursor position.
+    try {
+      final uriStr = brokerUrl.contains('://') ? brokerUrl : 'mqtt://$brokerUrl';
+      final uri = Uri.parse(uriStr);
+      if (uri.hasPort && uri.port > 0) {
+        brokerUrl = brokerUrl.replaceFirst(':${uri.port}', '');
+      }
+    } catch (_) {}
+
     if (version == MQTTVersion.v5) {
       await _connectMqttV5(
         requestId,
@@ -416,14 +426,14 @@ class ConnectionManager {
         .withClientIdentifier(finalClientId);
 
     if (sessionExpiryInterval > 0) {
-      // By definition in v5, if we want to keep the session alive later,
-      // startClean MUST be false on subsequent reconnects. For simplicity,
-      // we match v3 behavior but set the expiry interval.
-      connMessage.startClean();
+      connMessage.withSessionExpiryInterval(sessionExpiryInterval);
+      connMessage.startClean(); // In v5, clean start = true, but expiry allows state preservation
     } else {
-      // Clean start
       connMessage.startClean();
     }
+    
+    // Also ensure keep alive is explicitly set on the connect message
+    connMessage.keepAliveFor(keepAlivePeriod);
 
     if (willTopic != null && willMessage != null) {
       final mqos = mqtt5.MqttQos.values.length > willQos

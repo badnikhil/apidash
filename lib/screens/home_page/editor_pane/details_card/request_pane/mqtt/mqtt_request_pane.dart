@@ -331,10 +331,10 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
               const SizedBox(width: 16),
               Expanded(
                 flex: 1,
-                child: TextFormField(
+                child: EnvAuthField(
                   initialValue: mqttModel.port.toString(),
-                  decoration: const InputDecoration(labelText: "Port"),
-                  keyboardType: TextInputType.number,
+                  hintText: "1883",
+                  title: "Port",
                   onChanged: (val) {
                     final port = int.tryParse(val) ?? 1883;
                     ref
@@ -454,10 +454,18 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 subtitle: const Text("Encrypt the connection (TLS/SSL)"),
                 value: mqttModel.useTLS,
                 onChanged: (val) {
+                  int newPort = mqttModel.port;
+                  if (val) {
+                    if (newPort == 1883) newPort = 8883;
+                    else if (newPort == 8083) newPort = 8084;
+                  } else {
+                    if (newPort == 8883) newPort = 1883;
+                    else if (newPort == 8084) newPort = 8083;
+                  }
                   ref
                       .read(collectionStateNotifierProvider.notifier)
                       .update(
-                        mqttRequestModel: mqttModel.copyWith(useTLS: val),
+                        mqttRequestModel: mqttModel.copyWith(useTLS: val, port: newPort),
                       );
                 },
               ),
@@ -483,10 +491,18 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 subtitle: const Text("Tunnel MQTT over a WebSocket transport"),
                 value: mqttModel.useWebSocket,
                 onChanged: (val) {
+                  int newPort = mqttModel.port;
+                  if (val) {
+                    if (newPort == 1883) newPort = 8083;
+                    else if (newPort == 8883) newPort = 8084;
+                  } else {
+                    if (newPort == 8083) newPort = 1883;
+                    else if (newPort == 8084) newPort = 8883;
+                  }
                   ref
                       .read(collectionStateNotifierProvider.notifier)
                       .update(
-                        mqttRequestModel: mqttModel.copyWith(useWebSocket: val),
+                        mqttRequestModel: mqttModel.copyWith(useWebSocket: val, port: newPort),
                       );
                 },
               ),

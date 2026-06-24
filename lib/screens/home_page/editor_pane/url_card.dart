@@ -203,8 +203,35 @@ class URLTextField extends ConsumerWidget {
         } else if (requestModel.apiType == APIType.mqtt) {
           final mqttModel = requestModel.mqttRequestModel;
           if (mqttModel != null) {
+            String brokerUrl = value;
+            int port = mqttModel.port;
+            bool useTLS = mqttModel.useTLS;
+            bool useWebSocket = mqttModel.useWebSocket;
+
+            try {
+              final uriStr = brokerUrl.contains('://') ? brokerUrl : 'mqtt://$brokerUrl';
+              final uri = Uri.parse(uriStr);
+              if (uri.hasPort && uri.port > 0 && uri.port <= 65535) {
+                port = uri.port;
+                if (uri.scheme == 'mqtts' || uri.scheme == 'wss') useTLS = true;
+                if (uri.scheme == 'mqtt' || uri.scheme == 'ws') useTLS = false;
+                if (uri.scheme == 'ws' || uri.scheme == 'wss') useWebSocket = true;
+                if (uri.scheme == 'mqtt' || uri.scheme == 'mqtts') useWebSocket = false;
+
+                // Safely strip port if it was pasted (length jumped by >1 character)
+                if ((value.length - mqttModel.brokerUrl.length).abs() > 1) {
+                  brokerUrl = brokerUrl.replaceFirst(':${uri.port}', '');
+                }
+              }
+            } catch (_) {}
+
             ref.read(collectionStateNotifierProvider.notifier).update(
-                mqttRequestModel: mqttModel.copyWith(brokerUrl: value));
+                mqttRequestModel: mqttModel.copyWith(
+                  brokerUrl: brokerUrl,
+                  port: port,
+                  useTLS: useTLS,
+                  useWebSocket: useWebSocket,
+                ));
           }
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
