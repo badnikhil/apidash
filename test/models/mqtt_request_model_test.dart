@@ -30,6 +30,11 @@ void main() {
       expect(model.correlationData, '');
       expect(model.sessionExpiryInterval, 0);
       expect(model.messageExpiryInterval, 0);
+      expect(model.keepAlivePeriod, 60);
+      expect(model.willTopic, '');
+      expect(model.willMessage, '');
+      expect(model.willRetain, false);
+      expect(model.willQos, 0);
     });
   });
 
@@ -130,6 +135,38 @@ void main() {
       expect(base.messageExpiryInterval, 0);
     });
 
+    test('copyWith keepAlivePeriod', () {
+      final c = base.copyWith(keepAlivePeriod: 120);
+      expect(c.keepAlivePeriod, 120);
+      expect(c.brokerUrl, base.brokerUrl);
+      expect(base.keepAlivePeriod, 60);
+    });
+
+    test('copyWith retainMessage', () {
+      final c = base.copyWith(retainMessage: true);
+      expect(c.retainMessage, true);
+      expect(c.brokerUrl, base.brokerUrl);
+      expect(base.retainMessage, false);
+    });
+
+    test('copyWith willTopic, willMessage, willRetain, willQos', () {
+      final c = base.copyWith(
+        willTopic: 'lwt/1',
+        willMessage: 'dead',
+        willRetain: true,
+        willQos: 2,
+      );
+      expect(c.willTopic, 'lwt/1');
+      expect(c.willMessage, 'dead');
+      expect(c.willRetain, true);
+      expect(c.willQos, 2);
+      expect(c.brokerUrl, base.brokerUrl);
+      expect(base.willTopic, '');
+      expect(base.willMessage, '');
+      expect(base.willRetain, false);
+      expect(base.willQos, 0);
+    });
+
     test('copyWith allowInvalidCertificates changes only that field', () {
       final c = base.copyWith(allowInvalidCertificates: true);
       expect(c.allowInvalidCertificates, true);
@@ -177,6 +214,12 @@ void main() {
       expect(model.sessionExpiryInterval, 3600);
       expect(model.messageExpiryInterval, 60);
       expect(model.allowInvalidCertificates, true);
+      expect(model.keepAlivePeriod, 120);
+      expect(model.retainMessage, true);
+      expect(model.willTopic, 'lwt/topic');
+      expect(model.willMessage, 'lwt-msg');
+      expect(model.willRetain, true);
+      expect(model.willQos, 1);
     });
 
     test('Full toJson -> fromJson is lossless', () {
@@ -207,6 +250,11 @@ void main() {
       expect(model.correlationData, '');
       expect(model.sessionExpiryInterval, 0);
       expect(model.messageExpiryInterval, 0);
+      expect(model.keepAlivePeriod, 60);
+      expect(model.willTopic, '');
+      expect(model.willMessage, '');
+      expect(model.willRetain, false);
+      expect(model.willQos, 0);
     });
 
     test('fromJson with explicit null optionals yields defaults', () {
@@ -323,6 +371,12 @@ void main() {
       expect(a == a.copyWith(correlationData: 'cd'), false);
       expect(a == a.copyWith(sessionExpiryInterval: 1), false);
       expect(a == a.copyWith(messageExpiryInterval: 1), false);
+      expect(a == a.copyWith(keepAlivePeriod: 1), false);
+      expect(a == a.copyWith(retainMessage: true), false);
+      expect(a == a.copyWith(willTopic: 'wt'), false);
+      expect(a == a.copyWith(willMessage: 'wm'), false);
+      expect(a == a.copyWith(willRetain: true), false);
+      expect(a == a.copyWith(willQos: 1), false);
       expect(
         a ==
             a.copyWith(

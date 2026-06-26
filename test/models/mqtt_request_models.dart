@@ -29,6 +29,12 @@ const mqttRequestModelDefaultsJson = {
   'correlationData': '',
   'sessionExpiryInterval': 0,
   'messageExpiryInterval': 0,
+  'keepAlivePeriod': 60,
+  'retainMessage': false,
+  'willTopic': '',
+  'willMessage': '',
+  'willRetain': false,
+  'willQos': 0,
 };
 
 /// A fully-populated MQTT v5 model exercising subscribedTopics, userProperties,
@@ -75,6 +81,12 @@ final mqttRequestModelFull = MQTTRequestModel(
   correlationData: 'corr-123',
   sessionExpiryInterval: 3600,
   messageExpiryInterval: 60,
+  keepAlivePeriod: 120,
+  retainMessage: true,
+  willTopic: 'lwt/topic',
+  willMessage: 'lwt-msg',
+  willRetain: true,
+  willQos: 1,
 );
 
 /// Expected JSON for [mqttRequestModelFull].
@@ -121,6 +133,12 @@ const mqttRequestModelFullJson = {
   'correlationData': 'corr-123',
   'sessionExpiryInterval': 3600,
   'messageExpiryInterval': 60,
+  'keepAlivePeriod': 120,
+  'retainMessage': true,
+  'willTopic': 'lwt/topic',
+  'willMessage': 'lwt-msg',
+  'willRetain': true,
+  'willQos': 1,
 };
 
 /// A v3.1.1 model used to assert the enum string mapping round-trips.
