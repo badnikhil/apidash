@@ -3,6 +3,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:grpc/grpc.dart';
+import 'package:apidash/models/grpc_request_model.dart';
 
 /// TODO: it should also be usable for other Protocols
 /// A singleton service that holds active WebSocket connections.
@@ -17,6 +19,8 @@ class ConnectionManager {
 
   /// Maps request ID → active WebSocket channel.
   final Map<String, WebSocketChannel> _channels = {};
+
+  final Map<String, ClientChannel> _grpcChannels = {};
 
   /// Whether there is an active connection for [requestId].
   bool hasConnection(String requestId) => _channels.containsKey(requestId);
@@ -73,5 +77,73 @@ class ConnectionManager {
       entry.value.sink.close();
     }
     _channels.clear();
+    for (final entry in _grpcChannels.entries) {
+      entry.value.terminate();
+    }
+    _grpcChannels.clear();
+  }
+
+  // gRPC 
+  ClientChannel getGrpcChannel(String requestId) => _grpcChannels[requestId]!;
+
+  Future<ClientChannel> connectGrpc(String requestId, GrpcRequestModel model) async {
+    String host = model.url.trim();
+    int port = 50051;
+
+    if (host.contains(':')) {
+      final parts = host.split(':');
+      host = parts[0].trim();
+      final p = int.tryParse(parts[1].trim());
+      if (p != null) port = p;
+    }
+
+    debugPrint("gRPC Connecting to: $host:$port");
+    final channel = ClientChannel(
+      host,
+      port: port,
+      options: ChannelOptions(
+        credentials: model.useTLS
+            ? const ChannelCredentials.secure()
+            : const ChannelCredentials.insecure(),
+      ),
+    );
+    _grpcChannels[requestId] = channel;
+    debugPrint("gRPC Channel established for $requestId");
+    return channel;
+  }
+
+  void disconnectGrpc(String requestId) {
+    final channel = _grpcChannels.remove(requestId);
+    channel?.terminate();
+  }
+
+  ClientCall<List<int>, List<int>> callGrpcMethod(
+    String requestId,
+    String service,
+    String method,
+    List<int> requestBytes, {
+    Map<String, String>? metadata,
+  }) {
+    final channel = _grpcChannels[requestId];
+    if (channel == null) {
+      throw Exception("No active gRPC channel for $requestId");
+    }
+
+    // Path is usually /{service}/{method}
+    final path = "/$service/$method";
+
+    final clientMethod = ClientMethod<List<int>, List<int>>(
+      path,
+      (List<int> value) => value,
+      (List<int> value) => value,
+    );
+
+    final call = channel.createCall(
+      clientMethod,
+      Stream.fromIterable([requestBytes]),
+      CallOptions(metadata: metadata),
+    );
+
+    return call;
   }
 }
