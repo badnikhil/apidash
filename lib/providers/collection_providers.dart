@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:apidash/models/grpc_request_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/services/connection_manager.dart';
+import 'package:apidash/services/grpc_reflection_service.dart';
+import 'package:apidash/utils/grpc_utils.dart';
 import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
 import '../models/models.dart';
@@ -168,6 +173,20 @@ class CollectionStateNotifier
     unsave();
   }
 
+  void clearGrpcHistory({String? id}) {
+    final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null || state?[rId] == null) return;
+    var currentModel = state![rId]!;
+    final newModel = currentModel.copyWith(
+      httpResponseModel: null,
+      grpcRequestModel: currentModel.grpcRequestModel?.copyWith(messageHistory: []),
+    );
+    var map = {...state!};
+    map[rId] = newModel;
+    state = map;
+    unsave();
+  }
+
   void duplicate({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     final newId = getNewUuid();
@@ -252,6 +271,7 @@ class CollectionStateNotifier
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
     WebSocketRequestModel? wsRequestModel,
+    GrpcRequestModel? grpcRequestModel,
     bool? isStreaming,
     bool? isWorking,
   }) {
@@ -296,6 +316,17 @@ class CollectionStateNotifier
           httpRequestModel: null,
           aiRequestModel: null,
           wsRequestModel: const WebSocketRequestModel(),
+          grpcRequestModel: null,
+        ),
+        APIType.grpc => currentModel.copyWith(
+          apiType: apiType,
+          requestTabIndex: 0,
+          name: name ?? currentModel.name,
+          description: description ?? currentModel.description,
+          httpRequestModel: null,
+          aiRequestModel: null,
+          wsRequestModel: null,
+          grpcRequestModel: const GrpcRequestModel(),
         ),
       };
     } else {
@@ -354,6 +385,7 @@ class CollectionStateNotifier
                     currentModel.wsRequestModel?.isParamEnabledList,
               )
             : (wsRequestModel ?? currentModel.wsRequestModel),
+        grpcRequestModel: grpcRequestModel ?? currentModel.grpcRequestModel,
         isStreaming: isStreaming ?? currentModel.isStreaming,
         isWorking: isWorking ?? currentModel.isWorking,
       );
@@ -669,7 +701,8 @@ class CollectionStateNotifier
     RequestModel? requestModel = state![requestId];
     if (requestModel?.httpRequestModel == null &&
         requestModel?.aiRequestModel == null &&
-        requestModel?.wsRequestModel == null) {
+        requestModel?.wsRequestModel == null &&
+        requestModel?.grpcRequestModel == null) {
       return;
     }
 
@@ -702,6 +735,16 @@ class CollectionStateNotifier
         await _connectWebSocket(requestId, requestModel, wsModel, historyId: newHistoryId);
       } else {
         update(id: requestId, message: "Invalid WebSocket model");
+      }
+      return;
+    }
+
+    if (requestModel.apiType == APIType.grpc) {
+      final grpcModel = requestModel.grpcRequestModel;
+      if (grpcModel != null) {
+        await _connectGrpc(requestId, requestModel, grpcModel);
+      } else {
+        update(id: requestId, message: "Invalid gRPC model");
       }
       return;
     }
@@ -974,6 +1017,27 @@ class CollectionStateNotifier
         update(id: id, isStreaming: false, isWorking: false);
       }
       ConnectionManager.instance.disconnect(id);
+    } else if (requestModel?.apiType == APIType.grpc) {
+      final grpc = requestModel?.grpcRequestModel;
+      if (grpc != null) {
+        final discMsg = WebSocketMessage(
+          payload: "Disconnected by user",
+          timestamp: DateTime.now(),
+          outgoing: false,
+          messageType: WebSocketMessageType.disconnected,
+        );
+        update(
+          id: id,
+          isStreaming: false,
+          isWorking: false,
+          grpcRequestModel: grpc.copyWith(
+            messageHistory: [...grpc.messageHistory, discMsg],
+          ),
+        );
+      } else {
+        update(id: id, isStreaming: false, isWorking: false);
+      }
+      ConnectionManager.instance.disconnectGrpc(id);
     } else {
       cancelHttpRequest(id);
     }
@@ -1051,5 +1115,251 @@ class CollectionStateNotifier
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
     return substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
+  }
+
+  Future<void> _connectGrpc(
+    String requestId,
+    RequestModel requestModel,
+    GrpcRequestModel grpcModel,
+  ) async {
+    try {
+      update(id: requestId, isWorking: true);
+      await ConnectionManager.instance.connectGrpc(requestId, grpcModel);
+
+      String host = grpcModel.url.trim();
+      int port = 50051;
+      if (host.contains(':')) {
+        final parts = host.split(':');
+        host = parts[0].trim();
+        final p = int.tryParse(parts[1].trim());
+        if (p != null) port = p;
+      }
+
+      final msg = WebSocketMessage(
+        payload: "Connected to gRPC host: $host:$port",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final currentRequest = state?[requestId];
+      if (currentRequest != null &&
+          currentRequest.grpcRequestModel != null) {
+        final currentGrpcModel = currentRequest.grpcRequestModel!;
+        final isActualRequest = grpcModel.service != null && grpcModel.method != null;
+        state = {
+          ...state!,
+          requestId: currentRequest.copyWith(
+            isWorking: isActualRequest,
+            isStreaming: isActualRequest,
+            responseStatus: isActualRequest ? 0 : currentRequest.responseStatus,
+            message: isActualRequest ? "" : currentRequest.message,
+            httpResponseModel: isActualRequest ? null : currentRequest.httpResponseModel,
+            grpcRequestModel: currentGrpcModel.copyWith(
+              messageHistory: isActualRequest ? [msg] : currentGrpcModel.messageHistory,
+            ),
+          ),
+        };
+
+        debugPrint("gRPC: Host established. Checking for method invocation...");
+        if (grpcModel.useReflection || (grpcModel.service == null && grpcModel.method == null)) {
+          debugPrint("gRPC: Fetching services via reflection...");
+          final services = await GrpcReflectionService.listServices(requestId, grpcModel);
+          if (services.isNotEmpty) {
+            final latestRequest = state?[requestId];
+            if (latestRequest != null && latestRequest.grpcRequestModel != null) {
+              state = {
+                ...state!,
+                requestId: latestRequest.copyWith(
+                  grpcRequestModel: latestRequest.grpcRequestModel!.copyWith(
+                    useReflection: true,
+                    availableServices: services,
+                  ),
+                ),
+              };
+            }
+          }
+        }
+
+        if (grpcModel.service != null && grpcModel.method != null) {
+          debugPrint(
+            "gRPC: Invoking method ${grpcModel.service}/${grpcModel.method}",
+          );
+          
+          GrpcMethodSchema? methodSchema;
+          if (grpcModel.useReflection) {
+            methodSchema = await GrpcReflectionService.getMethodSchema(
+              requestId, grpcModel, grpcModel.service!, grpcModel.method!);
+          }
+          
+          final startTime = DateTime.now();
+          final requestData = grpcModel.parameters.isNotEmpty
+              ? GrpcUtils.paramsToBytes(grpcModel.parameters)
+              : utf8.encode(grpcModel.requestBody);
+
+          final call = ConnectionManager.instance.callGrpcMethod(
+            requestId,
+            grpcModel.service!,
+            grpcModel.method!,
+            requestData,
+            metadata: grpcModel.metadataMap,
+          );
+
+          Map<String, String> initialMetadata = {};
+          Map<String, String> trailingMetadata = {};
+
+          call.headers.then((headers) {
+             initialMetadata = headers;
+          }).catchError((_) {});
+
+          call.trailers.then((trailers) {
+             trailingMetadata = trailers;
+          }).catchError((_) {});
+
+          call.response.listen(
+            (data) {
+              final duration = DateTime.now().difference(startTime);
+              final payload = GrpcUtils.decodeBinaryResponse(data, schema: methodSchema);
+              final responseMsg = WebSocketMessage(
+                payload:
+                    "Response (${duration.inMilliseconds}ms):\n$payload",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.received,
+              );
+
+              final currentReq = state?[requestId];
+              if (currentReq != null) {
+                final grpcReqModel = currentReq.grpcRequestModel;
+                if (grpcReqModel != null) {
+                  final receivedCount = grpcReqModel.messageHistory
+                      .where(
+                        (m) => m.messageType == WebSocketMessageType.received,
+                      )
+                      .length;
+
+                  state = {
+                    ...state!,
+                    requestId: currentReq.copyWith(
+                      isWorking: false,
+                      isStreaming: false,
+                      responseStatus: receivedCount == 0 ? 200 : currentReq.responseStatus,
+                      httpResponseModel: receivedCount == 0
+                          ? HttpResponseModel(
+                              body: payload, 
+                              bodyBytes: utf8.encode(payload), 
+                              time: duration,
+                              headers: initialMetadata.map((k, v) => MapEntry("[Initial] $k", v)),
+                            )
+                          : currentReq.httpResponseModel,
+                      grpcRequestModel: grpcReqModel.copyWith(
+                        messageHistory: [
+                          ...grpcReqModel.messageHistory,
+                          responseMsg,
+                        ],
+                      ),
+                    ),
+                  };
+                }
+              }
+            },
+            onDone: () {
+              final currentReq = state?[requestId];
+              if (currentReq != null) {
+                final responseModel = currentReq.httpResponseModel;
+                final finalHeaders = {
+                  ...initialMetadata.map((k, v) => MapEntry("[Initial] $k", v)),
+                  ...trailingMetadata.map((k, v) => MapEntry("[Trailing] $k", v)),
+                };
+                
+                state = {
+                  ...state!,
+                  requestId: currentReq.copyWith(
+                    isWorking: false,
+                    isStreaming: false,
+                    httpResponseModel: responseModel?.copyWith(
+                      headers: finalHeaders,
+                    ),
+                  ),
+                };
+              }
+            },
+            onError: (e) {
+              final errorMsg = WebSocketMessage(
+                payload: "RPC Error: ${e.toString()}",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.error,
+              );
+
+              final currentReq = state?[requestId];
+              if (currentReq != null && currentReq.grpcRequestModel != null) {
+                final currentGrpc = currentReq.grpcRequestModel!;
+                state = {
+                  ...state!,
+                  requestId: currentReq.copyWith(
+                    isWorking: false,
+                    isStreaming: false,
+                    responseStatus: 400,
+                    message: "",
+                    httpResponseModel: HttpResponseModel(
+                      body: e.toString(),
+                      bodyBytes: utf8.encode(e.toString()),
+                      time: Duration.zero,
+                    ),
+                    grpcRequestModel: currentGrpc.copyWith(
+                      messageHistory: [
+                        ...currentGrpc.messageHistory,
+                        errorMsg,
+                      ],
+                    ),
+                  ),
+                };
+              }
+            },
+          );
+        } else {
+          final latestRequest = state?[requestId];
+          if (latestRequest != null) {
+            state = {
+              ...state!,
+              requestId: latestRequest.copyWith(
+                isWorking: false,
+                isStreaming: false,
+              ),
+            };
+          }
+          ConnectionManager.instance.disconnectGrpc(requestId);
+        }
+      }
+    } catch (e) {
+      final errorMsg = WebSocketMessage(
+        payload: "Connection Error: ${e.toString()}",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.error,
+      );
+
+      final currentRequest = state?[requestId];
+      if (currentRequest != null && currentRequest.grpcRequestModel != null) {
+        final currentGrpcModel = currentRequest.grpcRequestModel!;
+        state = {
+          ...state!,
+          requestId: currentRequest.copyWith(
+            isWorking: false,
+            responseStatus: 400,
+            message: "",
+            httpResponseModel: HttpResponseModel(
+              body: e.toString(),
+              bodyBytes: utf8.encode(e.toString()),
+              time: Duration.zero,
+            ),
+            grpcRequestModel: currentGrpcModel.copyWith(
+              messageHistory: [...currentGrpcModel.messageHistory, errorMsg],
+            ),
+          ),
+        };
+      }
+    }
   }
 }

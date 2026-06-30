@@ -45,6 +45,7 @@ class HistoryResponsePane extends ConsumerWidget {
           Expanded(
             child: ResponseTabView(
               selectedId: selectedId,
+              headersTitle: requestModel?.apiType == APIType.grpc ? "Metadata" : kLabelHeaders,
               children: [
                 ResponseBody(
                   selectedRequestModel: requestModel,

@@ -37,7 +37,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
-                    APIType.websocket => kSizedBoxEmpty,
+                    APIType.websocket || APIType.grpc => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -55,7 +55,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
-                    APIType.websocket => kSizedBoxEmpty,
+                    APIType.websocket || APIType.grpc => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -113,6 +113,8 @@ class URLTextField extends ConsumerWidget {
         .select((value) => value?.httpRequestModel?.url));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.wsRequestModel?.url));
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.grpcRequestModel));
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
@@ -124,6 +126,9 @@ class URLTextField extends ConsumerWidget {
         break;
       case APIType.websocket:
         urlValue = requestModel.wsRequestModel?.url;
+        break;
+      case APIType.grpc:
+        urlValue = requestModel.grpcRequestModel?.url;
         break;
       default:
         urlValue = requestModel.httpRequestModel?.url;
@@ -140,6 +145,7 @@ class URLTextField extends ConsumerWidget {
       initialValue: urlValue,
       hintText: switch (requestModel.apiType) {
         APIType.websocket => kHintTextWsCard,
+        APIType.grpc => 'Enter gRPC URL',
         _ => kHintTextUrlCard,
       },
       onChanged: (value) {
@@ -152,6 +158,12 @@ class URLTextField extends ConsumerWidget {
           if (wsModel != null) {
             ref.read(collectionStateNotifierProvider.notifier).update(
                 wsRequestModel: wsModel.copyWith(url: value));
+          }
+        } else if (requestModel.apiType == APIType.grpc) {
+          final grpcModel = requestModel.grpcRequestModel;
+          if (grpcModel != null) {
+            ref.read(collectionStateNotifierProvider.notifier).update(
+                grpcRequestModel: grpcModel.copyWith(url: value));
           }
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
@@ -183,9 +195,13 @@ class SendRequestButton extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.apiType));
 
     return SendButton(
+      isWorking: isWorking!,
       isStreaming: isStreaming ?? false,
-      isWorking: isWorking ?? false,
-      sendLabel: apiType == APIType.websocket ? "Connect" : kLabelSend,
+      sendLabel: apiType == APIType.websocket 
+          ? "Connect" 
+          : (apiType == APIType.grpc 
+              ? ((ref.watch(selectedRequestModelProvider.select((value) => value?.grpcRequestModel?.method))) == null ? "Reflect" : kLabelSend) 
+              : kLabelSend),
       activeLabel: apiType == APIType.websocket ? "Disconnect" : null,
       onTap: () {
         onTap?.call();
