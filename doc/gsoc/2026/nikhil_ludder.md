@@ -106,12 +106,16 @@ Responses stream into a live view, and the server's **response metadata** — bo
 
 #### 1. A pure-Dart binary that reuses the real engine
 The CLI compiles to a single standalone binary with **no Flutter at runtime**, and runs every request through API Dash's own `better_networking` engine — so results match the desktop app exactly. It reads the **same workspace** the desktop app writes, so requests you build in the GUI are runnable from the terminal.
+<p align="center"><img src="./images/cli_list.png" alt="apidash list — the CLI reading the saved request from the desktop workspace" width="720"/></p>
 
 #### 2. A full command set
 `send` (ad-hoc requests), `run` (a saved request by name/id), `list`, `env` (+ a global `--env` for `{{var}}` substitution), `graphql`, `ai`, and `--stream` (SSE) — covering the HTTP-family protocols.
+<p align="center"><img src="./images/cli_help.png" alt="apidash --help — the full command set" width="720"/></p>
+<p align="center"><img src="./images/cli_send.png" alt="apidash send — an ad-hoc GET returning a live 200 response" width="720"/></p>
 
 #### 3. Agent- & CI-friendly
 Every command supports **`--json`** structured output, runs fully non-interactively, and returns **stable, documented exit codes** — so it drops cleanly into scripts, CI pipelines, and AI agents.
+<p align="center"><img src="./images/cli_send_json.png" alt="apidash send --json — structured output for scripts and AI agents" width="720"/></p>
 
 #### 4. Interactive TUI
 Running `apidash` (or `apidash tui`) opens a terminal UI to **browse** saved requests, then **Run** one, **edit** it in place (URL / method / headers / body / params), or **generate a curl command** — all against the shared workspace.
@@ -149,32 +153,26 @@ Each protocol ships a beginner-friendly end-user guide under `doc/user_guide/` (
 
 **Client — [foss42/apidash](https://github.com/foss42/apidash)**
 
-| PR | Title |
-| --- | --- |
-| [#1694](https://github.com/foss42/apidash/pull/1694) | WebSocket support |
-| [#1705](https://github.com/foss42/apidash/pull/1705) | User docs for the new protocols |
-| [#1644](https://github.com/foss42/apidash/pull/1644) | Migrate models to freezed v3 |
-| [#1696](https://github.com/foss42/apidash/pull/1696) | Add `Agents.md` |
-| [#1678](https://github.com/foss42/apidash/pull/1678) | Magic-byte previewer selection fix |
-| [#1637](https://github.com/foss42/apidash/pull/1637) | Pure-Dart refactor of core packages |
-| [#1757](https://github.com/foss42/apidash/pull/1757) | MQTT support |
-| [#1764](https://github.com/foss42/apidash/pull/1764) | gRPC support |
-| [#1792](https://github.com/foss42/apidash/pull/1792) | CLI (pure-Dart) + interactive TUI |
+| PR | Title | Status |
+| --- | --- | --- |
+| [#1694](https://github.com/foss42/apidash/pull/1694) | WebSocket support | Merged |
+| [#1705](https://github.com/foss42/apidash/pull/1705) | User docs for the new protocols | Merged |
+| [#1644](https://github.com/foss42/apidash/pull/1644) | Migrate models to freezed v3 | Merged |
+| [#1696](https://github.com/foss42/apidash/pull/1696) | Add `Agents.md` | Merged |
+| [#1678](https://github.com/foss42/apidash/pull/1678) | Magic-byte previewer selection fix | Merged |
+| [#1637](https://github.com/foss42/apidash/pull/1637) | Pure-Dart refactor of core packages | Under Review |
+| [#1757](https://github.com/foss42/apidash/pull/1757) | MQTT support | Under Review |
+| [#1764](https://github.com/foss42/apidash/pull/1764) | gRPC support | Under Review |
+| [#1792](https://github.com/foss42/apidash/pull/1792) | CLI (pure-Dart) + interactive TUI | Under Review |
 
 **Test servers — [foss42/api](https://github.com/foss42/api)**
 
-| PR | Title |
-| --- | --- |
-| [#89](https://github.com/foss42/api/pull/89), [#92](https://github.com/foss42/api/pull/92) | WebSocket echo endpoints |
-| [#93](https://github.com/foss42/api/pull/93) | MQTT broker rig |
-| [#94](https://github.com/foss42/api/pull/94) | gRPC test server |
-| [#97](https://github.com/foss42/api/pull/97) | gRPC rig: auth, response metadata, tests, restructure |
-
----
-
-## Skills Demonstrated
-
-Flutter & Dart (Riverpod, Hive, freezed, `dart compile` / CLI / TUI); protocol internals — WebSocket, MQTT v3.1.1 / v5, and gRPC (HTTP/2, Protobuf, server reflection, the four streaming modes); pure-Dart package architecture; Python server work (grpcio, paho-mqtt, FastAPI, Eclipse Mosquitto) with Docker; and clear technical writing.
+| PR | Title | Status |
+| --- | --- | --- |
+| [#89](https://github.com/foss42/api/pull/89), [#92](https://github.com/foss42/api/pull/92) | WebSocket echo endpoints | Merged |
+| [#93](https://github.com/foss42/api/pull/93) | MQTT broker rig | Merged |
+| [#94](https://github.com/foss42/api/pull/94) | gRPC test server | Merged |
+| [#97](https://github.com/foss42/api/pull/97) | gRPC rig: auth, response metadata, tests, restructure | Merged |
 
 ---
 
