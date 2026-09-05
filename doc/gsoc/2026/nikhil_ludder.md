@@ -161,6 +161,7 @@ Each protocol ships a beginner-friendly end-user guide under `doc/user_guide/` (
 | [#1696](https://github.com/foss42/apidash/pull/1696) | Add `Agents.md` | Merged |
 | [#1678](https://github.com/foss42/apidash/pull/1678) | Magic-byte previewer selection fix | Merged |
 | [#1637](https://github.com/foss42/apidash/pull/1637) | Pure-Dart refactor of core packages | Under Review |
+| [#1692](https://github.com/foss42/apidash/pull/1692) | Request model refactor | Under Review |
 | [#1757](https://github.com/foss42/apidash/pull/1757) | MQTT support | Under Review |
 | [#1764](https://github.com/foss42/apidash/pull/1764) | gRPC support | Under Review |
 | [#1792](https://github.com/foss42/apidash/pull/1792) | CLI (pure-Dart) + interactive TUI | Under Review |
