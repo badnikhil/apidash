@@ -49,6 +49,8 @@ Common payloads (a login, a subscribe command, a ping) can be saved as **templat
 #### 4. Auto-reconnect, auth & history
 Optional **auto-reconnect** retries dropped connections; headers/auth are applied on the handshake; and every session is saved to **history** for read-only review, with Dashbot aware of WebSocket requests too.
 
+<p align="center"><img src="./GIFs/ws_reconnect_auth_history.gif" alt="Auto-reconnect, auth on the handshake, and the session saved to history" width="720"/></p>
+
 ---
 
 ### Part 2 — MQTT ([#1757](https://github.com/foss42/apidash/pull/1757))
@@ -60,6 +62,8 @@ A version selector switches the whole request between **MQTT v3.1.1** and **MQTT
 #### 2. Secure, flexible connections
 Connect with a client id, keep-alive, and clean session/start; over plain TCP, **TLS**, or **MQTT-over-WebSocket**; with optional **username/password** auth — covering the real ways brokers are deployed.
 
+<p align="center"><img src="./images/mqtt_connection_options.png" alt="MQTT connection options: client id, keep-alive, clean session, TLS / WebSocket transport, credentials" width="720"/></p>
+
 #### 3. Topics: per-topic QoS & wildcards
 Subscribe to multiple topics at once, each with its **own QoS (0 / 1 / 2)**, and use wildcards (`+` / `#`) to match topic trees.
 <p align="center"><img src="./GIFs/mqtt_topics_qos.gif" alt="Subscribing to topics with per-topic QoS" width="720"/></p>
@@ -69,7 +73,10 @@ Publish messages to any topic with a chosen QoS and the **retain** flag, then wa
 <p align="center"><img src="./GIFs/mqtt_publish.gif" alt="Publishing a retained message" width="720"/></p>
 
 #### 5. MQTT v5 features
-The v5 path surfaces v5-specific capabilities such as **User Properties**, so v5 request/response metadata can actually be tested from the app.
+The v5 path surfaces v5-specific capabilities such as **User Properties** and **Request/Response & message expiry**, so v5 request/response metadata can actually be tested from the app.
+
+<p align="center"><img src="./images/mqtt_v5_user_properties.png" alt="MQTT v5 User Properties" width="720"/></p>
+<p align="center"><img src="./images/mqtt_v5_request_response.png" alt="MQTT v5 Request / Response & message expiry" width="720"/></p>
 
 #### 6. Learn-as-you-go help overlays
 Because MQTT has a lot of concepts, every control (QoS, retain, wildcards, clean session, v5 settings…) carries a **plain-language help overlay** explaining what it does — the request pane doubles as a teaching tool.
@@ -89,12 +96,16 @@ Discover a server's services and methods either through server **Reflection** (t
 #### 3. All four call types
 Full support for **unary**, **server-streaming**, **client-streaming**, and **bidirectional** calls — including pushing multiple messages onto an open request stream and half-closing it (`Send message` / `Finish sending`).
 
+<p align="center"><img src="./images/grpc_streaming_types.png" alt="Choosing the gRPC call type: unary, client-, server-streaming, bidirectional" width="437"/></p>
+
 #### 4. Composing the request message
 The Protobuf request message can be filled in a **typed form** (one input per field, matched to its type) or written as raw **JSON** on the Body tab — the two stay in sync.
 <p align="center"><img src="./GIFs/grpc_request_message.gif" alt="Filling a gRPC request via the form and JSON" width="720"/></p>
 
 #### 5. Metadata & auth
 Send call **metadata** (gRPC's headers), and use the shared **Auth** tab (Bearer / Basic / API-key / JWT) which is automatically turned into the right metadata.
+
+<p align="center"><img src="./images/grpc_metadata.png" alt="gRPC call metadata" width="437"/></p>
 
 #### 6. Streamed responses & response metadata
 Responses stream into a live view, and the server's **response metadata** — both **initial** and **trailing** — is shown alongside, so the full gRPC response surface is inspectable. Every request is saved to history.
