@@ -22,14 +22,13 @@ String stripUrlParams(String url) {
   return idx > 0 ? url.substring(0, idx) : url;
 }
 
-/// Prefixes a WebSocket [url] with `ws://` or `wss://` when the user omitted
-/// the scheme, mirroring what [getValidRequestUri] does for HTTP:
-/// localhost / bare IPs get `ws://`, everything else follows
-/// [defaultUriScheme] (`http` -> `ws`, `https` -> `wss`).
+/// Prefixes a WebSocket [url] with [defaultWsScheme] (`ws://` or `wss://`)
+/// when the user omitted the scheme, mirroring what [getValidRequestUri]
+/// does for HTTP. localhost / bare IPs always get `ws://`.
 /// URLs that already carry a scheme are returned untouched.
 String getWebSocketUrl(
   String url, {
-  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
+  SupportedWsSchemes defaultWsScheme = kDefaultWsScheme,
 }) {
   url = url.trim();
   if (url.isEmpty || url.contains("://")) {
@@ -38,8 +37,7 @@ String getWebSocketUrl(
   if (kLocalhostRegex.hasMatch(url) || kIPHostRegex.hasMatch(url)) {
     return "ws://$url";
   }
-  final scheme = defaultUriScheme == SupportedUriSchemes.http ? "ws" : "wss";
-  return "$scheme://$url";
+  return "${defaultWsScheme.name}://$url";
 }
 
 (Uri?, String?) getValidRequestUri(

@@ -184,11 +184,11 @@ void main() {
         "wss://api.apidash.dev/ws/echo",
       );
     });
-    test('adds ws:// when default scheme is http', () {
+    test('adds ws:// when the default WebSocket scheme is ws', () {
       expect(
         getWebSocketUrl(
           "api.apidash.dev/ws/echo",
-          defaultUriScheme: SupportedUriSchemes.http,
+          defaultWsScheme: SupportedWsSchemes.ws,
         ),
         "ws://api.apidash.dev/ws/echo",
       );

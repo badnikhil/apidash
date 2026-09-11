@@ -500,7 +500,7 @@ class CollectionStateNotifier
 
     final substitutedUrl = getWebSocketUrl(
       substituteVariables(wsModel.url, combinedEnvVarMap) ?? wsModel.url,
-      defaultUriScheme: ref.read(settingsProvider).defaultUriScheme,
+      defaultWsScheme: ref.read(settingsProvider).defaultWsScheme,
     );
 
     String finalUrl = substitutedUrl;

@@ -442,8 +442,8 @@ void main() async {
       notifier.update(id: id, apiType: APIType.websocket);
     });
 
-    test('connects to a scheme-less URL using the default scheme '
-        '(https -> wss) and logs the resolved URL', () async {
+    test('connects to a scheme-less URL using the default WebSocket scheme '
+        '(wss) and logs the resolved URL', () async {
       // Strip the scheme so the app has to supply one itself.
       final bareUrl = wsUrl.replaceFirst(RegExp(r'^wss?://'), '');
       notifier.update(
