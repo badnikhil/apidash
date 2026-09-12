@@ -498,8 +498,10 @@ class CollectionStateNotifier
   ) async {
     final Map<String, String> combinedEnvVarMap = _buildCombinedEnvVarMap();
 
-    final substitutedUrl =
-        substituteVariables(wsModel.url, combinedEnvVarMap) ?? wsModel.url;
+    final substitutedUrl = getWebSocketUrl(
+      substituteVariables(wsModel.url, combinedEnvVarMap) ?? wsModel.url,
+      defaultWsScheme: ref.read(settingsProvider).defaultWsScheme,
+    );
 
     String finalUrl = substitutedUrl;
     if (wsModel.params != null && wsModel.isParamEnabledList != null) {
