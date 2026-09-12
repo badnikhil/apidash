@@ -1,9 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/dashbot/constants.dart';
-import 'package:apidash/dashbot/dashbot.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/codegen/codegen.dart';
@@ -33,7 +30,7 @@ class CodePane extends ConsumerWidget {
 
     // TODO: Add AI Request Codegen
     if (selectedRequestModel?.apiType == APIType.ai) {
-      return const CodegenUnavailable(message: kMsgCodegenAINotAvailable);
+      return const ErrorMessage(message: kMsgCodegenAINotAvailable);
     }
 
     // TODO: Add WebSocket Codegen
@@ -43,10 +40,7 @@ class CodePane extends ConsumerWidget {
     if (selectedRequestModel?.apiType == APIType.websocket ||
         (selectedRequestModel != null &&
             selectedRequestModel.httpRequestModel == null)) {
-      return const CodegenUnavailable(
-        message: kMsgCodegenWebSocketViaDashbot,
-        dashbotTask: ChatMessageType.generateWsCode,
-      );
+      return const ErrorMessage(message: kMsgCodegenWebSocketNotAvailable);
     }
 
     final defaultUriScheme = ref.watch(
@@ -72,10 +66,7 @@ class CodePane extends ConsumerWidget {
 
     // TODO: Add GraphQL Codegen
     if (substitutedRequestModel.apiType == APIType.graphql) {
-      return const CodegenUnavailable(
-        message: kMsgCodegenGraphQLViaDashbot,
-        dashbotTask: ChatMessageType.generateCode,
-      );
+      return const ErrorMessage(message: kMsgCodegenGraphQLNotAvailable);
     }
     if (code == null) {
       return const ErrorMessage(message: kMsgCodegenError);
@@ -86,60 +77,6 @@ class CodePane extends ConsumerWidget {
       onChangedCodegenLanguage: (CodegenLanguage? value) {
         ref.read(codegenLanguageStateProvider.notifier).state = value!;
       },
-    );
-  }
-}
-
-/// Shown instead of generated code for API types without a native codegen.
-/// Offers to hand the job to DashBot when it has a matching task.
-class CodegenUnavailable extends ConsumerWidget {
-  const CodegenUnavailable({
-    super.key,
-    required this.message,
-    this.dashbotTask,
-  });
-
-  final String message;
-  final ChatMessageType? dashbotTask;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isDashBotEnabled = ref.watch(
-      settingsProvider.select((value) => value.isDashBotEnabled),
-    );
-    final showButton = isDashBotEnabled && dashbotTask != null;
-    return Padding(
-      padding: kPh20v10,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SelectableText(
-              message,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-            if (showButton) ...[
-              kVSpacer20,
-              ADFilledButton(
-                isTonal: true,
-                icon: Icons.auto_awesome,
-                label: kLabelGenerateCodeDashbot,
-                onPressed: () {
-                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                  ref
-                      .read(chatViewmodelProvider.notifier)
-                      .sendTaskMessage(dashbotTask!);
-                  ref.read(dashbotWindowNotifierProvider.notifier).show();
-                  showDashbotWindow(context, ref);
-                },
-              ),
-            ],
-          ],
-        ),
-      ),
     );
   }
 }
