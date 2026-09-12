@@ -662,10 +662,6 @@ const kMsgCodegenGraphQLNotAvailable =
 const kMsgCodegenWebSocketNotAvailable =
     "Code generation for WebSocket requests is currently not available.";
 const kLabelGenerateCodeDashbot = "Generate code with DashBot";
-const kMsgCodegenWebSocketViaDashbot =
-    "Code for WebSocket requests is generated with DashBot.";
-const kMsgCodegenGraphQLViaDashbot =
-    "Code for GraphQL requests is generated with DashBot.";
 const kMsgCodegenError =
     "An error was encountered while generating code. $kRaiseIssue";
 

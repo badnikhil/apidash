@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import '../../common_widgets/common_widgets.dart';
 import 'ai_history_page.dart';
 import 'ws_history_page.dart';
@@ -175,10 +176,16 @@ class HistoryRequestPane extends ConsumerWidget {
       }
     }
 
+    final codeButtonTooltip = apiType == null
+        ? null
+        : apiType.hasNativeCodegen
+        ? kTooltipViewCode
+        : apiType.codegenViaDashbotMessage;
+
     return switch (apiType) {
       APIType.rest => RequestPane(
         key: const Key("history-request-pane-rest"),
-        codeButtonTooltip: kTooltipViewCode,
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -210,7 +217,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.graphql => RequestPane(
         key: const Key("history-request-pane-graphql"),
-        codeButtonTooltip: kMsgCodegenGraphQLViaDashbot,
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -239,7 +246,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.ai => RequestPane(
         key: const Key("history-request-pane-ai"),
-        codeButtonTooltip: kMsgCodegenAINotAvailable,
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -261,7 +268,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.websocket => RequestPane(
         key: const Key("history-request-pane-websocket"),
-        codeButtonTooltip: kMsgCodegenWebSocketViaDashbot,
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -281,6 +288,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.mqtt => RequestPane(
         key: const Key("history-request-pane-mqtt"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {

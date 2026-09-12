@@ -5,6 +5,7 @@ import 'package:apidash/screens/history/history_widgets/his_request_pane.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -101,7 +102,7 @@ void main() {
 
       expect(find.text(kLabelViewCode), findsOneWidget);
       expect(
-        find.byTooltip(kMsgCodegenWebSocketViaDashbot),
+        find.byTooltip(APIType.websocket.codegenViaDashbotMessage),
         findsOneWidget,
       );
     });
