@@ -143,7 +143,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.graphql => RequestPane(
         key: const Key("history-request-pane-graphql"),
-        codeButtonTooltip: kMsgCodegenGraphQLNotAvailable,
+        codeButtonTooltip: kMsgCodegenGraphQLViaDashbot,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -194,7 +194,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.websocket => RequestPane(
         key: const Key("history-request-pane-websocket"),
-        codeButtonTooltip: kMsgCodegenWebSocketNotAvailable,
+        codeButtonTooltip: kMsgCodegenWebSocketViaDashbot,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {

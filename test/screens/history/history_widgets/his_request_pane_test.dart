@@ -82,7 +82,7 @@ void main() {
   );
 
   group('HistoryRequestPane Tests', () {
-    testWidgets('WebSocket history shows View Code with not-available tooltip',
+    testWidgets('WebSocket history shows View Code with DashBot tooltip',
         (tester) async {
       await tester.pumpWidget(
         ProviderScope(
@@ -101,7 +101,7 @@ void main() {
 
       expect(find.text(kLabelViewCode), findsOneWidget);
       expect(
-        find.byTooltip(kMsgCodegenWebSocketNotAvailable),
+        find.byTooltip(kMsgCodegenWebSocketViaDashbot),
         findsOneWidget,
       );
     });
