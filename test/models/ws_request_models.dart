@@ -12,6 +12,7 @@ const wsMessage1Json = {
   'payload': 'Hello',
   'timestamp': '2023-01-01T00:00:00.000',
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'sent',
   'metadata': null,
 };
@@ -27,6 +28,7 @@ const wsMessage2Json = {
   'payload': 'Hi',
   'timestamp': '2023-01-01T00:00:00.000',
   'outgoing': false,
+  'isAutomatic': false,
   'messageType': 'received',
   'metadata': null,
 };
@@ -59,6 +61,7 @@ const wsRequestModel1Json = {
       'payload': 'Ping',
       'timestamp': '2023-01-01T00:00:00.000',
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'sent',
       'metadata': null,
     }
@@ -112,6 +115,7 @@ const wsMessageNullTimestampJson = {
   'payload': 'NoTime',
   'timestamp': null,
   'outgoing': false,
+  'isAutomatic': false,
   'messageType': 'error',
   'metadata': null,
 };
@@ -125,6 +129,7 @@ const wsMessageConnectedJson = {
   'payload': 'conn',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'connected',
   'metadata': null,
 };
@@ -137,6 +142,7 @@ const wsMessageSentJson = {
   'payload': 'snt',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'sent',
   'metadata': null,
 };
@@ -149,6 +155,7 @@ const wsMessageReceivedJson = {
   'payload': 'rcv',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'received',
   'metadata': null,
 };
@@ -161,6 +168,7 @@ const wsMessageErrorJson = {
   'payload': 'err',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'error',
   'metadata': null,
 };
@@ -173,6 +181,7 @@ const wsMessageDisconnectedJson = {
   'payload': 'disc',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'disconnected',
   'metadata': null,
 };
@@ -207,6 +216,7 @@ const wsRequestModelMultiHistoryJson = {
       'payload': 'first',
       'timestamp': '2023-01-01T00:00:00.000',
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'sent',
       'metadata': null,
     },
@@ -214,6 +224,7 @@ const wsRequestModelMultiHistoryJson = {
       'payload': 'second',
       'timestamp': '2023-01-02T00:00:00.000',
       'outgoing': false,
+      'isAutomatic': false,
       'messageType': 'received',
       'metadata': null,
     },
@@ -221,6 +232,7 @@ const wsRequestModelMultiHistoryJson = {
       'payload': 'third',
       'timestamp': null,
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'error',
       'metadata': null,
     },
