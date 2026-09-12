@@ -448,14 +448,18 @@ class CollectionStateNotifier
           final substituted =
               substituteVariables(ws.messageHeartbeatPayload, combined) ??
                   ws.messageHeartbeatPayload;
-          sendWebSocketMessage(requestId, substituted);
+          sendWebSocketMessage(requestId, substituted, isAutomatic: true);
         },
       );
     }
   }
 
   /// Send a text message over an active WebSocket connection.
-  void sendWebSocketMessage(String requestId, String message) {
+  ///
+  /// [isAutomatic] marks messages sent by the app (repeating heartbeat) rather
+  /// than by the user, so the UI can keep them out of "Recently Sent".
+  void sendWebSocketMessage(String requestId, String message,
+      {bool isAutomatic = false}) {
     final currentRequest = state?[requestId];
     if (currentRequest == null || currentRequest.apiType != APIType.websocket) {
       return;
@@ -476,6 +480,7 @@ class CollectionStateNotifier
         payload: message,
         timestamp: DateTime.now(),
         outgoing: true,
+        isAutomatic: isAutomatic,
         messageType: WebSocketMessageType.sent,
       );
 

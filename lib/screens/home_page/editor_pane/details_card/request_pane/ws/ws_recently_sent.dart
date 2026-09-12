@@ -37,7 +37,7 @@ class WsRecentlySent extends HookConsumerWidget {
     // repeat keeps its latest slot) and counted so the card can show "×N".
     final sentCounts = <String, int>{};
     for (final payload in messageHistory
-        .where((m) => m.outgoing && m.messageType == WebSocketMessageType.sent && m.payload != "Heartbeat ping")
+        .where((m) => m.outgoing && m.messageType == WebSocketMessageType.sent && !m.isAutomatic)
         .map((m) => m.payload)
         .toList()
         .reversed) {
