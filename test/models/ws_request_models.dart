@@ -14,6 +14,7 @@ const wsMessage1Json = {
   'outgoing': true,
   'isAutomatic': false,
   'messageType': 'sent',
+  'metadata': null,
 };
 
 final wsMessage2 = WebSocketMessage(
@@ -29,6 +30,7 @@ const wsMessage2Json = {
   'outgoing': false,
   'isAutomatic': false,
   'messageType': 'received',
+  'metadata': null,
 };
 
 const wsMessage3 = WebSocketMessage(payload: 'Test');
@@ -61,7 +63,8 @@ const wsRequestModel1Json = {
       'outgoing': true,
       'isAutomatic': false,
       'messageType': 'sent',
-    },
+      'metadata': null,
+    }
   ],
   'headers': [
     {'name': 'Auth', 'value': 'Bearer 123'},
@@ -114,6 +117,7 @@ const wsMessageNullTimestampJson = {
   'outgoing': false,
   'isAutomatic': false,
   'messageType': 'error',
+  'metadata': null,
 };
 
 // One message fixture per WebSocketMessageType enum value, with matching JSON.
@@ -127,6 +131,7 @@ const wsMessageConnectedJson = {
   'outgoing': true,
   'isAutomatic': false,
   'messageType': 'connected',
+  'metadata': null,
 };
 
 const wsMessageSent = WebSocketMessage(
@@ -139,6 +144,7 @@ const wsMessageSentJson = {
   'outgoing': true,
   'isAutomatic': false,
   'messageType': 'sent',
+  'metadata': null,
 };
 
 const wsMessageReceived = WebSocketMessage(
@@ -151,6 +157,7 @@ const wsMessageReceivedJson = {
   'outgoing': true,
   'isAutomatic': false,
   'messageType': 'received',
+  'metadata': null,
 };
 
 const wsMessageError = WebSocketMessage(
@@ -163,6 +170,7 @@ const wsMessageErrorJson = {
   'outgoing': true,
   'isAutomatic': false,
   'messageType': 'error',
+  'metadata': null,
 };
 
 const wsMessageDisconnected = WebSocketMessage(
@@ -175,6 +183,7 @@ const wsMessageDisconnectedJson = {
   'outgoing': true,
   'isAutomatic': false,
   'messageType': 'disconnected',
+  'metadata': null,
 };
 
 // A model whose messageHistory holds multiple messages (covers list round-trip).
@@ -209,6 +218,7 @@ const wsRequestModelMultiHistoryJson = {
       'outgoing': true,
       'isAutomatic': false,
       'messageType': 'sent',
+      'metadata': null,
     },
     {
       'payload': 'second',
@@ -216,6 +226,7 @@ const wsRequestModelMultiHistoryJson = {
       'outgoing': false,
       'isAutomatic': false,
       'messageType': 'received',
+      'metadata': null,
     },
     {
       'payload': 'third',
@@ -223,6 +234,7 @@ const wsRequestModelMultiHistoryJson = {
       'outgoing': true,
       'isAutomatic': false,
       'messageType': 'error',
+      'metadata': null,
     },
   ],
   'headers': null,

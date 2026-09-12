@@ -21,6 +21,7 @@ abstract class WebSocketMessage with _$WebSocketMessage {
     @Default(true) bool outgoing,
     @Default(false) bool isAutomatic,
     @Default(WebSocketMessageType.received) WebSocketMessageType messageType,
+    String? metadata, // e.g., MQTT topic
   }) = _WebSocketMessage;
 
   factory WebSocketMessage.fromJson(Map<String, dynamic> json) =>

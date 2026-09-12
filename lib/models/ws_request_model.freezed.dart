@@ -72,7 +72,8 @@ as String,timestamp: freezed == timestamp ? _self.timestamp : timestamp // ignor
 as DateTime?,outgoing: null == outgoing ? _self.outgoing : outgoing // ignore: cast_nullable_to_non_nullable
 as bool,isAutomatic: null == isAutomatic ? _self.isAutomatic : isAutomatic // ignore: cast_nullable_to_non_nullable
 as bool,messageType: null == messageType ? _self.messageType : messageType // ignore: cast_nullable_to_non_nullable
-as WebSocketMessageType,
+as WebSocketMessageType,metadata: freezed == metadata ? _self.metadata : metadata // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -221,6 +222,7 @@ class _WebSocketMessage implements WebSocketMessage {
 @override@JsonKey() final  bool outgoing;
 @override@JsonKey() final  bool isAutomatic;
 @override@JsonKey() final  WebSocketMessageType messageType;
+@override final  String? metadata;
 
 /// Create a copy of WebSocketMessage
 /// with the given fields replaced by the non-null parameter values.
@@ -279,7 +281,8 @@ as String,timestamp: freezed == timestamp ? _self.timestamp : timestamp // ignor
 as DateTime?,outgoing: null == outgoing ? _self.outgoing : outgoing // ignore: cast_nullable_to_non_nullable
 as bool,isAutomatic: null == isAutomatic ? _self.isAutomatic : isAutomatic // ignore: cast_nullable_to_non_nullable
 as bool,messageType: null == messageType ? _self.messageType : messageType // ignore: cast_nullable_to_non_nullable
-as WebSocketMessageType,
+as WebSocketMessageType,metadata: freezed == metadata ? _self.metadata : metadata // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
