@@ -111,6 +111,7 @@ class HistoryRequestPane extends ConsumerWidget {
     return switch (apiType) {
       APIType.rest => RequestPane(
         key: const Key("history-request-pane-rest"),
+        codeButtonTooltip: kTooltipViewCode,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -142,6 +143,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.graphql => RequestPane(
         key: const Key("history-request-pane-graphql"),
+        codeButtonTooltip: kMsgCodegenGraphQLNotAvailable,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -170,6 +172,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.ai => RequestPane(
         key: const Key("history-request-pane-ai"),
+        codeButtonTooltip: kMsgCodegenAINotAvailable,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -191,15 +194,16 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.websocket => RequestPane(
         key: const Key("history-request-pane-websocket"),
+        codeButtonTooltip: kMsgCodegenWebSocketNotAvailable,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
           ref.read(historyCodePaneVisibleStateProvider.notifier).state =
               !codePaneVisible;
         },
-        // WebSocket requests have no code generation, so the "View Code"
-        // button is always hidden (mirrors request_pane_ws.dart:44).
-        showViewCodeButton: false,
+        // No WebSocket codegen yet: the button stays visible so the tooltip
+        // and the code pane can say so, like AI and GraphQL above.
+        showViewCodeButton: !isCompact,
         showIndicators: [paramLength > 0, headerLength > 0, true],
         tabLabels: const [kLabelURLParams, kLabelHeaders, kLabelSettings],
         children: [

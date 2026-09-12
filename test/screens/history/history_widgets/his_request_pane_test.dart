@@ -67,7 +67,45 @@ void main() {
     httpResponseModel: HttpResponseModel(statusCode: 200),
   );
 
+  final wsHistoryModel = HistoryRequestModel(
+    historyId: '4',
+    metaData: HistoryMetaModel(
+      historyId: '4',
+      requestId: 'req-4',
+      timeStamp: DateTime.now(),
+      method: HTTPVerb.get,
+      url: 'wss://example.com/ws',
+      apiType: APIType.websocket,
+      responseStatus: 101,
+    ),
+    wsRequestModel: const WebSocketRequestModel(url: 'wss://example.com/ws'),
+  );
+
   group('HistoryRequestPane Tests', () {
+    testWidgets('WebSocket history shows View Code with not-available tooltip',
+        (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            selectedHistoryIdStateProvider.overrideWith((ref) => '4'),
+            historyCodePaneVisibleStateProvider.overrideWith((ref) => false),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => wsHistoryModel,
+            ),
+          ],
+          child: const MaterialApp(home: Scaffold(body: HistoryRequestPane())),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text(kLabelViewCode), findsOneWidget);
+      expect(
+        find.byTooltip(kMsgCodegenWebSocketNotAvailable),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('renders HistoryRequestPane for REST API correctly', (
       tester,
     ) async {

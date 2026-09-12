@@ -458,6 +458,8 @@ const kLabelClose = "Close";
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
+const kTooltipViewCode =
+    "Show this request as code (cURL, Python, JavaScript and more)";
 const kLabelURLParams = "Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
