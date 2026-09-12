@@ -3,8 +3,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 
 /// "Recently Sent" strip below the message composer. Extracted into its own
 /// widget so the `messageHistory` watch (which changes on every incoming WS
@@ -92,11 +94,7 @@ class WsRecentlySent extends HookConsumerWidget {
 
                 final title = matchingTemplate?["name"];
 
-                return Tooltip(
-                  message: payload,
-                  waitDuration: const Duration(milliseconds: 600),
-                  textStyle: kCodeStyle.copyWith(fontSize: 11),
-                  child: Material(
+                return Material(
                     type: MaterialType.transparency,
                     clipBehavior: Clip.antiAlias,
                     borderRadius: BorderRadius.circular(8),
@@ -169,6 +167,15 @@ class WsRecentlySent extends HookConsumerWidget {
                                     ),
                                   ),
                                 ),
+                              // Long payloads are truncated by the card, so a
+                              // "View" button opens the full text in a dialog.
+                              ADIconButton(
+                                icon: Icons.open_in_full,
+                                iconSize: 14,
+                                tooltip: "View full message",
+                                visualDensity: VisualDensity.compact,
+                                onPressed: () => _showFullMessage(context, payload),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -183,7 +190,6 @@ class WsRecentlySent extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  ),
                 );
               },
             ),
@@ -192,6 +198,28 @@ class WsRecentlySent extends HookConsumerWidget {
             ),
           ),
       ],
+    );
+  }
+
+  void _showFullMessage(BuildContext context, String payload) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Sent message"),
+        content: SizedBox(
+          width: 600,
+          child: SingleChildScrollView(
+            child: SelectableText(payload, style: kCodeStyle.copyWith(fontSize: 12)),
+          ),
+        ),
+        actions: [
+          CopyButton(toCopy: payload),
+          ADTextButton(
+            label: kLabelClose,
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
     );
   }
 }
